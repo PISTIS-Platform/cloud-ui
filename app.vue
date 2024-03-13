@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const appConfig = useAppConfig();
+const appConfig: any = useAppConfig();
 
 useHead({
     titleTemplate: (title) => `${title ? title + ' • ' : ''}${appConfig.name}`,
@@ -13,12 +13,3 @@ useHead({
         <NuxtPage />
     </NuxtLayout>
 </template>
-
-<style>
-.placeholder_rect {
-    border-radius: 10px;
-    background: repeating-linear-gradient(135deg, #999 0px, #999 1px, white 1px, white 5px);
-    border: #999 solid;
-    border-width: 1px;
-}
-</style>

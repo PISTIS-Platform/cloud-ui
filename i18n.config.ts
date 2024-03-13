@@ -1,7 +1,6 @@
 export default defineI18nConfig(() => ({
     legacy: false,
     numberFormats: {
-        // FIXME: These are examples. We should adjust them accordingly
         en: {
             decimal: {
                 style: 'decimal',
@@ -16,5 +15,29 @@ export default defineI18nConfig(() => ({
             },
         },
     },
-    messages: {},
+    messages: {
+        en: {
+            signIn: 'Sign In',
+            signOut: 'Sign Out',
+            dashboard: {
+                dashboard: 'Dashboard',
+                status: 'Status',
+                resources: 'Resources',
+            },
+            registry: {
+                registry: 'Factory Registry',
+                info: '',
+            },
+            'usage-analytics': {
+                'usage-analytics': 'Usage Analytics',
+                overview: 'Overview',
+                questionaries: 'Questionaries',
+            },
+            models: {
+                models: 'Models Repository',
+                overview: 'Contents',
+                upload: 'Upload',
+            },
+        },
+    },
 }));

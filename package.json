@@ -19,6 +19,7 @@
         "@headlessui/vue": "^1.7.19",
         "@nuxt/ui": "^2.14.2",
         "@pinia/nuxt": "^0.5.1",
+        "next-auth": "4.21.1",
         "nuxt": "^3.10.3",
         "pinia": "^2.1.7",
         "ramda": "^0.29.1",
@@ -30,6 +31,7 @@
     "devDependencies": {
         "@nuxtjs/eslint-config-typescript": "^12.1.0",
         "@nuxtjs/i18n": "^8.1.1",
+        "@sidebase/nuxt-auth": "^0.7.0",
         "@types/ramda": "^0.29.11",
         "@vueuse/core": "^10.9.0",
         "@vueuse/nuxt": "^10.9.0",

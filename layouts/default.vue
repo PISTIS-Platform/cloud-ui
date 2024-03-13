@@ -1,35 +1,34 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItems } from '@headlessui/vue';
-
-// const route = useRoute();
-
-// const firstLevelRoutePath = route.fullPath.split('/')[1];
+import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 
 useHead({
     htmlAttrs: { class: 'min-h-full bg-gray-100' },
     bodyAttrs: { class: 'h-full' },
 });
 
-const user = {
-    name: 'John Doe',
-    email: 'john@doe.com',
-};
-const navigation: { name: string; to: string }[] = [];
+const { status, signIn, signOut, data: session } = useAuth();
 
-// const userNavigation: { name: string; to: string }[] = [];
+const navigation: { name: string; to: string; roles: string[] }[] = [
+    { name: 'dashboard.dashboard', to: '/dashboard', roles: [] },
+    { name: 'registry.registry', to: '/factory-registry', roles: ['admin'] },
+    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['admin'] },
+    { name: 'models.models', to: '/models', roles: ['admin'] },
+];
+
+const userNavigation: { name: string; to: string; icon?: string }[] = [];
 </script>
 
 <template>
     <div class="h-full flex flex-col">
         <Disclosure v-slot="{ open }" as="nav" class="bg-primary-700 sticky top-0 z-20">
-            <div class="mx-auto px-8 max-w-6xl">
+            <div class="mx-auto px-8 max-w-7xl">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
-                        <div class="flex-shrink-0">
+                        <NuxtLink :to="'/'" class="flex-shrink-0">
                             <img class="h-8 w-28" src="/img/PISTIS_logo_white.png" alt="PISTIS logo" />
-                        </div>
+                        </NuxtLink>
                         <div class="hidden md:block">
-                            <div class="ml-10 flex items-baseline space-x-4">
+                            <div v-if="status === 'authenticated'" class="ml-10 flex items-baseline space-x-4">
                                 <NuxtLink
                                     v-for="item in navigation"
                                     :key="item.name"
@@ -40,85 +39,115 @@ const navigation: { name: string; to: string }[] = [];
                                 >
                             </div>
                         </div>
-                        <div class="mt-1 md:hidden flex gap-4 justify-center items-center ml-4 text-white">
-                            <span> • </span>
-                            <!-- {{ $t(`${firstLevelRoutePath}.${firstLevelRoutePath}`) }} -->
-                        </div>
                     </div>
-                    <div class="hidden md:block">
-                        <div class="ml-4 flex items-center md:ml-6">
-                            <button
-                                type="button"
-                                class="relative rounded-full bg-primary-700 p-1 text-primary-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
-                                to="/notifications"
-                            >
-                                <span class="absolute -inset-1.5" />
-                                <span class="sr-only">View notifications</span>
-                                <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
-                            </button>
-
-                            <!-- Profile dropdown -->
-                            <Menu as="div" class="relative ml-3">
-                                <div>
-                                    <MenuButton
-                                        class="relative flex gap-2 text-primary-200 max-w-xs items-center rounded-full bg-primary-700 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
-                                    >
-                                        <span class="absolute -inset-1.5" />
-                                        <span class="sr-only">Open user menu</span>
-                                        <UIcon name="i-heroicons-user-circle" class="text-primary-200 w-8 h-8" />
-                                        <div>
-                                            {{ user.name }}
-                                        </div>
-                                        <UIcon name="i-heroicons-chevron-down" class="w-4 h-4 text-primary-300" />
-                                    </MenuButton>
-                                </div>
-                                <transition
-                                    enter-active-class="transition ease-out duration-100"
-                                    enter-from-class="transform opacity-0 scale-95"
-                                    enter-to-class="transform opacity-100 scale-100"
-                                    leave-active-class="transition ease-in duration-75"
-                                    leave-from-class="transform opacity-100 scale-100"
-                                    leave-to-class="transform opacity-0 scale-95"
+                    <template v-if="status === 'authenticated'">
+                        <div class="hidden md:block">
+                            <div class="ml-4 flex items-center space-x-2 md:ml-6">
+                                <button
+                                    type="button"
+                                    class="relative rounded-full bg-primary-700 w-10 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                                    to="/notifications"
                                 >
-                                    <MenuItems
-                                        class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                    <span class="absolute -inset-1.5" />
+                                    <span class="sr-only">View notifications</span>
+                                    <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
+                                </button>
+
+                                <!-- Profile dropdown -->
+                                <Menu as="div" class="relative">
+                                    <div>
+                                        <MenuButton
+                                            class="relative flex space-x-2 text-primary-200 max-w-xs items-center rounded-full bg-primary-700 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                                        >
+                                            <UAvatar :src="session?.user?.image" class="bg-primary-200" size="md" />
+                                            <div class="text-primary-100">
+                                                {{ session?.user?.name }}
+                                            </div>
+                                            <UIcon
+                                                name="i-heroicons-chevron-down"
+                                                class="w-4 h-4 mr-0.5 text-primary-300"
+                                            />
+                                        </MenuButton>
+                                    </div>
+                                    <transition
+                                        enter-active-class="transition ease-out duration-100"
+                                        enter-from-class="transform opacity-0 scale-95"
+                                        enter-to-class="transform opacity-100 scale-100"
+                                        leave-active-class="transition ease-in duration-75"
+                                        leave-from-class="transform opacity-100 scale-100"
+                                        leave-to-class="transform opacity-0 scale-95"
                                     >
-                                        <!-- <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                                            <a
-                                                :href="item.href"
-                                                :class="[
-                                                    active ? 'bg-primary-100' : '',
-                                                    'block px-4 py-2 text-sm text-gray-700',
-                                                ]"
-                                                >{{ $t(item.name) }}</a
+                                        <MenuItems
+                                            class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                        >
+                                            <MenuItem
+                                                v-for="item in userNavigation"
+                                                :key="item.name"
+                                                v-slot="{ active }"
                                             >
-                                        </MenuItem> -->
-                                    </MenuItems>
-                                </transition>
-                            </Menu>
+                                                <NuxtLink
+                                                    :to="item.to"
+                                                    :class="[
+                                                        active ? 'bg-primary-100' : undefined,
+                                                        'block px-4 py-2 text-sm text-gray-700',
+                                                    ]"
+                                                    >{{ $t(item.name) }}</NuxtLink
+                                                >
+                                            </MenuItem>
+                                            <MenuItem v-slot="{ active }">
+                                                <a
+                                                    href="javascript:void(0)"
+                                                    :class="[
+                                                        'block px-4 py-2 text-sm text-gray-700',
+                                                        active ? 'bg-primary-100 ' : undefined,
+                                                    ]"
+                                                    @click="signOut({ callbackUrl: '/' })"
+                                                >
+                                                    {{ $t('signOut') }}
+                                                </a>
+                                            </MenuItem>
+                                        </MenuItems>
+                                    </transition>
+                                </Menu>
+                            </div>
                         </div>
-                    </div>
-                    <div class="-mr-2 flex md:hidden">
-                        <!-- Mobile menu button -->
-                        <DisclosureButton
-                            class="relative inline-flex items-center justify-center rounded-md bg-primary-700 p-2 text-primary-200 hover:bg-primary-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                        <div class="-mr-2 flex md:hidden">
+                            <!-- Mobile menu button -->
+                            <DisclosureButton
+                                class="relative inline-flex items-center justify-center rounded-md bg-primary-700 p-2 text-primary-200 hover:bg-primary-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                            >
+                                <span class="absolute -inset-0.5" />
+                                <span class="sr-only">Open main menu</span>
+                                <UIcon
+                                    v-if="!open"
+                                    name="i-heroicons-bars-3"
+                                    class="block h-6 w-6"
+                                    aria-hidden="true"
+                                />
+                                <UIcon v-else name="i-heroicons-x-mark" class="block h-6 w-6" aria-hidden="true" />
+                            </DisclosureButton>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <button
+                            type="button"
+                            class="flex items-center relative px-4 py-1.5 font-medium rounded-lg bg-primary-900 hover:bg-primary-950 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-800"
+                            @click="signIn('keycloak')"
                         >
-                            <span class="absolute -inset-0.5" />
-                            <span class="sr-only">Open main menu</span>
-                            <UIcon v-if="!open" name="i-heroicons-bars-3" class="block h-6 w-6" aria-hidden="true" />
-                            <UIcon v-else name="i-heroicons-x-mark" class="block h-6 w-6" aria-hidden="true" />
-                        </DisclosureButton>
-                    </div>
+                            <UIcon name="i-heroicons-arrow-right-end-on-rectangle" class="-ml-0.5" />
+                            <span class="ml-2">{{ $t('signIn') }}</span>
+                        </button>
+                    </template>
                 </div>
             </div>
 
-            <DisclosurePanel class="md:hidden">
+            <DisclosurePanel v-if="status === 'authenticated'" class="md:hidden">
                 <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                     <DisclosureButton
                         v-for="item in navigation"
                         :key="item.name"
-                        as="a"
-                        :href="item.to"
+                        as="NuxtLink"
+                        :to="item.to"
                         active-class="bg-primary-700 text-white"
                         :class="[
                             'text-white hover:bg-primary-500 hover:bg-opacity-75',
@@ -129,12 +158,12 @@ const navigation: { name: string; to: string }[] = [];
                 </div>
                 <div class="border-t border-primary-700 pb-3 pt-4">
                     <div class="flex items-center px-5">
-                        <div class="flex-shrink-0">
-                            <UIcon name="i-heroicons-circle" class="text-primary-200 w-8 h-8" />
+                        <div class="flex-shrink-0 mt-1">
+                            <UIcon name="i-heroicons-user-circle" class="text-primary-200 w-8 h-8" />
                         </div>
                         <div class="ml-3">
-                            <div class="text-base font-medium text-white">{{ user.name }}</div>
-                            <div class="text-sm font-medium text-primary-300">{{ user.email }}</div>
+                            <div class="text-base font-medium text-white">{{ session?.user?.name }}</div>
+                            <div class="text-sm -mt-0.5 text-primary-300">{{ session?.user?.email }}</div>
                         </div>
                         <button
                             type="button"
@@ -145,16 +174,25 @@ const navigation: { name: string; to: string }[] = [];
                             <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
                         </button>
                     </div>
-                    <div class="mt-3 space-y-1 px-2">
-                        <!-- <DisclosureButton
+                    <div class="mt-3 space-y-1 px-5">
+                        <DisclosureButton
                             v-for="item in userNavigation"
                             :key="item.name"
-                            as="a"
-                            :href="item.href"
-                            class="block rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-500 hover:bg-opacity-75"
+                            as="NuxtLink"
+                            :to="item.to"
+                            class="flex space-x-2 items-center rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-500 hover:bg-opacity-75 cursor-pointer"
                         >
-                            {{ $t(item.name) }}</DisclosureButton
-                        > -->
+                            <UIcon v-if="item.icon" :name="item.icon" class="-ml-0.5" />
+                            <div>{{ $t(item.name) }}</div>
+                        </DisclosureButton>
+                        <DisclosureButton
+                            as="NuxtLink"
+                            class="flex flex-1 space-x-2 items-center rounded-md px-3 py-2 text-base font-medium text-white hover:bg-primary-500 hover:bg-opacity-75 cursor-pointer"
+                            @click="signOut({ callbackUrl: '/' })"
+                        >
+                            <UIcon name="i-heroicons-arrow-left-start-on-rectangle" class="-ml-0.5" />
+                            <div class="ml-2">{{ $t('signOut') }}</div>
+                        </DisclosureButton>
                     </div>
                 </div>
             </DisclosurePanel>
