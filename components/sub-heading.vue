@@ -14,7 +14,7 @@ defineProps({
 //TODO: Add slots? Check portals for menu
 <template>
     <div class="flex flex-col space-y-1 items-start justify-center">
-        <h3 class="text-2xl font-semibold text-gray-900">
+        <h3 class="text-lg font-semibold text-gray-700">
             {{ title }}
         </h3>
         <h4 v-if="info" class="text-sm text-gray-400">
