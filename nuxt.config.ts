@@ -19,6 +19,7 @@ export default defineNuxtConfig({
         },
     },
     runtimeConfig: {
+        factoryRegistryURL: process.env.NUXT_FACTORY_REGISTRY_URL,
         authSecret: process.env.NUXT_NEXTAUTH_SECRET,
         keycloak: {
             issuer: process.env.NUXT_KEYCLOAK_ISSUER,

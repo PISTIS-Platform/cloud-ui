@@ -5,6 +5,7 @@ import { NuxtAuthHandler } from '#auth';
 declare module 'next-auth/jwt' {
     interface JWT {
         id_token?: string;
+        access_token?: string;
         provider?: string;
     }
 }
@@ -26,6 +27,7 @@ export const authOptions = {
             if (account) {
                 token.id_token = account.id_token;
                 token.provider = account.provider;
+                token.access_token = account.access_token;
             }
 
             return token;
