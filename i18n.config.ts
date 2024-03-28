@@ -26,6 +26,8 @@ export default defineI18nConfig(() => ({
     },
     messages: {
         en: {
+            download: 'Download',
+            submit: 'Submit',
             addNew: 'Add New',
             signIn: 'Sign In',
             signOut: 'Sign Out',
@@ -66,6 +68,15 @@ export default defineI18nConfig(() => ({
                 },
             },
             registry: {
+                registration: {
+                    title: 'Factory Registration',
+                    welcome: 'Welcome to the Factory Registration page. Please follow these steps to get started:',
+                    downloadScripts: 'Download the deployment scripts',
+                    downloadConfig: 'Download the required configuration for your individual factory',
+                    defineIP: 'Define the public IP of the factory once it is up and running',
+                    enterIP: "Enter the factory's public IP",
+                },
+
                 registry: 'Factory Registry',
                 info: '',
                 title: 'Factory Registry Manager',

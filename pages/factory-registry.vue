@@ -120,12 +120,9 @@ const toggleActive = async (row: any) => {
 </script>
 
 <template>
-    <div class="py-6 justify-center items-center px-8 max-w-7xl mx-auto w-full">
-        <SubHeading :title="$t('registry.registry')" :info="$t('registry.info')" />
-    </div>
-    <div class="flex flex-col py-6 justify-start items-start px-8 flex-1 max-w-6xl mx-auto w-full">
-        <div class="flex flex-col w-full mt-8">
-            <UCard>
+    <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
+        <PageContainer>
+            <UCard class="w-full">
                 <template #header>
                     <SubHeading :title="$t('registry.title')" />
                 </template>
@@ -167,6 +164,6 @@ const toggleActive = async (row: any) => {
                     </div>
                 </UCard>
             </UModal>
-        </div>
+        </PageContainer>
     </div>
 </template>

@@ -12,6 +12,16 @@ declare module 'next-auth/jwt' {
 
 const { authSecret, keycloak } = useRuntimeConfig();
 
+const validKeycloakRoles = ['admin'];
+
+const getKeycloakRole = (profile: any) => {
+    //getting the retrieved user roles
+    const keycloakRoles = (profile as any).roles;
+
+    //return keycloak roles based on the available roles
+    return keycloakRoles.find((role: string) => validKeycloakRoles.includes(role)) || null;
+};
+
 export const authOptions = {
     secret: authSecret,
     providers: [
@@ -23,14 +33,19 @@ export const authOptions = {
         }),
     ],
     callbacks: {
-        async jwt({ token, account }: any) {
+        jwt: async ({ token, account, profile }: any) => {
             if (account) {
                 token.id_token = account.id_token;
                 token.provider = account.provider;
                 token.access_token = account.access_token;
+                token.role = getKeycloakRole(profile);
             }
 
-            return token;
+            return Promise.resolve(token);
+        },
+        session: async ({ session, token }: any) => {
+            (session as any).role = token.role;
+            return Promise.resolve(session);
         },
     },
     events: {

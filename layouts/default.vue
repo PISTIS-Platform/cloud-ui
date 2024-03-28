@@ -28,7 +28,10 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
                             <img class="h-8 w-28" src="/img/PISTIS_logo_white.png" alt="PISTIS logo" />
                         </NuxtLink>
                         <div class="hidden md:block">
-                            <div v-if="status === 'authenticated'" class="ml-10 flex items-baseline space-x-4">
+                            <div
+                                v-if="status === 'authenticated' && session.role === 'admin'"
+                                class="ml-10 flex items-baseline space-x-4"
+                            >
                                 <NuxtLink
                                     v-for="item in navigation"
                                     :key="item.name"
