@@ -18,9 +18,16 @@ export default defineNuxtConfig({
             link: [{ rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' }],
         },
     },
+    components: [
+        {
+            path: '~/components',
+            pathPrefix: false,
+        },
+    ],
     runtimeConfig: {
         factoryRegistryURL: process.env.NUXT_FACTORY_REGISTRY_URL,
         authSecret: process.env.NUXT_NEXTAUTH_SECRET,
+        intentionAnalyticsServerUrl: process.env.NUXT_INTENTION_ANALYTICS_SERVER_URL,
         keycloak: {
             issuer: process.env.NUXT_KEYCLOAK_ISSUER,
             clientId: process.env.NUXT_KEYCLOAK_CLIENT_ID,
