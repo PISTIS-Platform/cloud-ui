@@ -2,12 +2,15 @@ import type { UnwrapRef } from 'vue';
 
 import type { SortOptions } from '~/interfaces/table';
 
-export const useTable = <T>(data: Ref<T[] | null>, pageCount: number = 10, defaultSort?: SortOptions) => {
+export const useTable = <T>(data: Ref<T[] | null>, numOfItems: number = 10, defaultSort?: SortOptions) => {
     //Table data
     const rows = computed<T[]>(() => data.value || []);
 
     // page in paginated data
     const page = ref(1);
+
+    //number of items per page
+    const pageCount = ref(numOfItems);
 
     // Searchable string for search input
     const searchString = ref('');
@@ -40,7 +43,7 @@ export const useTable = <T>(data: Ref<T[] | null>, pageCount: number = 10, defau
 
     //paginated rows
     const paginatedRows = computed(() => {
-        return filteredRows.value.slice((page.value - 1) * pageCount, page.value * pageCount);
+        return filteredRows.value.slice((page.value - 1) * pageCount.value, page.value * pageCount.value);
     });
 
     return {
@@ -50,5 +53,6 @@ export const useTable = <T>(data: Ref<T[] | null>, pageCount: number = 10, defau
         rows,
         filteredRows,
         paginatedRows,
+        pageCount,
     };
 };

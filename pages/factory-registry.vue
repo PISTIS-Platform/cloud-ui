@@ -10,7 +10,7 @@ const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const { t } = useI18n();
 
-const { data } = await useFetch(`/api/factories-registry/factories`);
+const { data, pending } = await useFetch(`/api/factories-registry/factories`);
 const switchModalOpen = ref<boolean>(false);
 let selectedRow: FactoryModelRepo;
 
@@ -37,12 +37,9 @@ const columns = [
     },
 ];
 
-const page = ref<number>(1);
-const pageCount: number = 5;
-
-const rows = computed(() => {
-    // return [];
-    return data.value.slice((page.value - 1) * pageCount, page.value * pageCount);
+const { page, filteredRows, paginatedRows, sortBy, pageCount } = useTable<FactoryModelRepo>(data, 5, {
+    column: 'organizationName',
+    direction: 'asc',
 });
 
 const getStatusColorClass = (status: string) => {
@@ -127,7 +124,14 @@ const toggleActive = async (row: any) => {
                     <SubHeading :title="$t('registry.title')" />
                 </template>
 
-                <UTable :columns="columns" :rows="rows" @select="select">
+                <UTable
+                    v-model:sort="sortBy"
+                    :columns="columns"
+                    :rows="paginatedRows"
+                    sort-mode="manual"
+                    :loading="pending"
+                    @select="select"
+                >
                     <!-- Custom styling for ip data column -->
                     <template #ip-data="{ row }">
                         <span class="flex items-center">
@@ -146,8 +150,8 @@ const toggleActive = async (row: any) => {
                 </UTable>
 
                 <!-- Display the pagination only if the total number of transactions is larger than the page count -->
-                <div v-if="data?.length > pageCount" class="flex justify-end mt-2">
-                    <UPagination v-model="page" :page-count="pageCount" :total="data?.length || 0" />
+                <div v-if="filteredRows?.length > pageCount" class="flex justify-end mt-2">
+                    <UPagination v-model="page" :page-count="pageCount" :total="filteredRows.length" />
                 </div>
             </UCard>
             <UModal v-model="switchModalOpen">

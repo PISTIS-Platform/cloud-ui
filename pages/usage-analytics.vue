@@ -22,8 +22,7 @@ watch(error, () => {
 });
 
 // import info from table composable
-const pageCount = 10;
-const { page, filteredRows, paginatedRows, searchString, sortBy } = useTable<Questionnaire>(data, pageCount, {
+const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = useTable<Questionnaire>(data, 10, {
     column: 'isForVerifiedBuyers',
     direction: 'desc',
 });

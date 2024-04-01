@@ -3,8 +3,6 @@ import type DataModelRepo from '~/interfaces/data-model-repo';
 import type ModelsTableRow from '~/interfaces/models-table-row';
 import type TableColumn from '~/interfaces/table-column';
 
-const R = useRamda();
-
 const { t } = useI18n();
 
 const columns: TableColumn[] = [
@@ -53,41 +51,9 @@ const columns: TableColumn[] = [
 //data for models table
 const { data: modelsData, pending: modelsLoading } = await useLazyFetch<ModelsTableRow[]>('/api/models/models-table');
 
-const tableSort = ref<{ column: string; direction: 'asc' | 'desc' }>({
+const { page, filteredRows, paginatedRows, searchString, sortBy, pageCount } = useTable<ModelsTableRow>(modelsData, 5, {
     column: 'date',
     direction: 'desc',
-});
-
-//sort assets first before filtering and paginating
-const computedSorted = computed(() => {
-    if (!modelsData.value) return [];
-    if (tableSort.value.direction === 'asc') {
-        return R.sort(R.ascend(R.prop(tableSort.value.column)), modelsData.value);
-    }
-
-    return R.sort(R.descend(R.prop(tableSort.value.column)), modelsData.value);
-});
-
-//ref for query in table search
-const q = ref('');
-
-//table pagination and filtering
-const page = ref(1);
-const pageCount: number = 5;
-
-const filteredRows = computed(() => {
-    if (!q.value) {
-        return computedSorted.value;
-    }
-    return computedSorted.value.filter((asset) => {
-        return Object.values(asset).some((value) => {
-            return String(value).toLowerCase().includes(q.value.toLowerCase());
-        });
-    });
-});
-
-const paginatedRows = computed(() => {
-    return filteredRows.value.slice((page.value - 1) * pageCount, page.value * pageCount);
 });
 
 const actions = (row: DataModelRepo[]) => [
@@ -144,7 +110,12 @@ function deleteRepo() {
         <UCard>
             <div class="flex justify-between flex-1">
                 <div class="flex flex-1">
-                    <UInput v-model="q" size="md" :placeholder="$t('models.dmRepository.search')" class="w-full" />
+                    <UInput
+                        v-model="searchString"
+                        size="md"
+                        :placeholder="$t('models.dmRepository.search')"
+                        class="w-full"
+                    />
                 </div>
                 <div class="ml-2 flex">
                     <UButton
@@ -160,7 +131,8 @@ function deleteRepo() {
                 </div>
             </div>
             <UTable
-                v-model:sort="tableSort"
+                v-model:sort="sortBy"
+                sort-mode="manual"
                 class="mt-8"
                 :columns="columns"
                 :rows="paginatedRows"
@@ -186,7 +158,7 @@ function deleteRepo() {
                     {{ $d(new Date(row.date), 'short') }}
                 </template>
             </UTable>
-            <div v-if="modelsData && modelsData.length > pageCount" class="flex justify-end mt-2">
+            <div v-if="filteredRows?.length > pageCount" class="flex justify-end mt-2">
                 <div class="mt-2">
                     <UPagination
                         v-model="page"
