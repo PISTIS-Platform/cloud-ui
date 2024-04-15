@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n';
-
 import { useAlertMessage } from '~/composables/alert';
 import { useHttpHelper } from '~/composables/httpHelper';
 import type FactoryModelRepo from '~/interfaces/factories-model';

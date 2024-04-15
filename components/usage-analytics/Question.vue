@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
-
 import { useQuestionSchema } from '~/composables/usage-analytics/question-schema';
 import type { Question, QuestionOption } from '~/interfaces/usage-analytics';
 import { QuestionType } from '~/interfaces/usage-analytics';

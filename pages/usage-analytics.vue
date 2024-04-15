@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useI18n } from 'vue-i18n';
-
 import type TableColumn from '~/interfaces/table-column';
 import type { Questionnaire } from '~/interfaces/usage-analytics';
 

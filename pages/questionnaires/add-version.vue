@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n';
 import { z } from 'zod';
 
 import { MAX_CHARACTERS_QUESTIONNAIRE_TITLE_LIMIT, MAX_CHARACTERS_TEXT_LIMIT } from '@/constants/validation';
