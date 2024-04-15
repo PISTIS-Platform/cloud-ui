@@ -1,5 +1,6 @@
-const { intentionAnalyticsServerUrl } = useRuntimeConfig();
 import { getToken } from '#auth';
+
+const { intentionAnalyticsServerUrl } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);

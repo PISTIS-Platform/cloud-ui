@@ -10,9 +10,9 @@ const { status, signIn, signOut, data: session } = useAuth();
 
 const navigation: { name: string; to: string; roles: string[] }[] = [
     { name: 'dashboard.dashboard', to: '/dashboard', roles: [] },
-    { name: 'registry.registry', to: '/factory-registry', roles: ['admin'] },
-    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['admin'] },
-    { name: 'models.models', to: '/models', roles: ['admin'] },
+    { name: 'registry.registry', to: '/factory-registry', roles: ['PISTIS_ADMIN'] },
+    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['PISTIS_ADMIN'] },
+    { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
 ];
 
 const userNavigation: { name: string; to: string; icon?: string }[] = [];
@@ -29,7 +29,7 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
                         </NuxtLink>
                         <div class="hidden md:block">
                             <div
-                                v-if="status === 'authenticated' && session.role === 'admin'"
+                                v-if="status === 'authenticated' && session?.roles?.includes('PISTIS_ADMIN')"
                                 class="ml-10 flex items-baseline space-x-4"
                             >
                                 <NuxtLink

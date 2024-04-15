@@ -1,5 +1,6 @@
-const { factoryRegistryURL } = useRuntimeConfig();
 import { getToken } from '#auth';
+
+const { factoryRegistryURL } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
