@@ -28,11 +28,11 @@ export const useModelSchema = (withFile = false) => {
     const modelValues = modelTypes.map((item: Selection) => item.value) as [string, ...string[]];
 
     const dataModelSchema = z.object({
-        title: z.string().min(10, t('models.errors.atLeast10')),
+        title: z.string().min(10, t('validation.atLeastNumberChars', { count: 10 })),
         version: z.string().min(1, t('models.errors.version')),
-        description: z.string().min(10, t('models.errors.atLeast10')),
+        description: z.string().min(10, t('validation.atLeastNumberChars', { count: 10 })),
         type: z.enum(modelValues, {
-            errorMap: () => ({ message: t('models.errors.validModelType') }),
+            errorMap: () => ({ message: t('validation.validValue', { name: 'model type' }) }),
         }),
         data: withFile ? z.instanceof(File, { message: t('models.errors.validFile') }) : z.optional(z.instanceof(File)),
     });
