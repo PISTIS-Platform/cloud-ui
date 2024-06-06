@@ -86,6 +86,9 @@ export default defineI18nConfig(() => ({
                     downloadConfig: 'Download the required configuration for your individual factory',
                     defineIP: 'Define the public IP of the factory once it is up and running',
                     enterIP: "Enter the factory's public IP",
+                    invalidIP: 'Invalid IP Address',
+                    errorInDownloadScripts: 'Error occurred in downloading instructions',
+                    errorInDownloadingConfigurations: 'Error occurred in downloading your individual configurations',
                 },
 
                 registry: 'Factory Registry',
