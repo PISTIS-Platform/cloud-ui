@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import type DataModelRepo from '~/interfaces/data-model-repo';
 import type ModelsTableRow from '~/interfaces/models-table-row';
 import type TableColumn from '~/interfaces/table-column';
 
 const { t } = useI18n();
+
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const columns: TableColumn[] = [
     {
@@ -49,14 +50,25 @@ const columns: TableColumn[] = [
 ];
 
 //data for models table
-const { data: modelsData, pending: modelsLoading } = await useLazyFetch<ModelsTableRow[]>('/api/models/models-table');
+const {
+    data: modelsData,
+    pending: modelsLoading,
+    error: fetchListError,
+    refresh,
+} = await useLazyFetch<ModelsTableRow[]>('/api/models/table');
+
+watch(fetchListError, () => {
+    if (fetchListError.value) {
+        showErrorMessage(t('models.errors.list'));
+    }
+});
 
 const { page, filteredRows, paginatedRows, searchString, sortBy, pageCount } = useTable<ModelsTableRow>(modelsData, 5, {
     column: 'date',
     direction: 'desc',
 });
 
-const actions = (row: DataModelRepo[]) => [
+const actions = (row: ModelsTableRow) => [
     [
         {
             label: 'Edit',
@@ -66,7 +78,7 @@ const actions = (row: DataModelRepo[]) => [
         {
             label: 'Download',
             icon: 'i-heroicons-arrow-down-tray-20-solid',
-            click: () => downloadRepo(),
+            click: () => downloadRepo(row),
         },
     ],
     [
@@ -75,33 +87,69 @@ const actions = (row: DataModelRepo[]) => [
             color: 'text-red-400',
             icon: 'i-heroicons-trash-20-solid',
             class: 'text-red-400',
-            click: () => deleteRepo(),
+            click: () => {
+                modelForDeletion.value = row;
+                deleteConfirmationOpen.value = true;
+            },
         },
     ],
 ];
 
-const selected = ref<DataModelRepo[]>([]);
-
 //table functions
 
-async function editRepo(row: DataModelRepo[]) {
-    console.log(row);
+async function editRepo(row: ModelsTableRow) {
     await navigateTo({
         path: `/models/${row.id}`,
     });
 }
 
-function viewRepo(row: DataModelRepo[]) {
-    selected.value = row;
-    console.log(selected.value);
+async function downloadRepo(row: ModelsTableRow) {
+    try {
+        const response = await $fetch<Blob>(`/api/models/download`, {
+            query: { id: row.id },
+        });
+
+        const url = window.URL.createObjectURL(response);
+        const link = document.createElement('a');
+
+        link.href = url;
+
+        //if filepath is not set the browser will automatically set a name for the file
+        if (row.filepath) {
+            link.setAttribute('download', row.filepath);
+        }
+        document.body.appendChild(link);
+
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+    } catch (error) {
+        showErrorMessage(t('models.errors.download'));
+    }
 }
 
-function downloadRepo() {
-    console.log(selected.value);
-}
+const deleteConfirmationOpen = ref(false);
+const modelForDeletion = ref<ModelsTableRow | null>(null);
 
-function deleteRepo() {
-    console.log(selected.value);
+async function deleteRepo() {
+    if (!modelForDeletion.value) return;
+
+    deleteConfirmationOpen.value = false;
+    modelsLoading.value = true;
+    modelsData.value = null;
+
+    try {
+        await $fetch(`/api/models/${modelForDeletion.value.id}`, {
+            method: 'DELETE',
+        });
+
+        showSuccessMessage(t('models.successDelete'));
+    } catch (error) {
+        showErrorMessage(t('models.errors.delete'));
+    } finally {
+        modelForDeletion.value = null;
+        await refresh();
+    }
 }
 </script>
 
@@ -137,7 +185,6 @@ function deleteRepo() {
                 :columns="columns"
                 :rows="paginatedRows"
                 :loading="modelsLoading"
-                @select="viewRepo"
             >
                 <template #version-data="{ row }">
                     <div class="text-center">
@@ -155,7 +202,7 @@ function deleteRepo() {
                     </UDropdown>
                 </template>
                 <template #date-data="{ row }">
-                    {{ $d(new Date(row.date), 'short') }}
+                    {{ $d(new Date(row.updatedAt), 'short') }}
                 </template>
             </UTable>
             <div v-if="filteredRows?.length > pageCount" class="flex justify-end mt-2">
@@ -169,5 +216,20 @@ function deleteRepo() {
                 </div>
             </div>
         </UCard>
+        <UModal v-model="deleteConfirmationOpen">
+            <UCard class="flex flex-col justify-center items-center text-center text-gray-700 h-40">
+                <p class="font-bold text-xl">{{ $t('areYouSure') }}</p>
+                <p class="text-gray-400 mt-6">{{ $t('models.deleteModelDescription') }}</p>
+                <div class="flex gap-8 w-full justify-center mt-6">
+                    <UButton
+                        color="white"
+                        class="w-20 flex justify-center"
+                        @click="(deleteConfirmationOpen = false), (modelForDeletion = null)"
+                        >{{ $t('cancel') }}</UButton
+                    >
+                    <UButton class="w-20 flex justify-center" @click="deleteRepo()">{{ $t('yes') }}</UButton>
+                </div>
+            </UCard>
+        </UModal>
     </div>
 </template>
