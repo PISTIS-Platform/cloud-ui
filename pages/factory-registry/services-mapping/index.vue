@@ -12,9 +12,11 @@ const {
     error,
 } = await useLazyFetch<RegisteredService[]>('/api/factories-registry/services-mapping');
 
-if (error.value) {
-    showErrorMessage(t('registry.servicesRegistry.errorInRetrieval'));
-}
+watch(error, () => {
+    if (error.value) {
+        showErrorMessage(t('registry.servicesRegistry.errorInRetrieval'));
+    }
+});
 
 const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = useTable<RegisteredService>(data, 10, {
     column: 'component',
@@ -49,7 +51,7 @@ const navigateToEdit = async (id: string) => {
 </script>
 
 <template>
-    <div class="w-full h-full text-gray-700">
+    <div class="w-full h-full">
         <UCard class="w-full">
             <template #header>
                 <div class="flex justify-between flex-1">
@@ -81,12 +83,14 @@ const navigateToEdit = async (id: string) => {
                 }"
             >
                 <template #actions-data="{ row }">
-                    <UButton
-                        color="gray"
-                        variant="ghost"
-                        icon="i-heroicons-pencil-square-20-solid"
-                        @click="navigateToEdit(row.id)"
-                    />
+                    <UTooltip :text="$t('edit')">
+                        <UButton
+                            color="gray"
+                            variant="ghost"
+                            icon="i-heroicons-pencil-square-20-solid"
+                            @click="navigateToEdit(row.id)"
+                        />
+                    </UTooltip>
                 </template>
             </UTable>
 

@@ -38,6 +38,7 @@ export default defineI18nConfig(() => ({
             cancel: 'Cancel',
             required: 'Required',
             save: 'Save',
+            edit: 'Edit',
             reset: 'Reset',
             delete: 'Delete',
             goBack: 'Go Back',

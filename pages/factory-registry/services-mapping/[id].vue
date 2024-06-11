@@ -15,11 +15,11 @@ const {
     error,
 } = await useLazyFetch<RegisteredService>(`/api/factories-registry/services-mapping/${route.params.id}`);
 
-console.log({ fetched: registeredService.value });
-
-if (error.value) {
-    showErrorMessage(t('registry.servicesRegistry.errorInFindingServiceMapping'));
-}
+watch(error, () => {
+    if (error.value) {
+        showErrorMessage(t('registry.servicesRegistry.errorInFindingServiceMapping'));
+    }
+});
 
 const schema = z.object({
     component: z
