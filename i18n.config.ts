@@ -90,10 +90,17 @@ export default defineI18nConfig(() => ({
                 servicesRegistry: {
                     title: 'Services Registry',
                     createNew: 'Register new Service',
+                    updateService: 'Update Service',
                     update: 'Update Service',
                     component: 'Component Name',
                     serviceName: 'Service Name',
                     noServicesExist: 'No registered services available',
+                    saved: 'New service mapping has been saved successfully!',
+                    updated: 'Service mapping has been updated successfully!',
+                    errorInRetrieval: 'An error occurred while retrieving the registered services',
+                    errorInFindingServiceMapping: 'An error occurred while retrieving the service mapping',
+                    errorInSave: 'An error occurred while saving a service mapping',
+                    errorInUpdate: 'An error occurred while updating the service mapping',
                 },
 
                 registry: 'Factory Registry',

@@ -4,11 +4,17 @@ const { t } = useI18n();
 import type { RegisteredService } from '~/interfaces/services-registry';
 import type TableColumn from '~/interfaces/table-column';
 
-//const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+const { showErrorMessage } = useAlertMessage();
 
-const { data, pending: loadingRegisteredServices } = await useLazyFetch<RegisteredService[]>(
-    '/api/factories-registry/services-mapping',
-);
+const {
+    data,
+    pending: loadingRegisteredServices,
+    error,
+} = await useLazyFetch<RegisteredService[]>('/api/factories-registry/services-mapping');
+
+if (error.value) {
+    showErrorMessage(t('registry.servicesRegistry.errorInRetrieval'));
+}
 
 const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = useTable<RegisteredService>(data, 10, {
     column: 'component',
@@ -35,9 +41,9 @@ const navigateToCreate = async () => {
     });
 };
 
-const navigateToEdit = async (row: RegisteredService) => {
+const navigateToEdit = async (id: string) => {
     await navigateTo({
-        path: `/factory-registry/services-mapping/${row.id}`,
+        path: `/factory-registry/services-mapping/${id}`,
     });
 };
 </script>
