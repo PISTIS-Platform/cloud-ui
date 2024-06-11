@@ -87,6 +87,14 @@ export default defineI18nConfig(() => ({
                     defineIP: 'Define the public IP of the factory once it is up and running',
                     enterIP: "Enter the factory's public IP",
                 },
+                servicesRegistry: {
+                    title: 'Services Registry',
+                    createNew: 'Register new Service',
+                    update: 'Update Service',
+                    component: 'Component Name',
+                    serviceName: 'Service Name',
+                    noServicesExist: 'No registered services available',
+                },
 
                 registry: 'Factory Registry',
                 info: '',
