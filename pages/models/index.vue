@@ -142,13 +142,12 @@ async function deleteRepo() {
         await $fetch(`/api/models/${modelForDeletion.value.id}`, {
             method: 'DELETE',
         });
-
         showSuccessMessage(t('models.successDelete'));
+        await refresh();
     } catch (error) {
         showErrorMessage(t('models.errors.delete'));
     } finally {
         modelForDeletion.value = null;
-        await refresh();
     }
 }
 </script>
