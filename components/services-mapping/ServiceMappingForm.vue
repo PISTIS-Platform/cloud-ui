@@ -22,11 +22,11 @@ const body = ref<RegisteredService>({
 });
 
 const schema = z.object({
-    component: z
+    componentName: z
         .string()
         .trim()
         .min(1, { message: t('required') }),
-    serviceName: z
+    serviceUrl: z
         .string()
         .trim()
         .min(1, { message: t('required') }),
@@ -58,27 +58,27 @@ const submitForm = async () => {
             <UForm class="flex flex-col justify-start items-start space-y-8 w-full" :state="body" :schema="schema">
                 <div class="flex flex-col justify-start items-start space-y-4 w-full">
                     <UFormGroup
-                        :label="$t('registry.servicesRegistry.component')"
+                        :label="$t('registry.servicesRegistry.componentName')"
                         required
-                        name="component"
+                        name="componentName"
                         class="w-full"
                     >
                         <UInput
-                            v-model="body.component"
-                            :placeholder="$t('registry.servicesRegistry.component')"
+                            v-model="body.componentName"
+                            :placeholder="$t('registry.servicesRegistry.componentName')"
                             class="flex-1"
                             size="md"
                         />
                     </UFormGroup>
                     <UFormGroup
-                        :label="$t('registry.servicesRegistry.serviceName')"
+                        :label="$t('registry.servicesRegistry.serviceUrl')"
                         required
-                        name="serviceName"
+                        name="serviceUrl"
                         class="w-full"
                     >
                         <UInput
-                            v-model="body.serviceName"
-                            :placeholder="$t('registry.servicesRegistry.serviceName')"
+                            v-model="body.serviceUrl"
+                            :placeholder="$t('registry.servicesRegistry.serviceUrl')"
                             class="flex-1"
                             size="md"
                         />

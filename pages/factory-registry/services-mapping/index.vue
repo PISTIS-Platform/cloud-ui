@@ -4,19 +4,11 @@ const { t } = useI18n();
 import type { RegisteredService } from '~/interfaces/services-registry';
 import type TableColumn from '~/interfaces/table-column';
 
-const { showErrorMessage } = useAlertMessage();
-
 const {
     data,
     pending: loadingRegisteredServices,
     error,
 } = await useLazyFetch<RegisteredService[]>('/api/factories-registry/services-mapping');
-
-watch(error, () => {
-    if (error.value) {
-        showErrorMessage(t('registry.servicesRegistry.errorInRetrieval'));
-    }
-});
 
 const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = useTable<RegisteredService>(data, 10, {
     column: 'component',
@@ -25,13 +17,13 @@ const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = u
 
 const columns: TableColumn[] = [
     {
-        key: 'component',
-        label: t('registry.servicesRegistry.component'),
+        key: 'componentName',
+        label: t('registry.servicesRegistry.componentName'),
         sortable: true,
     },
     {
-        key: 'serviceName',
-        label: t('registry.servicesRegistry.serviceName'),
+        key: 'serviceUrl',
+        label: t('registry.servicesRegistry.serviceUrl'),
         sortable: true,
     },
     { key: 'actions', label: '', sortable: false, class: 'w-1/12 text-center' },
@@ -52,7 +44,11 @@ const navigateToEdit = async (id: string) => {
 
 <template>
     <div class="w-full h-full">
-        <UCard class="w-full">
+        <ErrorCard
+            v-if="!loadingRegisteredServices && error"
+            :error-msg="error.data?.data?.message || t('registry.servicesRegistry.errorInRetrieval')"
+        />
+        <UCard v-else class="w-full">
             <template #header>
                 <div class="flex justify-between flex-1">
                     <div class="flex flex-1">

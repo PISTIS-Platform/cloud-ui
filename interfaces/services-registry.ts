@@ -1,6 +1,6 @@
 export interface RegisteredService {
     id: string;
-    component: string;
-    serviceName: string;
+    componentName: string;
+    serviceUrl: string;
     isOn: boolean;
 }
