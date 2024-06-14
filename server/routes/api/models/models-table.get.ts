@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from 'dayjs/esm/index';
 
 import ModelsTableRow from '~/interfaces/models-table-row';
 
