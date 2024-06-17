@@ -22,7 +22,7 @@ const body = ref<RegisteredService>({
 });
 
 const schema = z.object({
-    componentName: z
+    serviceName: z
         .string()
         .trim()
         .min(1, { message: t('required') }),
@@ -58,14 +58,14 @@ const submitForm = async () => {
             <UForm class="flex flex-col justify-start items-start space-y-8 w-full" :state="body" :schema="schema">
                 <div class="flex flex-col justify-start items-start space-y-4 w-full">
                     <UFormGroup
-                        :label="$t('registry.servicesRegistry.componentName')"
+                        :label="$t('registry.servicesRegistry.serviceName')"
                         required
-                        name="componentName"
+                        name="serviceName"
                         class="w-full"
                     >
                         <UInput
-                            v-model="body.componentName"
-                            :placeholder="$t('registry.servicesRegistry.componentName')"
+                            v-model="body.serviceName"
+                            :placeholder="$t('registry.servicesRegistry.serviceName')"
                             class="flex-1"
                             size="md"
                         />

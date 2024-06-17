@@ -93,7 +93,7 @@ export default defineI18nConfig(() => ({
                     createNew: 'Register new Service',
                     updateService: 'Update Service',
                     update: 'Update Service',
-                    componentName: 'Component Name',
+                    serviceName: 'Service Name',
                     serviceUrl: 'Service URL',
                     noServicesExist: 'No registered services available',
                     saved: 'New service mapping has been saved successfully!',

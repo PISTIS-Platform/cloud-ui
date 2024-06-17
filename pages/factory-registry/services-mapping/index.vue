@@ -17,8 +17,8 @@ const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = u
 
 const columns: TableColumn[] = [
     {
-        key: 'componentName',
-        label: t('registry.servicesRegistry.componentName'),
+        key: 'serviceName',
+        label: t('registry.servicesRegistry.serviceName'),
         sortable: true,
     },
     {

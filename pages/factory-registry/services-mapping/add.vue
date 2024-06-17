@@ -6,7 +6,7 @@ const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const registeredService = ref<RegisteredService>({
     id: '',
-    componentName: '',
+    serviceName: '',
     serviceUrl: '',
     isOn: true,
 });
