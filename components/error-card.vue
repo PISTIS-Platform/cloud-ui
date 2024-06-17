@@ -8,13 +8,11 @@ defineProps({
 </script>
 
 <template>
-    <UCard class="w-full">
-        <div class="flex flex-col gap-8">
-            <div class="flex items-center justify-start gap-2">
-                <UIcon name="i-heroicons-exclamation-circle" class="text-red-500 size-5"></UIcon>
-                <p class="font-medium">{{ errorMsg }}</p>
-            </div>
-            <slot></slot>
-        </div>
-    </UCard>
+    <UAlert
+        class="p-6 border border-red-200"
+        icon="i-heroicons-exclamation-circle"
+        :title="errorMsg"
+        color="red"
+        variant="soft"
+    />
 </template>
