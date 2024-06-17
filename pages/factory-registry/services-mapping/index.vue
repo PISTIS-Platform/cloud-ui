@@ -46,7 +46,7 @@ const navigateToEdit = async (id: string) => {
     <div class="w-full h-full">
         <ErrorCard
             v-if="!loadingRegisteredServices && error"
-            :error-msg="error.data?.data?.message || t('registry.servicesRegistry.errorInRetrieval')"
+            :error-msg="error.data?.data?.message ?? t('registry.servicesRegistry.errorInRetrieval')"
         />
         <UCard v-else class="w-full">
             <template #header>

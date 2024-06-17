@@ -13,12 +13,6 @@ const {
     refresh,
 } = await useLazyFetch<Questionnaire[]>('/api/questionnaire');
 
-watch(error, () => {
-    if (error.value) {
-        showErrorMessage(t('usage-analytics.errorWhileRetrieving'));
-    }
-});
-
 // import info from table composable
 const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = useTable<Questionnaire>(data, 10, {
     column: 'isForVerifiedBuyers',
@@ -144,7 +138,7 @@ const actions = (row: Questionnaire) => [
             <SubHeading :title="$t('usage-analytics.questionnaires')" />
 
             <div class="w-full mt-8">
-                <UCard>
+                <UCard v-if="!error">
                     <template #header>
                         <div class="flex justify-between flex-1">
                             <div class="flex flex-1">
@@ -234,6 +228,11 @@ const actions = (row: Questionnaire) => [
                         </div>
                     </UCard>
                 </UModal>
+
+                <ErrorCard
+                    v-if="error && !loadingQuestionnaireVersions"
+                    :error-msg="error.data?.data?.message ?? $t('usage-analytics.errorWhileRetrieving')"
+                />
             </div>
         </PageContainer>
     </div>

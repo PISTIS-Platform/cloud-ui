@@ -15,4 +15,5 @@ defineProps({
         color="red"
         variant="soft"
     />
+    <slot> </slot>
 </template>

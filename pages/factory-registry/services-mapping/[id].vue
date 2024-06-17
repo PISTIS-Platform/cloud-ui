@@ -14,12 +14,6 @@ const {
     error,
 } = await useLazyFetch<RegisteredService>(`/api/factories-registry/services-mapping/${route.params.id}`);
 
-watch(error, () => {
-    if (error.value) {
-        showErrorMessage(t('registry.servicesRegistry.errorInFindingServiceMapping'));
-    }
-});
-
 const navigateToMainPage = async () => {
     await navigateTo({
         path: '/factory-registry/services-mapping',
@@ -59,7 +53,17 @@ const updateServiceMapping = async (body: RegisteredService) => {
         <div v-if="pendingFetch && !error" class="w-full mt-6">
             <UProgress animation="carousel" />
         </div>
-        <div v-else-if="!pendingFetch && error">
+
+        <ServiceMappingForm
+            v-if="registeredService && !pendingFetch"
+            :registered-service="registeredService"
+            :should-disable-button="pendingEdit"
+            @submit-form="(body: RegisteredService) => updateServiceMapping(body)"
+        />
+        <ErrorCard
+            v-if="error && !pendingFetch"
+            :error-msg="error.data?.data?.message ?? $t('registry.servicesRegistry.errorInFindingServiceMapping')"
+        >
             <UButton
                 size="lg"
                 color="gray"
@@ -69,12 +73,6 @@ const updateServiceMapping = async (body: RegisteredService) => {
                 :trailing="false"
                 @click="navigateToMainPage"
             />
-        </div>
-        <ServiceMappingForm
-            v-if="registeredService && !pendingFetch"
-            :registered-service="registeredService"
-            :should-disable-button="pendingEdit"
-            @submit-form="(body: RegisteredService) => updateServiceMapping(body)"
-        />
+        </ErrorCard>
     </div>
 </template>
