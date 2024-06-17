@@ -50,7 +50,7 @@ const updateServiceMapping = async (body: RegisteredService) => {
     <div class="w-full h-full space-y-6">
         <SubHeading :title="$t('registry.servicesRegistry.updateService')" />
 
-        <div v-if="pendingFetch && !error" class="w-full mt-6">
+        <div v-if="pendingFetch && !error" class="w-full mt-8">
             <UProgress animation="carousel" />
         </div>
 

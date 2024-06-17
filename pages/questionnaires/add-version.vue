@@ -27,7 +27,7 @@ const preExistingQuestionnaire = ref<Questionnaire | null>(null);
 const questions = ref<Question[]>(questionnaire.value.questions);
 
 const loadingQuestionnaireVersion = ref(false);
-const hasErrorInRetrieval = ref(false);
+const errorInRetrieval = ref('');
 
 //create new version from scratch
 if (!route.query.id && !route.query.version) {
@@ -45,10 +45,9 @@ if (route.query.id && route.query.version) {
     );
 
     if (error.value || !data.value) {
-        hasErrorInRetrieval.value = true;
-        showErrorMessage(t('usage-analytics.errorInFindVersion'));
+        errorInRetrieval.value =
+            (error.value as Record<string, any>)?.data?.data?.message ?? t('usage-analytics.errorInFindVersion');
     } else {
-        hasErrorInRetrieval.value = false;
         loadingQuestionnaireVersion.value = pending.value;
         questionnaire.value = data.value;
 
@@ -266,135 +265,143 @@ const resetQuestionnaire = () => {
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <SubHeading :title="$t('usage-analytics.createNew')" />
-            <div v-if="loadingQuestionnaireVersion && !hasErrorInRetrieval" class="w-full mt-6">
-                //TODO:: perhaps replace Progress Bar with Skeleton if needed
-                <UProgress animation="carousel" />
-            </div>
-            <div v-else-if="loadingQuestionnaireVersion && hasErrorInRetrieval">
-                <UButton
-                    size="lg"
-                    color="gray"
-                    variant="solid"
-                    :label="$t('goBack')"
-                    class="mt-6"
-                    :trailing="false"
-                    @click="navigateToMainPage"
-                />
-            </div>
-            <UCard v-else class="w-full mt-6">
-                <div>
-                    <UForm
-                        class="flex flex-col justify-start items-start space-y-8 w-full"
-                        :state="questionnaire"
-                        :schema="schema"
-                    >
-                        <!-- Questionnaire title and description-->
-                        <div class="flex flex-col justify-start items-start space-y-4 w-full">
-                            <UFormGroup :label="$t('usage-analytics.title')" required name="title" class="w-full">
-                                <UInput v-model="questionnaire.title" :placeholder="$t('usage-analytics.titleInfo')" />
-                            </UFormGroup>
-                            <UFormGroup :label="$t('usage-analytics.description')" name="description" class="w-full">
-                                <UTextarea
-                                    v-model="questionnaire.description"
-                                    :placeholder="$t('usage-analytics.descriptionInfo')"
-                                />
-                            </UFormGroup>
-
-                            <div class="flex gap-2 justify-start items-center">
-                                <UFormGroup name="isForVerifiedBuyers">
-                                    <UCheckbox
-                                        v-model="questionnaire.isForVerifiedBuyers"
-                                        :label="$t('usage-analytics.forVerifiedBuyers')"
+            <div class="w-full mt-8">
+                <div v-if="loadingQuestionnaireVersion && !errorInRetrieval">
+                    <UProgress animation="carousel" />
+                </div>
+                <ErrorCard v-else-if="loadingQuestionnaireVersion && errorInRetrieval" :error-msg="errorInRetrieval">
+                    <UButton
+                        size="lg"
+                        color="gray"
+                        variant="solid"
+                        :label="$t('goBack')"
+                        class="mt-6"
+                        :trailing="false"
+                        @click="navigateToMainPage"
+                    />
+                </ErrorCard>
+                <UCard v-else class="w-full">
+                    <div>
+                        <UForm
+                            class="flex flex-col justify-start items-start space-y-8 w-full"
+                            :state="questionnaire"
+                            :schema="schema"
+                        >
+                            <!-- Questionnaire title and description-->
+                            <div class="flex flex-col justify-start items-start space-y-4 w-full">
+                                <UFormGroup :label="$t('usage-analytics.title')" required name="title" class="w-full">
+                                    <UInput
+                                        v-model="questionnaire.title"
+                                        :placeholder="$t('usage-analytics.titleInfo')"
                                     />
                                 </UFormGroup>
-                            </div>
-                        </div>
+                                <UFormGroup
+                                    :label="$t('usage-analytics.description')"
+                                    name="description"
+                                    class="w-full"
+                                >
+                                    <UTextarea
+                                        v-model="questionnaire.description"
+                                        :placeholder="$t('usage-analytics.descriptionInfo')"
+                                    />
+                                </UFormGroup>
 
-                        <div class="flex flex-col justify-start items-start space-y-4 w-full">
-                            <!-- Questions -->
-                            <div v-if="questions.length" class="flex flex-col space-y-8 w-full">
-                                <div v-for="question in questions" :key="question.id">
-                                    <UCard :ui="{ base: 'overflow-visible' }">
-                                        <template #header>
-                                            <div class="flex justify-between items-center gap-6">
-                                                <h3 class="text-xl font-semibold text-gray-900">
-                                                    {{ `Question ${questions.indexOf(question) + 1}` }}
-                                                </h3>
-                                                <UButton
-                                                    icon="i-heroicons-trash"
-                                                    size="sm"
-                                                    color="red"
-                                                    variant="outline"
-                                                    :label="t('usage-analytics.removeQuestion')"
-                                                    @click="removeQuestion(question.id)"
-                                                />
-                                            </div>
-                                        </template>
-                                        <Question
-                                            :question="question"
-                                            @update:title="(value: string) => (question.title = value)"
-                                            @update:type="(value: string) => (question.type = value)"
-                                            @update:options="
-                                                (options: QuestionOption[]) => (question.options = options)
-                                            "
-                                            @update:is-optional="(value: boolean) => (question.isOptional = value)"
-                                            @is-valid="(isValid: boolean) => (question.isValid = isValid)"
-                                        >
-                                        </Question>
-                                    </UCard>
+                                <div class="flex gap-2 justify-start items-center">
+                                    <UFormGroup name="isForVerifiedBuyers">
+                                        <UCheckbox
+                                            v-model="questionnaire.isForVerifiedBuyers"
+                                            :label="$t('usage-analytics.forVerifiedBuyers')"
+                                        />
+                                    </UFormGroup>
                                 </div>
                             </div>
 
-                            <!-- Button for adding question -->
-                            <UTooltip text="Add Question" :popper="{ placement: 'right' }">
+                            <div class="flex flex-col justify-start items-start space-y-4 w-full">
+                                <!-- Questions -->
+                                <div v-if="questions.length" class="flex flex-col space-y-8 w-full">
+                                    <div v-for="question in questions" :key="question.id">
+                                        <UCard :ui="{ base: 'overflow-visible' }">
+                                            <template #header>
+                                                <div class="flex justify-between items-center gap-6">
+                                                    <h3 class="text-xl font-semibold text-gray-900">
+                                                        {{ `Question ${questions.indexOf(question) + 1}` }}
+                                                    </h3>
+                                                    <UButton
+                                                        icon="i-heroicons-trash"
+                                                        size="sm"
+                                                        color="red"
+                                                        variant="outline"
+                                                        :label="t('usage-analytics.removeQuestion')"
+                                                        @click="removeQuestion(question.id)"
+                                                    />
+                                                </div>
+                                            </template>
+                                            <Question
+                                                :question="question"
+                                                @update:title="(value: string) => (question.title = value)"
+                                                @update:type="(value: string) => (question.type = value)"
+                                                @update:options="
+                                                    (options: QuestionOption[]) => (question.options = options)
+                                                "
+                                                @update:is-optional="(value: boolean) => (question.isOptional = value)"
+                                                @is-valid="(isValid: boolean) => (question.isValid = isValid)"
+                                            >
+                                            </Question>
+                                        </UCard>
+                                    </div>
+                                </div>
+
+                                <!-- Button for adding question -->
+                                <UTooltip text="Add Question" :popper="{ placement: 'right' }">
+                                    <UButton
+                                        icon="i-heroicons-plus"
+                                        size="xs"
+                                        color="primary"
+                                        variant="solid"
+                                        @click="addQuestion()"
+                                    />
+                                </UTooltip>
+                            </div>
+                        </UForm>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex gap-4 justify-between items-center mt-8">
+                        <div class="flex gap-4">
+                            <UTooltip :text="$t('cancel')">
                                 <UButton
-                                    icon="i-heroicons-plus"
-                                    size="xs"
-                                    color="primary"
+                                    size="lg"
+                                    color="gray"
                                     variant="solid"
-                                    @click="addQuestion()"
+                                    :label="$t('cancel')"
+                                    :trailing="false"
+                                    @click="navigateToMainPage"
+                                />
+                            </UTooltip>
+                            <UTooltip :text="$t('usage-analytics.reset')">
+                                <UButton
+                                    size="lg"
+                                    :label="$t('reset')"
+                                    color="gray"
+                                    variant="solid"
+                                    @click="resetQuestionnaire"
                                 />
                             </UTooltip>
                         </div>
-                    </UForm>
-                </div>
 
-                <!-- Submit Buttons -->
-                <div class="flex gap-4 justify-between items-center mt-8">
-                    <div class="flex gap-4">
-                        <UTooltip :text="$t('cancel')">
+                        <UTooltip :text="$t('usage-analytics.save')">
                             <UButton
                                 size="lg"
-                                color="gray"
+                                :label="$t('save')"
+                                color="primary"
                                 variant="solid"
-                                :label="$t('cancel')"
-                                :trailing="false"
-                                @click="navigateToMainPage"
-                            />
-                        </UTooltip>
-                        <UTooltip :text="$t('usage-analytics.reset')">
-                            <UButton
-                                size="lg"
-                                :label="$t('reset')"
-                                color="gray"
-                                variant="solid"
-                                @click="resetQuestionnaire"
+                                :disabled="isSaveDisabled"
+                                @click="submitForm"
                             />
                         </UTooltip>
                     </div>
-
-                    <UTooltip :text="$t('usage-analytics.save')">
-                        <UButton
-                            size="lg"
-                            :label="$t('save')"
-                            color="primary"
-                            variant="solid"
-                            :disabled="isSaveDisabled"
-                            @click="submitForm"
-                        />
-                    </UTooltip>
-                </div>
-            </UCard>
+                </UCard>
+            </div>
         </PageContainer>
     </div>
 </template>
