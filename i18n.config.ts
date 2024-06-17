@@ -102,6 +102,7 @@ export default defineI18nConfig(() => ({
                     errorInFindingServiceMapping: 'An error occurred while retrieving the service mapping',
                     errorInSave: 'An error occurred while saving a service mapping',
                     errorInUpdate: 'An error occurred while updating the service mapping',
+                    invalidServiceUrl: 'Service URL can only contain alphanumeric characters, "/" and "-"',
                 },
 
                 registry: 'Factory Registry',
@@ -116,6 +117,7 @@ export default defineI18nConfig(() => ({
                 accept: 'Accept',
                 deny: 'Deny',
                 factoryAccepted: 'Factory Accepted',
+                errorInRetrievingFactories: 'Error occurred while retrieving factories',
                 factoryAcceptanceError: 'Factory acceptance error',
                 factoryActivationError: 'Factory activation/deactivation error',
                 factoryDenied: 'Factory Denied',

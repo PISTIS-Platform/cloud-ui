@@ -29,7 +29,8 @@ const schema = z.object({
     serviceUrl: z
         .string()
         .trim()
-        .min(1, { message: t('required') }),
+        .min(1, { message: t('required') })
+        .regex(new RegExp(/^[a-zA-Z0-9-/]+$/), { message: t('registry.servicesRegistry.invalidServiceUrl') }),
 });
 
 const isFormValid = computed(() => {

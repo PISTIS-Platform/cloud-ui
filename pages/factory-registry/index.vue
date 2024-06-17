@@ -8,7 +8,7 @@ const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const { t } = useI18n();
 
-const { data, pending } = await useFetch(`/api/factories-registry/factories`);
+const { data, pending, error } = await useFetch(`/api/factories-registry/factories`);
 const switchModalOpen = ref<boolean>(false);
 let selectedRow: FactoryModelRepo;
 
@@ -116,7 +116,8 @@ const toggleActive = async (row: any) => {
 
 <template>
     <div class="w-full h-full text-gray-700">
-        <UCard class="w-full">
+        <ErrorCard v-if="error" :error-msg="error.data?.data?.message ?? t('registry.errorInRetrievingFactories')" />
+        <UCard v-else class="w-full">
             <template #header>
                 <SubHeading :title="$t('registry.title')" />
             </template>
