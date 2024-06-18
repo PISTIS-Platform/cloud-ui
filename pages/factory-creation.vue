@@ -34,7 +34,7 @@ const onSubmit = () => {
         <PageContainer>
             <UCard :ui="{ base: 'w-full text-gray-700' }">
                 <template #header>
-                    <SubHeading :title="t('registry.creation.createFactory')" />
+                    <SubHeading :title="t('registry.createFactory')" />
                 </template>
                 <div class="flex flex-col gap-4">
                     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
