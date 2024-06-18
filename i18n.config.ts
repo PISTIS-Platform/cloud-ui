@@ -82,12 +82,12 @@ export default defineI18nConfig(() => ({
                 registration: {
                     title: 'Factory Registration',
                     welcome: 'Welcome to the Factory Registration page. Please follow these steps to get started:',
-                    downloadScripts: 'Download the deployment scripts',
+                    downloadInstructions: 'Download the deployment instructions for your factory',
                     downloadConfig: 'Download the required configuration for your individual factory',
                     defineIP: 'Define the public IP of the factory once it is up and running',
                     enterIP: "Enter the factory's public IP",
                     invalidIP: 'Invalid IP Address',
-                    errorInDownloadScripts: 'Error occurred in downloading instructions',
+                    errorInDownloadingInstructions: 'Error occurred in downloading instructions',
                     errorInDownloadingConfigurations: 'Error occurred in downloading your individual configurations',
                 },
 

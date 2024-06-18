@@ -15,19 +15,19 @@ const schema = z.object({
         .ip({ version: 'v4', message: t('registry.registration.invalidIP') }),
 });
 
-const downloadingScripts = ref(false);
+const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
-const downloadScripts = async () => {
-    downloadingScripts.value = true;
+const downloadInstructions = async () => {
+    downloadingInstructions.value = true;
 
     try {
         await useDownloadFile(`/api/factories-registry/download-scripts`, 'test.txt');
     } catch (error) {
-        showErrorMessage(t('registry.registration.errorInDownloadScripts'));
+        showErrorMessage(t('registry.registration.errorInDownloadInstructions'));
     } finally {
-        downloadingScripts.value = false;
+        downloadingInstructions.value = false;
     }
 };
 
@@ -63,14 +63,17 @@ const submitIP = async () => {
                     <div class="flex w-full justify-between items-center flex-wrap xl:flex-nowrap">
                         <span class="flex gap-4 whitespace-nowrap">
                             <span class="text-lg font-bold">1.</span>
-                            <span>{{ t('registry.registration.downloadScripts') }}</span>
+                            <span>{{ t('registry.registration.downloadInstructions') }}</span>
                         </span>
-                        <UTooltip :text="t('registry.registration.downloadScripts')">
+                        <UTooltip
+                            :text="t('registry.registration.downloadInstructions')"
+                            :ui="{ width: 'max-w-2xl text-center' }"
+                        >
                             <UButton
                                 class="w-28 flex justify-center disabled:opacity-40"
                                 size="lg"
-                                :disabled="downloadingScripts"
-                                @click="downloadScripts"
+                                :disabled="downloadingInstructions"
+                                @click="downloadInstructions"
                                 >{{ t('download') }}</UButton
                             >
                         </UTooltip>
@@ -116,10 +119,15 @@ const submitIP = async () => {
                                     />
                                 </UFormGroup>
                                 <UButton
+                                    :key="schemaState.publicIP"
                                     class="w-28 flex justify-center"
                                     size="lg"
                                     type="submit"
-                                    :disabled="!schemaState.publicIP || schemaState.publicIP === ''"
+                                    :disabled="
+                                        !schemaState.publicIP ||
+                                        schemaState.publicIP === '' ||
+                                        !schema.safeParse(schemaState).success
+                                    "
                                     @click="submitIP"
                                     >{{ t('submit') }}</UButton
                                 >
