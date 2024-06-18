@@ -25,7 +25,7 @@ const downloadInstructions = async () => {
     try {
         await useDownloadFile(`/api/factories-registry/download-scripts`, 'test.txt');
     } catch (error) {
-        showErrorMessage(t('registry.registration.errorInDownloadInstructions'));
+        showErrorMessage(t('registry.registration.errorInDownloadingInstructions'));
     } finally {
         downloadingInstructions.value = false;
     }
