@@ -39,7 +39,7 @@ const isFormValid = computed(() => {
 
 const navigateToMainPage = async () => {
     await navigateTo({
-        path: '/factory-registry/services-mapping',
+        path: '/factory-registry/services',
     });
 };
 

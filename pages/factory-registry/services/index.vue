@@ -8,7 +8,7 @@ const {
     data,
     pending: loadingRegisteredServices,
     error,
-} = await useLazyFetch<RegisteredService[]>('/api/factories-registry/services-mapping');
+} = await useLazyFetch<RegisteredService[]>('/api/factories-registry/services');
 
 const { page, pageCount, filteredRows, paginatedRows, searchString, sortBy } = useTable<RegisteredService>(data, 10, {
     column: 'component',
@@ -31,13 +31,13 @@ const columns: TableColumn[] = [
 
 const navigateToCreate = async () => {
     await navigateTo({
-        path: '/factory-registry/services-mapping/add',
+        path: '/factory-registry/services/add',
     });
 };
 
 const navigateToEdit = async (id: string) => {
     await navigateTo({
-        path: `/factory-registry/services-mapping/${id}`,
+        path: `/factory-registry/services/${id}`,
     });
 };
 </script>

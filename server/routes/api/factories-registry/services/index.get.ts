@@ -4,12 +4,7 @@ const { factoryRegistryURL } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
-    const id = getRouterParam(event, 'id');
-    const body = await readBody(event);
-
-    const response = await $fetch(`${factoryRegistryURL}/factories/${id}/services-mapping`, {
-        method: 'PATCH',
-        body,
+    const response = await $fetch(`${factoryRegistryURL}/factories/services`, {
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },

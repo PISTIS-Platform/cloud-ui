@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 const routes = ref([
     { name: 'registry.registry', to: '/factory-registry' },
-    { name: 'registry.servicesRegistry.title', to: '/factory-registry/services-mapping' },
+    { name: 'registry.servicesRegistry.title', to: '/factory-registry/services' },
 ]);
 </script>
 

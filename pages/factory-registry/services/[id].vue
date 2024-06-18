@@ -12,11 +12,11 @@ const {
     data: registeredService,
     pending: pendingFetch,
     error,
-} = await useLazyFetch<RegisteredService>(`/api/factories-registry/services-mapping/${route.params.id}`);
+} = await useLazyFetch<RegisteredService>(`/api/factories-registry/services/${route.params.id}`);
 
 const navigateToMainPage = async () => {
     await navigateTo({
-        path: '/factory-registry/services-mapping',
+        path: '/factory-registry/services',
     });
 };
 
@@ -28,7 +28,7 @@ const updateServiceMapping = async (body: RegisteredService) => {
     pendingEdit.value = true;
 
     try {
-        await $fetch(`/api/factories-registry/services-mapping/${registeredService.value.id}`, {
+        await $fetch(`/api/factories-registry/services/${registeredService.value.id}`, {
             method: 'PATCH',
             body,
         });
@@ -36,7 +36,7 @@ const updateServiceMapping = async (body: RegisteredService) => {
         showSuccessMessage(t('registry.servicesRegistry.updated'));
 
         await navigateTo({
-            path: '/factory-registry/services-mapping/',
+            path: '/factory-registry/services/',
         });
     } catch (error) {
         showErrorMessage(t('registry.servicesRegistry.errorInUpdate'));

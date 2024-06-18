@@ -17,7 +17,7 @@ const createServiceMapping = async (body: RegisteredService) => {
     pendingCreate.value = true;
 
     try {
-        await $fetch('/api/factories-registry/services-mapping', {
+        await $fetch('/api/factories-registry/services', {
             method: 'POST',
             body,
         });
@@ -25,7 +25,7 @@ const createServiceMapping = async (body: RegisteredService) => {
         showSuccessMessage(t('registry.servicesRegistry.saved'));
 
         await navigateTo({
-            path: '/factory-registry/services-mapping',
+            path: '/factory-registry/services',
         });
     } catch (error) {
         showErrorMessage(t('registry.servicesRegistry.errorInSave'));

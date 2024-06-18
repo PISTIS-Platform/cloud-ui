@@ -3,14 +3,14 @@ import { getToken } from '#auth';
 const { factoryRegistryURL } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
-    const body = await readBody(event);
     const token = await getToken({ event });
+    const id = getRouterParam(event, 'id');
 
-    return await $fetch(`${factoryRegistryURL}/factories/services-mapping`, {
-        method: 'POST',
-        body,
+    const response = await $fetch(`${factoryRegistryURL}/factories/${id}/services`, {
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },
     });
+
+    return response;
 });
