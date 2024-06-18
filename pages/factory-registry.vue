@@ -119,7 +119,10 @@ const toggleActive = async (row: any) => {
         <PageContainer>
             <UCard class="w-full">
                 <template #header>
-                    <SubHeading :title="$t('registry.title')" />
+                    <div class="flex items-center justify-between w-full">
+                        <SubHeading :title="$t('registry.title')" />
+                        <UButton to="factory-creation">Create</UButton>
+                    </div>
                 </template>
 
                 <UTable

@@ -90,7 +90,9 @@ export default defineI18nConfig(() => ({
                     errorInDownloadingInstructions: 'Error occurred in downloading instructions',
                     errorInDownloadingConfigurations: 'Error occurred in downloading your individual configurations',
                 },
-
+                creation: {
+                    createFactory: 'Create Factory',
+                },
                 registry: 'Factory Registry',
                 info: '',
                 title: 'Factory Registry Manager',
