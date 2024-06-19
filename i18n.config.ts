@@ -37,6 +37,7 @@ export default defineI18nConfig(() => ({
             yes: 'Yes',
             cancel: 'Cancel',
             required: 'Required',
+            string: 'Input must be a string',
             save: 'Save',
             reset: 'Reset',
             delete: 'Delete',

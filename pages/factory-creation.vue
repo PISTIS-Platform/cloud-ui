@@ -4,10 +4,24 @@ const { t } = useI18n();
 import { z } from 'zod';
 
 const schema = z.object({
-    organizationName: z.string(),
-    organizationId: z.string().uuid(),
-    country: z.string(),
-    factoryPrefix: z.string(),
+    organizationName: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
+    organizationId: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .uuid(),
+    country: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
+    factoryPrefix: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
     isAccepted: z.boolean(),
     ip: z
         .string()
