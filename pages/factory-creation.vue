@@ -123,9 +123,12 @@ const onSubmit = () => {
                             </UFormGroup>
                         </div>
 
-                        <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]"
-                            >Create Factory</UButton
-                        >
+                        <div class="flex gap-2">
+                            <UButton color="white" :to="'factory-registry'">Back</UButton>
+                            <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
+                                t('registry.createFactory')
+                            }}</UButton>
+                        </div>
                     </UForm>
                 </div>
             </UCard>
