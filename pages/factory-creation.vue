@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 const schema = z.object({
     organizationName: z.string(),
-    organizationId: z.string(),
+    organizationId: z.string().uuid(),
     country: z.string(),
     factoryPrefix: z.string(),
     isAccepted: z.boolean(),
@@ -38,34 +38,47 @@ const onSubmit = () => {
                 </template>
                 <div class="flex w-full">
                     <UForm :schema="schema" :state="state" class="space-y-4 w-full flex flex-col" @submit="onSubmit">
-                        <div class="flex w-full items-center gap-4">
+                        <UFormGroup
+                            :label="t('registry.organizationName')"
+                            name="organizationName"
+                            required
+                            class="w-full max-w-xl pb-2"
+                            :ui="{ error: 'absolute -bottom-6' }"
+                        >
+                            <UInput
+                                v-model="state.organizationName"
+                                :placeholder="t('registry.organizationNamePlaceholder')"
+                            />
+                        </UFormGroup>
+                        <!--TODO: Will the ID be uuid v4?-->
+                        <UFormGroup
+                            :label="t('registry.organizationId')"
+                            name="organizationId"
+                            required
+                            class="w-full max-w-xl pb-2"
+                            :ui="{ error: 'absolute -bottom-6' }"
+                        >
+                            <UInput
+                                v-model="state.organizationId"
+                                :placeholder="t('registry.organizationIdPlaceholder')"
+                            />
+                        </UFormGroup>
+                        <div class="flex w-full max-w-xl items-center gap-4 pb-2">
                             <UFormGroup
-                                :label="t('registry.organizationName')"
-                                name="organizationName"
+                                :label="t('registry.country')"
+                                :ui="{ error: 'absolute -bottom-6' }"
+                                name="country"
                                 required
-                                class="w-full"
+                                class="w-full max-w-20"
                             >
-                                <UInput v-model="state.organizationName" />
-                            </UFormGroup>
-                            <!--TODO: Will the ID be uuid v4?-->
-                            <UFormGroup
-                                :label="t('registry.organizationId')"
-                                name="organizationId"
-                                required
-                                class="w-full"
-                            >
-                                <UInput v-model="state.organizationId" />
-                            </UFormGroup>
-                        </div>
-                        <div class="flex w-full items-center gap-4">
-                            <UFormGroup :label="t('registry.country')" name="country" required class="w-full">
-                                <UInput v-model="state.country" />
+                                <UInput v-model="state.country" :placeholder="t('registry.countryPlaceholder')" />
                             </UFormGroup>
                             <UFormGroup
                                 :label="t('registry.factoryPrefix')"
                                 name="factoryPrefix"
                                 required
                                 class="w-full"
+                                :ui="{ error: 'absolute -bottom-6' }"
                             >
                                 <div class="w-full flex items-center">
                                     <UButton
@@ -78,6 +91,7 @@ const onSubmit = () => {
                                         v-model="state.factoryPrefix"
                                         :ui="{ rounded: 'rounded-none' }"
                                         class="w-full"
+                                        :placeholder="t('registry.factoryPrefixPlaceholder')"
                                     />
                                     <UButton
                                         color="white"
@@ -88,11 +102,21 @@ const onSubmit = () => {
                                 </div>
                             </UFormGroup>
                         </div>
-                        <div class="w-1/2 items-center flex gap-4">
-                            <UFormGroup :label="t('registry.ip')" name="ip" class="w-full">
+                        <div class="w-full max-w-xl items-center flex gap-4 pb-2">
+                            <UFormGroup
+                                :label="t('registry.ip')"
+                                name="ip"
+                                class="w-full"
+                                :ui="{ error: 'absolute -bottom-6' }"
+                            >
                                 <UInput v-model="state.ip" />
                             </UFormGroup>
-                            <UFormGroup :label="t('registry.factoryAccepted')" name="isAccepted" class="w-44">
+                            <UFormGroup
+                                :label="t('registry.factoryAccepted')"
+                                name="isAccepted"
+                                class="w-44"
+                                :ui="{ error: 'absolute -bottom-6' }"
+                            >
                                 <div class="w-full items-center justify-center flex h-full">
                                     <UToggle v-model="state.isAccepted" class="-ml-3" />
                                 </div>
