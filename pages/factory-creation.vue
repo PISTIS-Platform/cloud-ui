@@ -84,7 +84,7 @@ const onSubmit = () => {
                                     <UButton
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
-                                        class="text-gray-400 cursor-default hover:none rounded-l-lg rounded-r-none"
+                                        class="cursor-default hover:none rounded-l-lg rounded-r-none"
                                         >https://</UButton
                                     >
                                     <UInput
@@ -96,7 +96,7 @@ const onSubmit = () => {
                                     <UButton
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
-                                        class="text-gray-400 cursor-default rounded-l-none rounded-r-lg"
+                                        class="cursor-default rounded-l-none rounded-r-lg"
                                         >.pistis-project.eu</UButton
                                     >
                                 </div>
@@ -109,7 +109,7 @@ const onSubmit = () => {
                                 class="w-full"
                                 :ui="{ error: 'absolute -bottom-6' }"
                             >
-                                <UInput v-model="state.ip" />
+                                <UInput v-model="state.ip" :placeholder="t('registry.ipPlaceholder')" />
                             </UFormGroup>
                             <UFormGroup
                                 :label="t('registry.factoryAccepted')"
