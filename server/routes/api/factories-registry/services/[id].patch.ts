@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const id = getRouterParam(event, 'id');
     const body = await readBody(event);
 
-    const response = await $fetch(`${factoryRegistryURL}/factories/${id}/services`, {
+    const response = await $fetch(`${factoryRegistryURL}/factories/services/${id}`, {
         method: 'PATCH',
         body,
         headers: {
