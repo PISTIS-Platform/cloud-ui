@@ -13,7 +13,7 @@ const schema = z.object({
             required_error: t('required'),
             invalid_type_error: t('string'),
         })
-        .uuid(),
+        .uuid({ message: t('invalidUUID') }),
     country: z.string({
         required_error: t('required'),
         invalid_type_error: t('string'),

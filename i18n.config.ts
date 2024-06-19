@@ -38,6 +38,7 @@ export default defineI18nConfig(() => ({
             cancel: 'Cancel',
             required: 'Required',
             string: 'Input must be a string',
+            invalidUUID: 'Invalid UUID',
             save: 'Save',
             reset: 'Reset',
             delete: 'Delete',
