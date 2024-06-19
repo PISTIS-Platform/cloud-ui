@@ -97,7 +97,7 @@ const onSubmit = () => {
                                 <div class="w-full flex items-center">
                                     <UButton
                                         color="white"
-                                        :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
+                                        :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default hover:none rounded-l-md rounded-r-none"
                                         >https://</UButton
                                     >
@@ -109,7 +109,7 @@ const onSubmit = () => {
                                     />
                                     <UButton
                                         color="white"
-                                        :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
+                                        :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default rounded-l-none rounded-r-md"
                                         >.pistis-project.eu</UButton
                                     >
