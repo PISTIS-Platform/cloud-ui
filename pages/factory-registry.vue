@@ -121,7 +121,7 @@ const toggleActive = async (row: any) => {
                 <template #header>
                     <div class="flex items-center justify-between w-full">
                         <SubHeading :title="$t('registry.title')" />
-                        <UButton to="factory-creation">Create</UButton>
+                        <UButton to="factory-creation">{{ t('registry.createFactory') }}</UButton>
                     </div>
                 </template>
 
