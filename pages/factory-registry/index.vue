@@ -119,7 +119,10 @@ const toggleActive = async (row: any) => {
         <ErrorCard v-if="error" :error-msg="error.data?.data?.message ?? t('registry.errorInRetrievingFactories')" />
         <UCard v-else class="w-full">
             <template #header>
-                <SubHeading :title="$t('registry.title')" />
+                <div class="flex items-center justify-between w-full">
+                    <SubHeading :title="$t('registry.title')" />
+                    <UButton to="factory-creation">{{ t('registry.createFactory') }}</UButton>
+                </div>
             </template>
 
             <UTable

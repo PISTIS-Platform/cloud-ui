@@ -1,71 +1,41 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { z } from 'zod';
 
 import { ModelType } from '~/interfaces/model-type.enum';
+import type ModelsTableRow from '~/interfaces/models-table-row';
 
 const isDragging = ref<boolean>(false);
 const file = ref();
-const uploadedState = ref<boolean>(false);
-const uploaded = ref<boolean>();
+const uploaded = ref();
 const isValidFile = ref<boolean>(false);
+
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const { t } = useI18n();
 
-async function submit(/*event: FormSubmitEvent<any>*/) {
-    // Do something with data
-    console.log(dataModelState);
-}
+const { dataModelSchema, modelTypes } = useModelSchema(true);
 
-const modelTypes = [
-    {
-        value: ModelType.DATAMODEL,
-        name: t('models.dmRepository.modelTypes.dataModel'),
-    },
-    {
-        value: ModelType.METADATAMODEL,
-        name: t('models.dmRepository.modelTypes.metadataModel'),
-    },
-    {
-        value: ModelType.MONETISATIONMODEL,
-        name: t('models.dmRepository.modelTypes.monetisationModel'),
-    },
-    {
-        value: ModelType.PRETRAINEDAIMODEL,
-        name: t('models.dmRepository.modelTypes.pretrainedAIModel'),
-    },
-];
-
-const dataModelSchema = z.object({
-    title: z.string().min(10, 'Must be at least 10 characters'),
-    version: z
-        .number({ invalid_type_error: 'Please enter a valid number' })
-        .gte(0, 'Version must be 0 or a positive number'),
-    description: z.string().min(20, 'Must be at least 10 characters'),
-    data: z.any(),
-    type: z.enum(['Pre-trained AI model', 'Data Model', 'Monetisation Model', 'Metadata model']),
-});
-
-//Example of z schema
-type DataModel = z.output<typeof dataModelSchema>;
-
-const dataModelState = ref<DataModel>({
+const dataModelState = ref<ModelsTableRow>({
     title: '',
-    version: 0,
+    version: '',
     description: '',
     data: null,
     type: '' as ModelType,
 });
 
 function onChange() {
-    //TODO: Check for maximum size
-    uploadedState.value = false;
-    dataModelState.value.title = file?.value?.files[0] ?? '';
-    if (dataModelState.value.title) isValidFile.value = true;
-    else {
+    uploaded.value = file.value.files[0];
+
+    if (uploaded.value?.name.length) {
+        isValidFile.value = true;
+        dataModelState.value.data = uploaded.value;
+        uploadForm.value.clear('data');
+    } else {
         isValidFile.value = false;
-        dataModelState.value.title = '';
+        uploaded.value = null;
         file.value = null;
+        dataModelState.value.data = null;
+        uploadForm.value.setErrors([{ message: t('models.errors.validFile'), path: 'data' }]);
     }
 }
 
@@ -85,17 +55,55 @@ function drop(e: any) {
     isDragging.value = false;
 }
 
-// const uploadFile = async () => {
+const pendingUpload = ref(false);
 
-// };
+const body = computed(() => {
+    if (!uploaded.value) return null;
+    const formData = new FormData();
+    formData.append('data', uploaded.value);
+    formData.append('title', dataModelState.value.title.toString());
+    formData.append('description', dataModelState.value.description);
+    formData.append('type', dataModelState.value.type.toString());
+    formData.append('version', dataModelState.value.version.toString());
+    return formData;
+});
+
+const uploadForm = ref();
+
+const isFormValid = computed(() => {
+    return dataModelSchema.safeParse(dataModelState.value).success;
+});
+
+const uploadFile = async () => {
+    if (!isFormValid.value) return;
+
+    pendingUpload.value = true;
+
+    try {
+        await $fetch('/api/models/upload', {
+            method: 'POST',
+            body: body.value,
+        });
+
+        showSuccessMessage(t('models.successUpload'));
+
+        await navigateTo({
+            path: '/models/',
+        });
+    } catch (error) {
+        showErrorMessage(t('models.errors.upload'));
+    } finally {
+        pendingUpload.value = false;
+    }
+};
 </script>
 
 <template>
     <div class="w-full h-full space-y-6">
         <UCard class="flex flex-col">
             <div class="w-full">
-                <UForm :schema="dataModelSchema" :state="dataModelState" class="space-y-5" @submit="submit">
-                    <UFormGroup :label="$t('models.dmRepository.select') + ':'" name="selectFile">
+                <UForm ref="uploadForm" :schema="dataModelSchema" :state="dataModelState" class="space-y-5">
+                    <UFormGroup :label="$t('models.dmRepository.select') + ':'" name="data" required>
                         <div class="">
                             <div
                                 class="flex justify-center rounded-md border-2 border-dashed border-gray-300 py-5"
@@ -105,21 +113,21 @@ function drop(e: any) {
                             >
                                 <div class="text-center flex flex-col items-center space-y-2">
                                     <label
-                                        for="file-upload"
+                                        for="data"
                                         class="relative cursor-pointer rounded-md font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
                                     >
                                         <UIcon class="box-content h-8 w-8" name="i-heroicons-arrow-up-circle-solid" />
                                     </label>
                                     <div class="flex text-sm text-gray-600 space-x-1">
                                         <label
-                                            for="file-upload"
+                                            for="data"
                                             class="relative cursor-pointer rounded-md font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
                                         >
                                             <span v-if="!isDragging">{{ $t('models.dmRepository.select') }}</span>
                                             <input
-                                                id="file-upload"
+                                                id="data"
                                                 ref="file"
-                                                name="file-upload"
+                                                name="data"
                                                 type="file"
                                                 class="sr-only"
                                                 @change="onChange"
@@ -131,7 +139,7 @@ function drop(e: any) {
                                         {{ $t('models.dmRepository.noFile') }}
                                     </p>
                                     <p v-if="uploaded && isValidFile" class="text-xs text-gray-900">
-                                        {{ $t('models.dmRepository.fileName') }} {{ dataModelState.title }}
+                                        {{ $t('models.dmRepository.fileName') }} {{ uploaded.name }}
                                     </p>
                                     <p v-if="uploaded && !isValidFile" class="text-xs text-red-500">
                                         {{ $t('models.dmRepository.invalid') }}
@@ -141,20 +149,27 @@ function drop(e: any) {
                         </div>
                     </UFormGroup>
                     <div class="flex flex-1">
-                        <UFormGroup class="w-2/4" :label="$t('models.dmRepository.formTitle')" required name="title">
+                        <UFormGroup
+                            class="w-2/4"
+                            :label="$t('models.dmRepository.formTitle')"
+                            required
+                            name="title"
+                            eager-validation
+                        >
                             <UInput v-model="dataModelState.title" />
                         </UFormGroup>
                         <UFormGroup
                             class="ml-2 w-1/4"
                             :label="$t('models.dmRepository.modelType')"
                             required
-                            name="model_type"
+                            name="type"
+                            eager-validation
                         >
-                            <USelect
+                            <USelectMenu
                                 v-model="dataModelState.type"
                                 :options="modelTypes"
-                                option-attribute="name"
-                                required
+                                option-attribute="label"
+                                value-attribute="value"
                             />
                         </UFormGroup>
                         <UFormGroup
@@ -162,11 +177,17 @@ function drop(e: any) {
                             :label="$t('models.dmRepository.formVersion')"
                             required
                             name="version"
+                            eager-validation
                         >
-                            <UInput v-model.number="dataModelState.version" type="numeric" />
+                            <UInput v-model="dataModelState.version" />
                         </UFormGroup>
                     </div>
-                    <UFormGroup :label="$t('models.dmRepository.formDescription')" required name="description">
+                    <UFormGroup
+                        :label="$t('models.dmRepository.formDescription')"
+                        required
+                        name="description"
+                        eager-validation
+                    >
                         <UTextarea v-model="dataModelState.description" :rows="4" />
                     </UFormGroup>
                     <div class="flex justify-end flex-1">
@@ -174,8 +195,10 @@ function drop(e: any) {
                             size="md"
                             color="primary"
                             variant="solid"
-                            :label="$t('models.dmRepository.uploadButton')"
                             type="submit"
+                            :label="$t('models.dmRepository.uploadButton')"
+                            :disabled="pendingUpload"
+                            @click="uploadFile"
                         />
                     </div>
                 </UForm>

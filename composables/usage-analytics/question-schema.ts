@@ -18,7 +18,9 @@ export const useQuestionSchema = () => {
             .max(MAX_CHARACTERS_TEXT_LIMIT, {
                 message: t('validation.moreThanNumberChars', { count: MAX_CHARACTERS_TEXT_LIMIT }),
             }),
-        type: questionTypesEnum,
+        type: z.enum(questionTypes, {
+            errorMap: () => ({ message: t('validation.validValue', { name: 'question type' }) }),
+        }),
         options: z
             .array(
                 z.object({

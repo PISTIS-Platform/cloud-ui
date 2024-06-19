@@ -43,8 +43,20 @@ export const useTable = <T>(data: Ref<T[] | null>, numOfItems: number = 10, defa
 
     //paginated rows
     const paginatedRows = computed(() => {
-        return filteredRows.value.slice((page.value - 1) * pageCount.value, page.value * pageCount.value);
+        const paginatedResults = getPaginatedRows(page.value);
+
+        //get paginated results of previous page in case user deletes an item from the list
+        //and there are results in general, but not in the current page after the deletion
+        if (!paginatedResults.length && filteredRows.value.length && page.value !== 1) {
+            return getPaginatedRows(page.value - 1);
+        }
+
+        return paginatedResults;
     });
+
+    const getPaginatedRows = (pageNum: number) => {
+        return filteredRows.value.slice((pageNum - 1) * pageCount.value, pageNum * pageCount.value);
+    };
 
     return {
         page,

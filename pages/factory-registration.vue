@@ -1,7 +1,54 @@
 <script setup lang="ts">
 const { t } = useI18n();
+import { z } from 'zod';
 
-const publicIP = ref<string>();
+const { showErrorMessage } = useAlertMessage();
+
+const schemaState = ref({
+    publicIP: '',
+});
+
+const schema = z.object({
+    publicIP: z
+        .string()
+        .min(1, t('required'))
+        .ip({ version: 'v4', message: t('registry.registration.invalidIP') }),
+});
+
+const downloadingInstructions = ref(false);
+const downloadingConfigurations = ref(false);
+const submittingIP = ref(false);
+
+const downloadInstructions = async () => {
+    downloadingInstructions.value = true;
+
+    try {
+        await useDownloadFile(`/api/factories-registry/download-scripts`, 'test.txt');
+    } catch (error) {
+        showErrorMessage(t('registry.registration.errorInDownloadingInstructions'));
+    } finally {
+        downloadingInstructions.value = false;
+    }
+};
+
+const downloadConfigurations = async () => {
+    downloadingConfigurations.value = true;
+
+    try {
+        await useDownloadFile(`/api/factories-registry/download-configurations`, 'keycloak-clients.json');
+    } catch (error) {
+        showErrorMessage(t('registry.registration.errorInDownloadingConfigurations'));
+    } finally {
+        downloadingConfigurations.value = false;
+    }
+};
+
+const submitIP = async () => {
+    submittingIP.value = true;
+
+    console.log('submitting state');
+    //TODO:: api call to backend
+};
 </script>
 
 <template>
@@ -16,10 +63,19 @@ const publicIP = ref<string>();
                     <div class="flex w-full justify-between items-center flex-wrap xl:flex-nowrap">
                         <span class="flex gap-4 whitespace-nowrap">
                             <span class="text-lg font-bold">1.</span>
-                            <span>{{ t('registry.registration.downloadScripts') }}</span>
+                            <span>{{ t('registry.registration.downloadInstructions') }}</span>
                         </span>
-                        <UTooltip :text="t('registry.registration.downloadScripts')">
-                            <UButton class="w-28 flex justify-center" size="lg">{{ t('download') }}</UButton>
+                        <UTooltip
+                            :text="t('registry.registration.downloadInstructions')"
+                            :ui="{ width: 'max-w-2xl text-center' }"
+                        >
+                            <UButton
+                                class="w-28 flex justify-center disabled:opacity-40"
+                                size="lg"
+                                :disabled="downloadingInstructions"
+                                @click="downloadInstructions"
+                                >{{ t('download') }}</UButton
+                            >
                         </UTooltip>
                     </div>
 
@@ -28,27 +84,55 @@ const publicIP = ref<string>();
                             <span class="text-lg font-bold">2.</span>
                             <span>{{ t('registry.registration.downloadConfig') }}</span>
                         </span>
-                        <UTooltip :text="t('registry.registration.downloadConfig')">
-                            <UButton class="w-28 flex justify-center" size="lg">{{ t('download') }}</UButton>
+                        <UTooltip
+                            :text="t('registry.registration.downloadConfig')"
+                            :ui="{ width: 'max-w-2xl text-center' }"
+                        >
+                            <UButton
+                                class="w-28 flex justify-center disabled:opacity-40"
+                                size="lg"
+                                :disabled="downloadingConfigurations"
+                                @click="downloadConfigurations"
+                                >{{ t('download') }}</UButton
+                            >
                         </UTooltip>
                     </div>
 
-                    <div class="flex w-full justify-between items-center gap-4 xl:gap-16 flex-wrap xl:flex-nowrap">
+                    <div class="flex w-full justify-between items-center gap-4 xl:gap-16 flex-wrap md:flex-nowrap">
                         <span class="flex gap-4 whitespace-nowrap">
                             <span class="text-lg font-bold">3.</span>
                             <span>{{ t('registry.registration.defineIP') }}</span>
                         </span>
-                        <div class="flex gap-4 w-full">
-                            <UInput
-                                v-model="publicIP"
-                                class="w-full"
-                                size="lg"
-                                :placeholder="t('registry.registration.enterIP')"
-                            />
-                            <UButton class="w-28 flex justify-center" size="lg" :disabled="!publicIP">{{
-                                t('submit')
-                            }}</UButton>
-                        </div>
+                        <UForm
+                            :schema="schema"
+                            :state="schemaState"
+                            class="space-y-5 w-full flex items-end justify-end"
+                            @submit="submitIP"
+                        >
+                            <div class="flex items-start gap-4 w-4/5">
+                                <UFormGroup class="w-full" required name="publicIP">
+                                    <UInput
+                                        v-model="schemaState.publicIP"
+                                        class="w-full"
+                                        size="lg"
+                                        :placeholder="t('registry.registration.enterIP')"
+                                    />
+                                </UFormGroup>
+                                <UButton
+                                    :key="schemaState.publicIP"
+                                    class="w-28 flex justify-center"
+                                    size="lg"
+                                    type="submit"
+                                    :disabled="
+                                        !schemaState.publicIP ||
+                                        schemaState.publicIP === '' ||
+                                        !schema.safeParse(schemaState).success
+                                    "
+                                    @click="submitIP"
+                                    >{{ t('submit') }}</UButton
+                                >
+                            </div>
+                        </UForm>
                     </div>
                 </div>
             </UCard>
