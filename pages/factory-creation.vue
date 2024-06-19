@@ -84,7 +84,7 @@ const onSubmit = () => {
                                     <UButton
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
-                                        class="cursor-default hover:none rounded-l-lg rounded-r-none"
+                                        class="cursor-default hover:none rounded-l-md rounded-r-none"
                                         >https://</UButton
                                     >
                                     <UInput
@@ -96,7 +96,7 @@ const onSubmit = () => {
                                     <UButton
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
-                                        class="cursor-default rounded-l-none rounded-r-lg"
+                                        class="cursor-default rounded-l-none rounded-r-md"
                                         >.pistis-project.eu</UButton
                                     >
                                 </div>
