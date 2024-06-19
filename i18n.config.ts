@@ -82,6 +82,12 @@ export default defineI18nConfig(() => ({
                 },
             },
             registry: {
+                statuses: {
+                    pending: 'Pending',
+                    online: 'Online',
+                    offline: 'Offline',
+                    suspended: 'Suspended',
+                },
                 registration: {
                     title: 'Factory Registration',
                     welcome: 'Welcome to the Factory Registration page. Please follow these steps to get started:',

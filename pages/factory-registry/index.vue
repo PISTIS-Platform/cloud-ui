@@ -12,6 +12,35 @@ const { data, pending, error } = await useFetch(`/api/factories-registry/factori
 const switchModalOpen = ref<boolean>(false);
 let selectedRow: FactoryModelRepo;
 
+const statuses = computed(() => ({
+    pending: t('registry.statuses.pending'),
+    online: t('registry.statuses.online'),
+    offline: t('registry.statuses.offline'),
+    suspended: t('registry.statuses.suspended'),
+}));
+
+const statusesForDropdown = computed(() =>
+    Object.keys(statuses.value).map((key: string) => ({
+        label: statuses.value[key as keyof typeof statuses.value],
+        value: key,
+    })),
+);
+
+const updateStatus = (value: { id: string; status: string }) => {
+    const foundObj = rows.value.find((item: any) => item.id === value.id);
+    //TODO: Check if this can be done and if it is successful via API, if not show toast and don't change the status
+    if (foundObj) foundObj.status = value.status;
+};
+
+const getStatusColorClass = (status: string) => {
+    return {
+        'text-green-500': status === 'online',
+        'text-gray-500': status === 'offline',
+        'text-yellow-500': status === 'pending',
+        'text-red-500': status === 'suspended',
+    };
+};
+
 const columns = [
     {
         key: 'organizationName',
@@ -30,23 +59,15 @@ const columns = [
     },
     {
         key: 'actions',
-        label: `${t('registry.activate')} / ${t('registry.deactivate')}`,
+        label: `${t('registry.status')}`,
         class: 'text-center',
     },
 ];
 
-const { page, filteredRows, paginatedRows, sortBy, pageCount } = useTable<FactoryModelRepo>(data, 5, {
+const { page, filteredRows, paginatedRows, sortBy, pageCount, rows } = useTable<FactoryModelRepo>(data, 5, {
     column: 'organizationName',
     direction: 'asc',
 });
-
-const getStatusColorClass = (status: string) => {
-    return {
-        'text-green-500': status === 'live',
-        'text-red-500': status === 'deactivated',
-        'text-yellow-500': status === 'pending',
-    };
-};
 
 const select = (row: any) => {
     if (row.status !== 'pending') {
@@ -82,7 +103,7 @@ const acceptFactory = async (data: string) => {
     }
 };
 
-const toggleActive = async (row: any) => {
+const _toggleActive = async (row: any) => {
     if (row.isActive === true) {
         row.status = 'deactivated';
         row.isActive = false;
@@ -131,6 +152,7 @@ const toggleActive = async (row: any) => {
                 :rows="paginatedRows"
                 sort-mode="manual"
                 :loading="pending"
+                class="overflow-visible"
                 @select="select"
             >
                 <!-- Custom styling for ip data column -->
@@ -142,7 +164,15 @@ const toggleActive = async (row: any) => {
                 </template>
                 <template #actions-data="{ row }">
                     <div class="justify-center flex">
-                        <UToggle :model-value="row.isActive" @click="toggleActive(row)" />
+                        <USelectMenu
+                            :model-value="row.status"
+                            :placeholder="t('registry.status')"
+                            :options="statusesForDropdown"
+                            value-attribute="value"
+                            option-attribute="label"
+                            class="w-28"
+                            @update:model-value="(value: string) => updateStatus({ id: row.id, status: value })"
+                        />
                     </div>
                 </template>
             </UTable>
