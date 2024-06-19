@@ -138,7 +138,7 @@ const onSubmit = () => {
                         </div>
 
                         <div class="flex gap-2">
-                            <UButton color="white" :to="'factory-registry'">Back</UButton>
+                            <UButton color="white" :to="'factory-registry'">{{ t('goBack') }}</UButton>
                             <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
                                 t('registry.createFactory')
                             }}</UButton>
