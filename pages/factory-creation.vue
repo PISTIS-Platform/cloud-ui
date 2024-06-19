@@ -50,13 +50,13 @@ const onSubmit = () => {
                 <template #header>
                     <SubHeading :title="t('registry.createFactory')" />
                 </template>
-                <div class="flex w-full">
-                    <UForm :schema="schema" :state="state" class="space-y-4 w-full flex flex-col" @submit="onSubmit">
+                <div class="flex w-full gap-4 divide-x">
+                    <UForm :schema="schema" :state="state" class="space-y-4 w-2/3 flex flex-col" @submit="onSubmit">
                         <UFormGroup
                             :label="t('registry.organizationName')"
                             name="organizationName"
                             required
-                            class="w-full max-w-xl pb-2"
+                            class="w-full pb-2"
                             :ui="{ error: 'absolute -bottom-6' }"
                         >
                             <UInput
@@ -69,7 +69,7 @@ const onSubmit = () => {
                             :label="t('registry.organizationId')"
                             name="organizationId"
                             required
-                            class="w-full max-w-xl pb-2"
+                            class="w-full pb-2"
                             :ui="{ error: 'absolute -bottom-6' }"
                         >
                             <UInput
@@ -77,7 +77,7 @@ const onSubmit = () => {
                                 :placeholder="t('registry.organizationIdPlaceholder')"
                             />
                         </UFormGroup>
-                        <div class="flex w-full max-w-xl items-center gap-4 pb-2">
+                        <div class="flex w-full items-center gap-4 pb-2">
                             <UFormGroup
                                 :label="t('registry.country')"
                                 :ui="{ error: 'absolute -bottom-6' }"
@@ -98,7 +98,7 @@ const onSubmit = () => {
                                     <UButton
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
-                                        class="cursor-default hover:none rounded-l-md rounded-r-none"
+                                        class="text-gray-500 cursor-default hover:none rounded-l-md rounded-r-none"
                                         >https://</UButton
                                     >
                                     <UInput
@@ -110,13 +110,13 @@ const onSubmit = () => {
                                     <UButton
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-white' } } }"
-                                        class="cursor-default rounded-l-none rounded-r-md"
+                                        class="text-gray-500 cursor-default rounded-l-none rounded-r-md"
                                         >.pistis-project.eu</UButton
                                     >
                                 </div>
                             </UFormGroup>
                         </div>
-                        <div class="w-full max-w-xl items-center flex gap-4 pb-2">
+                        <div class="w-full items-center flex gap-4 pb-2">
                             <UFormGroup
                                 :label="t('registry.ip')"
                                 name="ip"
@@ -144,6 +144,16 @@ const onSubmit = () => {
                             }}</UButton>
                         </div>
                     </UForm>
+                    <div class="h-full flex items-center justify-center p-4 w-1/3">
+                        <p>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil impedit perferendis aperiam
+                            corrupti sit aliquam repellat veritatis enim asperiores accusamus ullam laudantium
+                            architecto, nostrum nisi nam a eligendi quisquam officiis. Veritatis, totam itaque placeat
+                            eos deleniti voluptatum obcaecati voluptatibus? Delectus temporibus impedit in perferendis
+                            magni facere quos, illum ipsam debitis aspernatur facilis sunt accusamus dolores accusantium
+                            ipsa optio a soluta.
+                        </p>
+                    </div>
                 </div>
             </UCard>
         </PageContainer>
