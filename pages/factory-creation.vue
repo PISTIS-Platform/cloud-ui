@@ -127,7 +127,7 @@ const onSubmit = async () => {
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default rounded-l-none rounded-r-md"
-                                        >.pistis-project.eu</UButton
+                                        >.pistis-market.eu</UButton
                                     >
                                 </div>
                             </UFormGroup>
