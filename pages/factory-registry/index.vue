@@ -117,38 +117,40 @@ const select = (row: any, actionGiven: string) => {
                 </template>
                 <template #actions-data="{ row }">
                     <div class="flex justify-center items-center">
-                        <UIcon
-                            name="i-heroicons-light-bulb-solid"
-                            :class="[getStatusColorClass(row.status), 'mr-2 h-5 w-5']"
-                        />
-                        <span class="w-[90px]">{{ statuses[row.status] }}</span>
-                        <UTooltip
-                            v-if="(row.status === 'pending' || row.status === 'suspended') && !row.ip"
-                            :text="t('registry.noIpProvided')"
-                            :ui="{ width: 'max-w-2xl text-center' }"
-                        >
+                        <div class="flex items-center justify-start gap-1 w-52">
+                            <UIcon
+                                name="i-heroicons-light-bulb-solid"
+                                :class="[getStatusColorClass(row.status), 'mr-1 h-5 w-5']"
+                            />
+                            <span class="w-[90px]">{{ statuses[row.status] }}</span>
+                            <UTooltip
+                                v-if="(row.status === 'pending' || row.status === 'suspended') && !row.ip"
+                                :text="t('registry.noIpProvided')"
+                                :ui="{ width: 'max-w-2xl text-center' }"
+                            >
+                                <UButton
+                                    variant="outline"
+                                    :disabled="!row.ip"
+                                    class="disabled:opacity-40"
+                                    @click="select(row, 'activate')"
+                                    >{{ t('registry.activate') }}</UButton
+                                >
+                            </UTooltip>
                             <UButton
+                                v-else-if="row.status === 'pending' || row.status === 'suspended'"
                                 variant="outline"
                                 :disabled="!row.ip"
-                                class="disabled:opacity-40"
                                 @click="select(row, 'activate')"
                                 >{{ t('registry.activate') }}</UButton
                             >
-                        </UTooltip>
-                        <UButton
-                            v-else-if="row.status === 'pending' || row.status === 'suspended'"
-                            variant="outline"
-                            :disabled="!row.ip"
-                            @click="select(row, 'activate')"
-                            >{{ t('registry.activate') }}</UButton
-                        >
-                        <UButton
-                            v-else-if="row.status !== 'suspended'"
-                            color="red"
-                            variant="outline"
-                            @click="select(row, 'suspend')"
-                            >{{ t('registry.suspend') }}
-                        </UButton>
+                            <UButton
+                                v-else-if="row.status !== 'suspended'"
+                                color="red"
+                                variant="outline"
+                                @click="select(row, 'suspend')"
+                                >{{ t('registry.suspend') }}
+                            </UButton>
+                        </div>
                     </div>
                 </template>
             </UTable>
