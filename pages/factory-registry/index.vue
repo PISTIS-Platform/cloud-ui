@@ -110,7 +110,7 @@ const select = (row: any, actionGiven: string) => {
                         />
                         <span class="w-[90px]">{{ statuses[row.status] }}</span>
                         <UTooltip
-                            v-if="(row.status === pending || row.status === 'suspended') && !row.ip"
+                            v-if="(row.status === 'pending' || row.status === 'suspended') && !row.ip"
                             :text="t('registry.noIpProvided')"
                             :ui="{ width: 'max-w-2xl text-center' }"
                         >
