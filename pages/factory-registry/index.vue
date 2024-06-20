@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import type FactoryModelRepo from '~/interfaces/factories-model';
 
-// const { isSuccessResponse } = useHttpHelper();
-// const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const { t } = useI18n();
 
-const { data, pending, error } = await useFetch(`/api/factories-registry/factories`);
+const { data, pending, error, refresh } = await useFetch(`/api/factories-registry/factories`);
 const switchModalOpen = ref<boolean>(false);
 const action = ref<string>();
 let selectedRow: FactoryModelRepo;
@@ -18,16 +17,30 @@ const statuses = computed(() => ({
     suspended: t('registry.statuses.suspended'),
 }));
 
-const activate = (id: string | number) => {
+const activate = async (id: string | number) => {
     switchModalOpen.value = false;
-    console.log(id);
-    //TODO: send put request to set status to "online"
+    try {
+        await $fetch(`/api/factories-registry/${id}/activate`, {
+            method: 'patch',
+        });
+        showSuccessMessage(t('registry.factoryActivated'));
+        refresh();
+    } catch {
+        showErrorMessage(t('registry.factoryActivationError'));
+    }
 };
 
-const suspend = (id: string | number) => {
+const suspend = async (id: string | number) => {
     switchModalOpen.value = false;
-    console.log(id);
-    //TODO: send put request to set status to "suspended"
+    try {
+        await $fetch(`/api/factories-registry/${id}/suspend`, {
+            method: 'patch',
+        });
+        showSuccessMessage(t('registry.factorySuspended'));
+        refresh();
+    } catch {
+        showErrorMessage(t('registry.factoryActivationError'));
+    }
 };
 
 const getStatusColorClass = (status: string) => {

@@ -149,6 +149,8 @@ export default defineI18nConfig(() => ({
                 factoryModal: 'Please choose to register new factory',
                 areYouSureActivate: 'Are you sure you would like to activate this factory?',
                 areYouSureSuspend: 'Are you sure you would like to suspend this factory?',
+                factoryActivated: 'Factory successfully activated',
+                factorySuspended: 'Factory successfully suspended',
             },
             validation: {
                 atLeastNumberChars: 'Must be at least {count} characters',
