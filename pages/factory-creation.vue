@@ -1,10 +1,11 @@
 <script setup lang="ts">
-const { isSuccessResponse } = useHttpHelper();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const { t } = useI18n();
 
 import { z } from 'zod';
+
+const router = useRouter();
 
 const schema = z.object({
     organizationName: z.string({
@@ -43,18 +44,13 @@ const state = reactive({
 
 const onSubmit = async () => {
     try {
-        const response = await $fetch(`/api/factories-registry/create-factory`, {
+        await $fetch(`/api/factories-registry/create-factory`, {
             method: 'post',
             body: { ...state, status: 'pending' },
         });
 
-        console.log({ response });
-
-        if (isSuccessResponse(response?.status)) {
-            showSuccessMessage(t('registry.factoryCreated'));
-        } else {
-            showErrorMessage(t('registry.factoryError'));
-        }
+        showSuccessMessage(t('registry.factoryCreated'));
+        router.back();
     } catch {
         showErrorMessage(t('registry.factoryError'));
     }
