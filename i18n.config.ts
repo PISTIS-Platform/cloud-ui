@@ -151,6 +151,8 @@ export default defineI18nConfig(() => ({
                 areYouSureSuspend: 'Are you sure you would like to suspend this factory?',
                 factoryActivated: 'Factory successfully activated',
                 factorySuspended: 'Factory successfully suspended',
+                IPUpdated: 'IP successfully updated',
+                IPSubmitError: 'Error occurred while updating the IP',
             },
             validation: {
                 atLeastNumberChars: 'Must be at least {count} characters',

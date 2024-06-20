@@ -4,10 +4,9 @@ const { factoryRegistryURL } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
-    const factoryId = getRouterParam(event, 'factoryId');
     const body = await readBody(event);
 
-    const response = await $fetch(`${factoryRegistryURL}/factories/${factoryId}`, {
+    const response = await $fetch(`${factoryRegistryURL}/factories`, {
         method: 'PUT',
         body,
         headers: {
