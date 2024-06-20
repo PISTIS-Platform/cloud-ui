@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const { isSuccessResponse } = useHttpHelper();
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+
 const { t } = useI18n();
 
 import { z } from 'zod';
@@ -38,8 +41,23 @@ const state = reactive({
     ip: undefined,
 });
 
-const onSubmit = () => {
-    console.log('submitted');
+const onSubmit = async () => {
+    try {
+        const response = await $fetch(`/api/factories-registry/create-factory`, {
+            method: 'post',
+            body: { ...state, status: 'pending' },
+        });
+
+        console.log({ response });
+
+        if (isSuccessResponse(response?.status)) {
+            showSuccessMessage(t('registry.factoryCreated'));
+        } else {
+            showErrorMessage(t('registry.factoryError'));
+        }
+    } catch {
+        showErrorMessage(t('registry.factoryError'));
+    }
 };
 </script>
 
