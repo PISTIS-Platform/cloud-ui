@@ -110,6 +110,7 @@ const onSubmit = async () => {
                             >
                                 <div class="w-full flex items-center">
                                     <UButton
+                                        tabindex="-1"
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default hover:none rounded-l-md rounded-r-none"
@@ -122,6 +123,7 @@ const onSubmit = async () => {
                                         :placeholder="t('registry.factoryPrefixPlaceholder')"
                                     />
                                     <UButton
+                                        tabindex="-1"
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default rounded-l-none rounded-r-md"
