@@ -23,7 +23,7 @@ const downloadInstructions = async () => {
     downloadingInstructions.value = true;
 
     try {
-        await useDownloadFile(`/api/factories-registry/download-scripts`, 'test.txt');
+        await useDownloadFile(`/api/factories-registry/download-instructions`, 'test.txt');
     } catch (error) {
         showErrorMessage(t('registry.registration.errorInDownloadingInstructions'));
     } finally {
@@ -35,7 +35,7 @@ const downloadConfigurations = async () => {
     downloadingConfigurations.value = true;
 
     try {
-        await useDownloadFile(`/api/factories-registry/download-configurations`, 'keycloak-clients.json');
+        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.json');
     } catch (error) {
         showErrorMessage(t('registry.registration.errorInDownloadingConfigurations'));
     } finally {
@@ -47,7 +47,7 @@ const submitIP = async () => {
     submittingIP.value = true;
 
     try {
-        await $fetch(`api/factories-registry/update`, {
+        await $fetch(`api/factories-registry/setip`, {
             method: 'PUT',
             body: { ip: schemaState.value.publicIP },
         });
