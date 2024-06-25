@@ -1,7 +1,11 @@
 <script setup lang="ts">
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+
 const { t } = useI18n();
 
 import { z } from 'zod';
+
+const router = useRouter();
 
 const schema = z.object({
     organizationName: z.string({
@@ -38,8 +42,18 @@ const state = reactive({
     ip: undefined,
 });
 
-const onSubmit = () => {
-    console.log('submitted');
+const onSubmit = async () => {
+    try {
+        await $fetch(`/api/factories-registry/create-factory`, {
+            method: 'post',
+            body: { ...state, status: 'pending' },
+        });
+
+        showSuccessMessage(t('registry.factoryCreated'));
+        router.back();
+    } catch {
+        showErrorMessage(t('registry.factoryError'));
+    }
 };
 </script>
 
@@ -96,6 +110,7 @@ const onSubmit = () => {
                             >
                                 <div class="w-full flex items-center">
                                     <UButton
+                                        tabindex="-1"
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default hover:none rounded-l-md rounded-r-none"
@@ -108,10 +123,11 @@ const onSubmit = () => {
                                         :placeholder="t('registry.factoryPrefixPlaceholder')"
                                     />
                                     <UButton
+                                        tabindex="-1"
                                         color="white"
                                         :ui="{ color: { white: { solid: 'hover:bg-gray-100 bg-gray-100' } } }"
                                         class="text-gray-500 cursor-default rounded-l-none rounded-r-md"
-                                        >.pistis-project.eu</UButton
+                                        >.pistis-market.eu</UButton
                                     >
                                 </div>
                             </UFormGroup>

@@ -2,7 +2,7 @@
 const { t } = useI18n();
 import { z } from 'zod';
 
-const { showErrorMessage } = useAlertMessage();
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const schemaState = ref({
     publicIP: '',
@@ -23,7 +23,7 @@ const downloadInstructions = async () => {
     downloadingInstructions.value = true;
 
     try {
-        await useDownloadFile(`/api/factories-registry/download-scripts`, 'test.txt');
+        await useDownloadFile(`/api/factories-registry/download-instructions`, 'test.txt');
     } catch (error) {
         showErrorMessage(t('registry.registration.errorInDownloadingInstructions'));
     } finally {
@@ -35,7 +35,7 @@ const downloadConfigurations = async () => {
     downloadingConfigurations.value = true;
 
     try {
-        await useDownloadFile(`/api/factories-registry/download-configurations`, 'keycloak-clients.json');
+        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.json');
     } catch (error) {
         showErrorMessage(t('registry.registration.errorInDownloadingConfigurations'));
     } finally {
@@ -46,8 +46,18 @@ const downloadConfigurations = async () => {
 const submitIP = async () => {
     submittingIP.value = true;
 
-    console.log('submitting state');
-    //TODO:: api call to backend
+    try {
+        await $fetch(`api/factories-registry/setip`, {
+            method: 'PUT',
+            body: { ip: schemaState.value.publicIP },
+        });
+
+        showSuccessMessage(t('registry.IPUpdated'));
+    } catch (error) {
+        showErrorMessage(t('registry.IPSubmitError'));
+    } finally {
+        submittingIP.value = false;
+    }
 };
 </script>
 

@@ -1,16 +1,56 @@
 <script lang="ts" setup>
-import { useAlertMessage } from '~/composables/alert';
-import { useHttpHelper } from '~/composables/httpHelper';
 import type FactoryModelRepo from '~/interfaces/factories-model';
 
-const { isSuccessResponse } = useHttpHelper();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const { t } = useI18n();
 
-const { data, pending, error } = await useFetch(`/api/factories-registry/factories`);
+const { data, pending, error, refresh } = await useFetch(`/api/factories-registry/factories`);
 const switchModalOpen = ref<boolean>(false);
+const action = ref<string>();
 let selectedRow: FactoryModelRepo;
+
+const statuses = computed(() => ({
+    pending: t('registry.statuses.pending'),
+    online: t('registry.statuses.online'),
+    offline: t('registry.statuses.offline'),
+    suspended: t('registry.statuses.suspended'),
+}));
+
+const activate = async (id: string | number) => {
+    switchModalOpen.value = false;
+    try {
+        await $fetch(`/api/factories-registry/${id}/activate`, {
+            method: 'patch',
+        });
+        showSuccessMessage(t('registry.factoryActivated'));
+        refresh();
+    } catch {
+        showErrorMessage(t('registry.factoryActivationError'));
+    }
+};
+
+const suspend = async (id: string | number) => {
+    switchModalOpen.value = false;
+    try {
+        await $fetch(`/api/factories-registry/${id}/suspend`, {
+            method: 'patch',
+        });
+        showSuccessMessage(t('registry.factorySuspended'));
+        refresh();
+    } catch {
+        showErrorMessage(t('registry.factoryActivationError'));
+    }
+};
+
+const getStatusColorClass = (status: string) => {
+    return {
+        'text-green-500': status === 'online',
+        'text-gray-500': status === 'offline',
+        'text-yellow-500': status === 'pending',
+        'text-red-500': status === 'suspended',
+    };
+};
 
 const columns = [
     {
@@ -30,7 +70,7 @@ const columns = [
     },
     {
         key: 'actions',
-        label: `${t('registry.activate')} / ${t('registry.deactivate')}`,
+        label: `${t('registry.status')}`,
         class: 'text-center',
     },
 ];
@@ -40,77 +80,10 @@ const { page, filteredRows, paginatedRows, sortBy, pageCount } = useTable<Factor
     direction: 'asc',
 });
 
-const getStatusColorClass = (status: string) => {
-    return {
-        'text-green-500': status === 'live',
-        'text-red-500': status === 'deactivated',
-        'text-yellow-500': status === 'pending',
-    };
-};
-
-const select = (row: any) => {
-    if (row.status !== 'pending') {
-        return;
-    } else {
-        selectedRow = row;
-        return (switchModalOpen.value = true);
-    }
-};
-
-const acceptFactory = async (data: string) => {
-    const body = { acceptance: data };
-
-    try {
-        const response = await $fetch(`/api/factories-registry/${selectedRow.id}`, {
-            method: 'patch',
-            body,
-        });
-
-        if (isSuccessResponse(response.status)) {
-            if (data === 'accept') {
-                showSuccessMessage(t('registry.factoryAccepted'));
-            } else {
-                showSuccessMessage(t('registry.factoryDenied'));
-            }
-        } else {
-            showErrorMessage(t('registry.factoryError'));
-        }
-        switchModalOpen.value = !switchModalOpen;
-    } catch (err) {
-        switchModalOpen.value = !switchModalOpen;
-        showErrorMessage(t('registry.factoryError'));
-    }
-};
-
-const toggleActive = async (row: any) => {
-    if (row.isActive === true) {
-        row.status = 'deactivated';
-        row.isActive = false;
-    } else {
-        row.isActive = true;
-        row.status = 'live';
-    }
-
-    try {
-        const response = await $fetch(`/api/factories-registry/${row.id}/`, {
-            method: 'put',
-            body: row,
-        });
-
-        if (isSuccessResponse(response.status)) {
-            if ((row.status = 'live')) {
-                showSuccessMessage(t('registry.activate'));
-            } else {
-                showSuccessMessage(t('registry.Deactivate'));
-            }
-        } else {
-            showErrorMessage(t('registry.factoryActivationError'));
-        }
-    } catch (err) {
-        showErrorMessage(t('registry.factoryActivationError'));
-    }
-
-    return row;
+const select = (row: any, actionGiven: string) => {
+    action.value = actionGiven;
+    selectedRow = row;
+    return (switchModalOpen.value = true);
 };
 </script>
 
@@ -131,18 +104,53 @@ const toggleActive = async (row: any) => {
                 :rows="paginatedRows"
                 sort-mode="manual"
                 :loading="pending"
-                @select="select"
+                class="overflow-visible"
             >
                 <!-- Custom styling for ip data column -->
                 <template #ip-data="{ row }">
-                    <span class="flex items-center">
-                        <UIcon name="i-heroicons-light-bulb-solid" :class="[getStatusColorClass(row.status), 'mr-2']" />
+                    <span v-if="row.ip" class="flex items-center">
                         {{ row.ip }}
+                    </span>
+                    <span v-else>
+                        {{ t('registry.noIp') }}
                     </span>
                 </template>
                 <template #actions-data="{ row }">
-                    <div class="justify-center flex">
-                        <UToggle :model-value="row.isActive" @click="toggleActive(row)" />
+                    <div class="flex justify-center items-center">
+                        <div class="flex items-center justify-start gap-1 w-52">
+                            <UIcon
+                                name="i-heroicons-light-bulb-solid"
+                                :class="[getStatusColorClass(row.status), 'mr-1 h-5 w-5']"
+                            />
+                            <span class="w-[90px]">{{ statuses[row.status] }}</span>
+                            <UTooltip
+                                v-if="(row.status === 'pending' || row.status === 'suspended') && !row.ip"
+                                :text="t('registry.noIpProvided')"
+                                :ui="{ width: 'max-w-2xl text-center' }"
+                            >
+                                <UButton
+                                    variant="outline"
+                                    :disabled="!row.ip"
+                                    class="disabled:opacity-40"
+                                    @click="select(row, 'activate')"
+                                    >{{ t('registry.activate') }}</UButton
+                                >
+                            </UTooltip>
+                            <UButton
+                                v-else-if="row.status === 'pending' || row.status === 'suspended'"
+                                variant="outline"
+                                :disabled="!row.ip"
+                                @click="select(row, 'activate')"
+                                >{{ t('registry.activate') }}</UButton
+                            >
+                            <UButton
+                                v-else-if="row.status !== 'suspended'"
+                                color="red"
+                                variant="outline"
+                                @click="select(row, 'suspend')"
+                                >{{ t('registry.suspend') }}
+                            </UButton>
+                        </div>
                     </div>
                 </template>
             </UTable>
@@ -154,15 +162,21 @@ const toggleActive = async (row: any) => {
         </UCard>
         <UModal v-model="switchModalOpen">
             <UCard class="flex flex-col justify-center items-center text-center text-gray-700 h-40">
-                <p class="font-bold text-xl">{{ $t('registry.factoryModal') }}</p>
-                {{ selectedRow.ip }} - {{ selectedRow.organizationName }}
+                <p class="font-bold text-xl">{{ $t('areYouSure') }}</p>
+                <span>{{
+                    action === 'activate' ? t('registry.areYouSureActivate') : t('registry.areYouSureSuspend')
+                }}</span>
+                <br />
+                <span>{{ t('registry.organizationName') + ': ' + selectedRow.organizationName }}</span>
                 <div class="flex gap-8 w-full justify-center mt-6">
-                    <UButton color="white" class="w-20 flex justify-center" @click="acceptFactory('accept')">{{
-                        $t('registry.accept')
+                    <UButton color="white" class="w-20 flex justify-center" @click="switchModalOpen = false">{{
+                        $t('no')
                     }}</UButton>
-                    <UButton class="w-20 flex justify-center" @click="acceptFactory('deny')">{{
-                        $t('registry.deny')
-                    }}</UButton>
+                    <UButton
+                        class="w-20 flex justify-center"
+                        @click="action === 'activate' ? activate(selectedRow.id) : suspend(selectedRow.id)"
+                        >{{ $t('yes') }}</UButton
+                    >
                 </div>
             </UCard>
         </UModal>
