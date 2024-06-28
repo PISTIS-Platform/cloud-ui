@@ -145,18 +145,14 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
             </div>
 
             <DisclosurePanel v-if="status === 'authenticated'" class="md:hidden">
-                <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                    <DisclosureButton
+                <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3 flex flex-col">
+                    <NuxtLink
                         v-for="item in navigation"
                         :key="item.name"
-                        as="NuxtLink"
                         :to="item.to"
-                        active-class="bg-primary-700 text-white"
-                        :class="[
-                            'text-white hover:bg-primary-500 hover:bg-opacity-75',
-                            'block rounded-md px-3 py-2 text-base font-medium',
-                        ]"
-                        >{{ $t(item.name) }}</DisclosureButton
+                        class="text-white hover:bg-primary-600 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
+                        active-class="bg-primary-800"
+                        >{{ $t(item.name) }}</NuxtLink
                     >
                 </div>
                 <div class="border-t border-primary-700 pb-3 pt-4">
