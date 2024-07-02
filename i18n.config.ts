@@ -61,11 +61,15 @@ export default defineI18nConfig(() => ({
                     weeklyTransactions: 'Weekly Transactions',
                     weeklyMoney: 'Weekly Money Circulated',
                     usageStats: {
+                        cpuAndMemory: 'CPU and Memory Usage',
+                        disk: 'Disk Usage',
                         cpuUsage: 'CPU Usage',
-                        diskUtilisation: 'Disk Utilisation',
                         memoryUtilisation: 'Memory Utilisation',
                         from: 'from',
                         cores: 'cores',
+                        mongoDb: 'Mongo DB',
+                        elasticSearch: 'Elasticsearch (Average of all instances)',
+                        postgres: 'Postgres',
                     },
                     tableFields: {
                         asset: 'Asset',
