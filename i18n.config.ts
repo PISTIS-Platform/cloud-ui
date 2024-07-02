@@ -68,8 +68,12 @@ export default defineI18nConfig(() => ({
                         from: 'from',
                         cores: 'cores',
                         mongoDb: 'Mongo DB',
-                        elasticSearch: 'Elasticsearch (Average of all instances)',
+                        elasticSearchAvg: 'Elasticsearch (Average of all instances)',
+                        esInstance1: 'Instance 1',
+                        esInstance2: 'Instance 2',
+                        esInstance3: 'Instance 3',
                         postgres: 'Postgres',
+                        minio: 'Minio',
                     },
                     tableFields: {
                         asset: 'Asset',

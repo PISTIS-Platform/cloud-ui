@@ -35,6 +35,7 @@ const { data: componentStatusData, pending: componentStatusLoading } = await use
 const { data: usageStatsData, pending: usageStatsLoading } = await useLazyFetch<{
     cpuAndMemoryStats: UsageStatsData[];
     diskUsageStats: UsageStatsData[];
+    elasticSearchInstancesStats: UsageStatsData[];
 }>('/api/dashboard/resource-usage');
 
 const computedCpuAndMemoryStats = computed(() => {
@@ -48,42 +49,21 @@ const computedCpuAndMemoryStats = computed(() => {
 
 const computedDiskUsageStats = computed(() => {
     const stats = usageStatsData.value?.diskUsageStats || [];
+    const esInstancesStats = usageStatsData.value?.elasticSearchInstancesStats || [];
 
     return stats.map((item: UsageStatsData) => ({
+        key: item.key,
         title: t(`dashboard.resources.usageStats.${item.key}`),
         percentage: item.percentage,
+        tooltipInfo:
+            item.key === 'elasticSearchAvg'
+                ? esInstancesStats.map((item: UsageStatsData) => ({
+                      label: t(`dashboard.resources.usageStats.${item.key}`),
+                      value: `${item.percentage} %`,
+                  }))
+                : [],
     }));
 });
-
-// const computedUsageStats = computed(() => {
-//     const cpuUsage = usageStatsData.value?.find((item: UsageStatsData) => item.key === 'cpuUsage');
-//     const diskUtilisation = usageStatsData.value?.find((item: UsageStatsData) => item.key === 'diskUtilisation');
-//     const memoryUtilisation = usageStatsData.value?.find((item: UsageStatsData) => item.key === 'memoryUtilisation');
-
-//     return [
-//         {
-//             title: t('dashboard.resources.usageStats.cpuUsage'),
-//             key: 'cpuUsage',
-//             used: cpuUsage?.used || 0,
-//             total: cpuUsage?.total || 0,
-//             measurement: t('dashboard.resources.usageStats.cores'),
-//         },
-//         {
-//             title: t('dashboard.resources.usageStats.diskUtilisation'),
-//             key: 'diskUtilisation',
-//             used: diskUtilisation?.used || 0,
-//             total: diskUtilisation?.total || 0,
-//             measurement: 'GB',
-//         },
-//         {
-//             title: t('dashboard.resources.usageStats.memoryUtilisation'),
-//             key: 'memoryUtilisation',
-//             used: memoryUtilisation?.used || 0,
-//             total: memoryUtilisation?.total || 0,
-//             measurement: 'GB',
-//         },
-//     ];
-// });
 
 //data for monitoring cards
 const { data: monitoringCardsData, pending: monitoringCardsLoading } = await useLazyFetch<MonitoringCardsData[]>(
@@ -162,10 +142,7 @@ const computedWeeklyMoneyData = computed(() => ({
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.componentStatus')" />
                         </template>
-                        <div
-                            v-if="!componentStatusLoading"
-                            class="flex w-full flex-col h-[510px] gap-10 overflow-y-scroll"
-                        >
+                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-2 overflow-y-scroll">
                             <StatusCard
                                 v-for="item in componentStatusData"
                                 :key="item.title"
@@ -174,10 +151,7 @@ const computedWeeklyMoneyData = computed(() => ({
                             />
                         </div>
                         <!--TODO: Currently using fixed number of skeleton elements based on number of components-->
-                        <div
-                            v-if="componentStatusLoading"
-                            class="flex w-full flex-col h-[510px] gap-10 overflow-y-scroll"
-                        >
+                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-2 overflow-y-scroll">
                             <USkeleton
                                 v-for="item in new Array(componentStatusData?.length)"
                                 :key="item"
@@ -228,9 +202,10 @@ const computedWeeklyMoneyData = computed(() => ({
                             <div v-if="!usageStatsLoading" class="flex flex-col flex-1 justify-between">
                                 <UsageCard
                                     v-for="item in computedDiskUsageStats"
-                                    :key="item.title"
+                                    :key="item.key"
                                     :title="item.title || ''"
                                     :percentage="item.percentage"
+                                    :tooltip-info="item.tooltipInfo"
                                 />
                             </div>
                             <div v-if="usageStatsLoading" class="flex flex-col flex-1 justify-between">
