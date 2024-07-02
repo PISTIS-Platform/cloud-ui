@@ -30,7 +30,19 @@ const percentageColorClasses = computed(() => {
 
 <template>
     <div class="p-2">
-        <dt class="text-gray-500 text-sm">{{ props.title }}</dt>
+        <div class="flex items-center gap-2">
+            <dt class="text-gray-500 text-sm">{{ props.title }}</dt>
+            <dd class="mt-1 flex items-baseline justify-between gap-4">
+                <div
+                    :class="[
+                        percentageColorClasses,
+                        'inline-flex items-baseline rounded-full px-2 text-sm py-0.5 font-medium',
+                    ]"
+                >
+                    {{ props.percentage }} %
+                </div>
+            </dd>
+        </div>
         <div class="flex flex-col gap-1 mt-2">
             <UTooltip
                 :prevent="!props.tooltipInfo.length"
@@ -46,16 +58,6 @@ const percentageColorClasses = computed(() => {
                     </div>
                 </template>
             </UTooltip>
-            <dd class="mt-1 flex items-baseline justify-between gap-4">
-                <div
-                    :class="[
-                        percentageColorClasses,
-                        'inline-flex items-baseline rounded-full px-2 text-sm py-0.5 font-medium',
-                    ]"
-                >
-                    {{ props.percentage }} %
-                </div>
-            </dd>
         </div>
     </div>
 </template>

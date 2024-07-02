@@ -4,7 +4,7 @@ const { prometheusUrl } = useRuntimeConfig();
 
 import UsageStatsData from '~/interfaces/usage-stats-data';
 
-const getPrometheusResult = async (q: string, percentageMultiplier = 100, decimalsNum = 2) => {
+const getPrometheusResult = async (q: string, percentageMultiplier = 100) => {
     const prom = new PrometheusDriver({
         endpoint: prometheusUrl,
         baseURL: '/api/v1', // default value
@@ -14,10 +14,10 @@ const getPrometheusResult = async (q: string, percentageMultiplier = 100, decima
         return res.result;
     });
 
-    return Number((result[0].value.value * percentageMultiplier).toFixed(decimalsNum));
+    return Number((result[0].value.value * percentageMultiplier).toFixed(2));
 };
 
-const getDiskUsageByVolume = async (volume: string, percentageMultiplier: number = 100, decimalsNum = 2) => {
+const getDiskUsageByVolume = async (volume: string, percentageMultiplier: number = 100) => {
     const q = `max without(instance,node) (
 (
   topk(1, kubelet_volume_stats_capacity_bytes{job="kubelet", metrics_path="/metrics", namespace="default", persistentvolumeclaim="${volume}"})
@@ -28,7 +28,7 @@ const getDiskUsageByVolume = async (volume: string, percentageMultiplier: number
 topk(1, kubelet_volume_stats_capacity_bytes{job="kubelet", metrics_path="/metrics", namespace="default", persistentvolumeclaim="${volume}"})
 * 100)`;
 
-    return await getPrometheusResult(q, percentageMultiplier, decimalsNum);
+    return await getPrometheusResult(q, percentageMultiplier);
 };
 
 export default defineEventHandler(async () => {
@@ -62,8 +62,8 @@ export default defineEventHandler(async () => {
     //Disk Usage Stats
 
     //Minio & Postgres
-    const minioUsagePercentage = await getDiskUsageByVolume('minio', 1, 3);
-    const mongoDbUsagePercentage = await getDiskUsageByVolume('datadir-mongodb-0', 1, 3);
+    const minioUsagePercentage = await getDiskUsageByVolume('minio', 1);
+    const mongoDbUsagePercentage = await getDiskUsageByVolume('datadir-mongodb-0', 1);
     const postgresUsagePercentage = await getDiskUsageByVolume('postgresql-1', 1);
 
     //Elasticsearch Instances

@@ -142,7 +142,7 @@ const computedWeeklyMoneyData = computed(() => ({
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.componentStatus')" />
                         </template>
-                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-2 overflow-y-scroll">
+                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
                             <StatusCard
                                 v-for="item in componentStatusData"
                                 :key="item.title"
@@ -151,7 +151,7 @@ const computedWeeklyMoneyData = computed(() => ({
                             />
                         </div>
                         <!--TODO: Currently using fixed number of skeleton elements based on number of components-->
-                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-2 overflow-y-scroll">
+                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
                             <USkeleton
                                 v-for="item in new Array(componentStatusData?.length)"
                                 :key="item"
@@ -179,12 +179,8 @@ const computedWeeklyMoneyData = computed(() => ({
                                     :percentage="item.percentage"
                                 />
                             </div>
-                            <div v-if="usageStatsLoading" class="flex flex-col flex-1 justify-between">
-                                <USkeleton
-                                    v-for="item in new Array(computedCpuAndMemoryStats.length)"
-                                    :key="item"
-                                    class="h-16 w-full"
-                                />
+                            <div v-if="usageStatsLoading" class="flex flex-col flex-1 gap-4 justify-between">
+                                <USkeleton v-for="item in new Array(2)" :key="item" class="h-12 w-full" />
                             </div>
                         </UCard>
 
@@ -208,12 +204,8 @@ const computedWeeklyMoneyData = computed(() => ({
                                     :tooltip-info="item.tooltipInfo"
                                 />
                             </div>
-                            <div v-if="usageStatsLoading" class="flex flex-col flex-1 justify-between">
-                                <USkeleton
-                                    v-for="item in new Array(computedDiskUsageStats.length)"
-                                    :key="item"
-                                    class="h-16 w-full"
-                                />
+                            <div v-if="usageStatsLoading" class="flex flex-col flex-1 gap-4 justify-between">
+                                <USkeleton v-for="item in new Array(4)" :key="item" class="h-12 w-full" />
                             </div>
                         </UCard>
                     </div>
