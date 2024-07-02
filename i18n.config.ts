@@ -74,6 +74,9 @@ export default defineI18nConfig(() => ({
                         esInstance3: 'Instance 3',
                         postgres: 'PostgreSQL',
                         minio: 'MinIO',
+                        errorInRetrievingCpuAndMemoryStats:
+                            'Error occurred while retrieving CPU and Memory usage stats',
+                        errorInRetrievingDiskUsageStats: 'Error occurred while retrieving Disk usage stats',
                     },
                     tableFields: {
                         asset: 'Asset',

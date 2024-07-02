@@ -32,7 +32,11 @@ const { data: componentStatusData, pending: componentStatusLoading } = await use
 );
 
 //data for usage stats
-const { data: usageStatsData, pending: usageStatsLoading } = await useLazyFetch<{
+const {
+    data: usageStatsData,
+    pending: usageStatsLoading,
+    error: usageStatsError,
+} = await useLazyFetch<{
     cpuAndMemoryStats: UsageStatsData[];
     diskUsageStats: UsageStatsData[];
     elasticSearchInstancesStats: UsageStatsData[];
@@ -164,14 +168,17 @@ const computedWeeklyMoneyData = computed(() => ({
                         <UCard
                             :ui="{
                                 strategy: 'override',
-                                base: 'flex flex-col',
-                                body: { base: 'flex flex-col flex-1' },
+                                base: 'flex flex-col h-full',
+                                body: { base: 'flex flex-col flex-1 h-full' },
                             }"
                         >
                             <template #header>
                                 <SubHeading :title="t('dashboard.resources.usageStats.cpuAndMemory')" />
                             </template>
-                            <div v-if="!usageStatsLoading" class="flex flex-col flex-1 justify-between">
+                            <div
+                                v-if="!usageStatsLoading && !usageStatsError"
+                                class="flex flex-col flex-1 justify-between"
+                            >
                                 <UsageCard
                                     v-for="item in computedCpuAndMemoryStats"
                                     :key="item.title"
@@ -179,7 +186,12 @@ const computedWeeklyMoneyData = computed(() => ({
                                     :percentage="item.percentage"
                                 />
                             </div>
-                            <div v-if="usageStatsLoading" class="flex flex-col flex-1 gap-4 justify-between">
+                            <div v-else-if="!usageStatsLoading && usageStatsError">
+                                <ErrorCard
+                                    :error-msg="t('dashboard.resources.usageStats.errorInRetrievingCpuAndMemoryStats')"
+                                />
+                            </div>
+                            <div v-else class="flex flex-col flex-1 gap-4 justify-between">
                                 <USkeleton v-for="item in new Array(2)" :key="item" class="h-12 w-full" />
                             </div>
                         </UCard>
@@ -188,14 +200,17 @@ const computedWeeklyMoneyData = computed(() => ({
                         <UCard
                             :ui="{
                                 strategy: 'override',
-                                base: 'flex flex-col',
-                                body: { base: 'flex flex-col flex-1' },
+                                base: 'flex flex-col h-full',
+                                body: { base: 'flex flex-col flex-1 h-full' },
                             }"
                         >
                             <template #header>
                                 <SubHeading :title="t('dashboard.resources.usageStats.disk')" />
                             </template>
-                            <div v-if="!usageStatsLoading" class="flex flex-col flex-1 justify-between">
+                            <div
+                                v-if="!usageStatsLoading && !usageStatsError"
+                                class="flex flex-col flex-1 justify-between"
+                            >
                                 <UsageCard
                                     v-for="item in computedDiskUsageStats"
                                     :key="item.key"
@@ -204,7 +219,12 @@ const computedWeeklyMoneyData = computed(() => ({
                                     :tooltip-info="item.tooltipInfo"
                                 />
                             </div>
-                            <div v-if="usageStatsLoading" class="flex flex-col flex-1 gap-4 justify-between">
+                            <div v-else-if="!usageStatsLoading && usageStatsError">
+                                <ErrorCard
+                                    :error-msg="t('dashboard.resources.usageStats.errorInRetrievingDiskUsageStats')"
+                                />
+                            </div>
+                            <div v-else class="flex flex-col flex-1 gap-4 justify-between">
                                 <USkeleton v-for="item in new Array(4)" :key="item" class="h-12 w-full" />
                             </div>
                         </UCard>
