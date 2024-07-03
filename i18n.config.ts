@@ -68,7 +68,7 @@ export default defineI18nConfig(() => ({
                         from: 'from',
                         cores: 'cores',
                         mongoDb: 'MongoDB',
-                        elasticSearchAvg: 'Elastic',
+                        elasticSearchAvg: 'Elasticsearch',
                         esInstance1: 'Instance 1',
                         esInstance2: 'Instance 2',
                         esInstance3: 'Instance 3',
