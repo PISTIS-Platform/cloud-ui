@@ -40,7 +40,7 @@ const percentageColorClasses = computed(() => {
         :ui="{ width: 'max-w-2xl', base: 'text-wrap p-2 h-24' }"
     >
         <div
-            class="flex flex-col items-start xl:flex-row xl:items-center gap-4 w-full rounded-lg ring-gray-200 ring-1 bg-white px-4 py-5 shadow-md sm:py-6"
+            class="flex flex-col items-start xl:flex-row xl:justify-between xl:items-center gap-4 w-full rounded-lg ring-gray-200 ring-1 bg-white px-4 py-5 shadow-md sm:py-6"
         >
             <div class="flex items-center gap-2">
                 <UIcon v-if="icon" :name="icon" class="h-6 w-6" aria-hidden="true" />
