@@ -63,8 +63,8 @@ export default defineI18nConfig(() => ({
                     usageStats: {
                         cpuAndMemory: 'CPU and Memory Utilisation',
                         disk: 'Disk Usage',
-                        cpuUsage: 'CPU',
-                        memoryUtilisation: 'Memory',
+                        cpu: 'CPU',
+                        memory: 'Memory',
                         from: 'from',
                         cores: 'cores',
                         mongoDb: 'MongoDB',

@@ -47,11 +47,21 @@ const computedResourcesUsageStats = computed(() => {
     const diskUsageStats = usageStatsData.value?.diskUsageStats || [];
     const esInstancesStats = usageStatsData.value?.elasticSearchInstancesStats || [];
 
+    const iconsMapping: Record<string, string> = {
+        cpu: 'ph:cpu',
+        memory: 'material-symbols:memory-alt-outline-rounded',
+        minio: 'simple-icons:minio',
+        mongoDb: 'tabler:brand-mongodb',
+        postgres: 'carbon:database-postgresql',
+        elasticSearchAvg: 'tabler:brand-elastic',
+    };
+
     const allStats = [...cpuAndMemoryStats, ...diskUsageStats];
 
     return allStats.map((item: UsageStatsData) => ({
         title: t(`dashboard.resources.usageStats.${item.key}`),
         percentage: item.percentage,
+        icon: iconsMapping[item.key],
         tooltipInfo:
             item.key === 'elasticSearchAvg'
                 ? esInstancesStats.map((item: UsageStatsData) => ({
@@ -153,16 +163,18 @@ const computedWeeklyMoneyData = computed(() => ({
                             <USkeleton v-for="item in new Array(10)" :key="item" class="h-7 w-full" />
                         </div>
                     </UCard>
-                    <!-- CPU and Memory usage -->
-                    <UCard :ui="{ base: 'w-full h-full' }">
+
+                    <!-- Resources usage -->
+                    <UCard :ui="{ base: 'w-full' }">
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.resourceUsage')" />
                         </template>
-                        <div v-if="!usageStatsLoading && !usageStatsError" class="grid grid-cols-2 w-full gap-6">
+                        <div v-if="!usageStatsLoading && !usageStatsError" class="grid grid-cols-2 w-full gap-6 mt-4">
                             <UsageCard
                                 v-for="item in computedResourcesUsageStats"
                                 :key="item.title"
                                 :title="item.title || ''"
+                                :icon="item.icon"
                                 :percentage="item.percentage"
                                 :tooltip-info="item.tooltipInfo"
                             />

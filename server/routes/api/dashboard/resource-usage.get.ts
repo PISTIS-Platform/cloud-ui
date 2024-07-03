@@ -46,11 +46,11 @@ export default defineEventHandler(async () => {
 
     const cpuAndMemoryStats: UsageStatsData[] = [
         {
-            key: 'cpuUsage',
+            key: 'cpu',
             percentage: cpuPercentage,
         },
         {
-            key: 'memoryUtilisation',
+            key: 'memory',
             percentage: memoryUtilisationPercentage,
         },
     ];
