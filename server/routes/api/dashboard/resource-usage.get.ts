@@ -44,17 +44,6 @@ export default defineEventHandler(async () => {
 
     const memoryUtilisationPercentage = await getPrometheusResult(memoryUtilisationQuery);
 
-    const cpuAndMemoryStats: UsageStatsData[] = [
-        {
-            key: 'cpu',
-            percentage: cpuPercentage,
-        },
-        {
-            key: 'memory',
-            percentage: memoryUtilisationPercentage,
-        },
-    ];
-
     //Disk Usage Stats
 
     //Minio & Postgres
@@ -67,28 +56,21 @@ export default defineEventHandler(async () => {
     const esInstance2Percentage = await getDiskUsageByVolume('elasticsearch-data-elasticsearch-es-default-1', 1);
     const esInstance3Percentage = await getDiskUsageByVolume('elasticsearch-data-elasticsearch-es-default-2', 1);
 
-    const elasticSearchInstancesStats: UsageStatsData[] = [
-        {
-            key: 'esInstance1',
-            percentage: esInstance1Percentage,
-        },
-        {
-            key: 'esInstance2',
-            percentage: esInstance2Percentage,
-        },
-        {
-            key: 'esInstance3',
-            percentage: esInstance3Percentage,
-        },
-    ];
-
     //Elasticsearch average percentage
     const elasticSearchAvgPercentage = Number(
         ((esInstance1Percentage + esInstance2Percentage + esInstance3Percentage) / 3).toFixed(2),
     );
 
     //General disk usage stats
-    const diskUsageStats: UsageStatsData[] = [
+    const usageStatsData: UsageStatsData[] = [
+        {
+            key: 'cpu',
+            percentage: cpuPercentage,
+        },
+        {
+            key: 'memory',
+            percentage: memoryUtilisationPercentage,
+        },
         {
             key: 'minio',
             percentage: minioUsagePercentage,
@@ -104,12 +86,22 @@ export default defineEventHandler(async () => {
         {
             key: 'elasticSearchAvg',
             percentage: elasticSearchAvgPercentage,
+            extraInfo: [
+                {
+                    key: 'esInstance1',
+                    value: esInstance1Percentage,
+                },
+                {
+                    key: 'esInstance2',
+                    value: esInstance2Percentage,
+                },
+                {
+                    key: 'esInstance3',
+                    value: esInstance3Percentage,
+                },
+            ],
         },
     ];
 
-    return {
-        cpuAndMemoryStats,
-        diskUsageStats,
-        elasticSearchInstancesStats,
-    };
+    return usageStatsData;
 });

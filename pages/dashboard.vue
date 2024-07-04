@@ -36,17 +36,9 @@ const {
     data: usageStatsData,
     pending: usageStatsLoading,
     error: usageStatsError,
-} = await useLazyFetch<{
-    cpuAndMemoryStats: UsageStatsData[];
-    diskUsageStats: UsageStatsData[];
-    elasticSearchInstancesStats: UsageStatsData[];
-}>('/api/dashboard/resource-usage');
+} = await useLazyFetch<UsageStatsData[]>('/api/dashboard/resource-usage');
 
 const computedResourcesUsageStats = computed(() => {
-    const cpuAndMemoryStats = usageStatsData.value?.cpuAndMemoryStats || [];
-    const diskUsageStats = usageStatsData.value?.diskUsageStats || [];
-    const esInstancesStats = usageStatsData.value?.elasticSearchInstancesStats || [];
-
     const iconsMapping: Record<string, string> = {
         cpu: 'ph:cpu',
         memory: 'material-symbols:memory-alt-outline-rounded',
@@ -56,19 +48,16 @@ const computedResourcesUsageStats = computed(() => {
         elasticSearchAvg: 'tabler:brand-elastic',
     };
 
-    const allStats = [...cpuAndMemoryStats, ...diskUsageStats];
-
-    return allStats.map((item: UsageStatsData) => ({
+    return (usageStatsData?.value || []).map((item: UsageStatsData) => ({
         title: t(`dashboard.resources.usageStats.${item.key}`),
         percentage: item.percentage,
         icon: iconsMapping[item.key],
-        tooltipInfo:
-            item.key === 'elasticSearchAvg'
-                ? esInstancesStats.map((item: UsageStatsData) => ({
-                      label: t(`dashboard.resources.usageStats.${item.key}`),
-                      value: `${item.percentage} %`,
-                  }))
-                : [],
+        tooltipInfo: item.extraInfo
+            ? item.extraInfo.map((item: { key: string; value: number }) => ({
+                  label: t(`dashboard.resources.usageStats.${item.key}`),
+                  value: `${item.value} %`,
+              }))
+            : [],
     }));
 });
 
@@ -184,8 +173,8 @@ const computedWeeklyMoneyData = computed(() => ({
                                 :error-msg="t('dashboard.resources.usageStats.errorInRetrievingCpuAndMemoryStats')"
                             />
                         </div>
-                        <div v-else class="flex flex-col flex-1 gap-4 justify-between">
-                            <USkeleton v-for="item in new Array(2)" :key="item" class="h-12 w-full" />
+                        <div v-else class="grid grid-cols-2 w-full gap-6 mt-4">
+                            <USkeleton v-for="item in new Array(6)" :key="item" class="h-20" />
                         </div>
                     </UCard>
                 </div>

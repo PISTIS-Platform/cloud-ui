@@ -4,5 +4,9 @@ export default interface UsageStatsData {
     used?: number;
     total?: number;
     percentage: number;
+    extraInfo?: {
+        key: string;
+        value: number;
+    }[];
     measurement?: string;
 }
