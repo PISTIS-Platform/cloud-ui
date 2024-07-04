@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const body = await readBody(event);
 
-    const response = await $fetch(`${factoryRegistryURL}/setip`, {
+    const response = await $fetch(`${factoryRegistryURL}/factories/setip`, {
         method: 'PUT',
         body,
         headers: {
