@@ -170,7 +170,10 @@ const computedWeeklyMoneyData = computed(() => ({
                         </div>
                         <div v-else-if="!usageStatsLoading && usageStatsError">
                             <ErrorCard
-                                :error-msg="t('dashboard.resources.usageStats.errorInRetrievingCpuAndMemoryStats')"
+                                :error-msg="
+                                    usageStatsError?.statusMessage ??
+                                    t('dashboard.resources.usageStats.errorInRetrievingCpuAndMemoryStats')
+                                "
                             />
                         </div>
                         <div v-else class="grid grid-cols-2 w-full gap-6 mt-4">
