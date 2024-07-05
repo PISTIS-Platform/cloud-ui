@@ -22,13 +22,17 @@ const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
-const { data: userFactory, error: userFactoryError } = await useFetch<FactoryModelRepo>(
+const { data: userFactory, error: userFactoryError } = useFetch<FactoryModelRepo>(
     `/api/factories-registry/user-factory`,
 );
 
-if (userFactory.value) {
-    schemaState.publicIP = userFactory.value.ip ?? '';
-}
+watch(
+    userFactory,
+    () => {
+        schemaState.publicIP = userFactory.value?.ip ?? '';
+    },
+    { once: true },
+);
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;
