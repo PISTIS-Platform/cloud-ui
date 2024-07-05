@@ -1,56 +1,59 @@
 <script setup lang="ts">
+import type Selection from '~/interfaces/selection';
+
 const props = defineProps({
     title: {
         type: String,
         required: true,
     },
-    used: {
-        type: Number,
-        required: true,
-    },
-    total: {
-        type: Number,
-        required: true,
-    },
-    measurement: {
+    icon: {
         type: String,
         required: false,
+        default: null,
+    },
+    percentage: {
+        type: Number,
+        required: true,
+    },
+    tooltipInfo: {
+        type: Array as PropType<Selection[]>,
+        required: false,
+        default: () => [],
     },
 });
 
-const percentage = computed(() => props.used / props.total);
-
 const percentageColorClasses = computed(() => {
-    if (percentage.value >= 0 && percentage.value < 0.5) {
-        return 'bg-green-100 text-green-500';
+    if (props.percentage >= 0 && props.percentage < 50) {
+        return 'text-green-600';
     }
-    if (percentage.value >= 0.5 && percentage.value < 0.9) {
-        return 'bg-yellow-100 text-yellow-500';
+    if (props.percentage >= 50 && props.percentage < 90) {
+        return 'text-yellow-600';
     }
-    return 'bg-red-100 text-red-500';
+    return 'text-red-600';
 });
 </script>
 
 <template>
-    <div class="p-2">
-        <dt class="text-gray-500 text-sm">{{ props.title }}</dt>
-        <UProgress :value="percentage * 100" class="mt-2" />
-        <dd class="mt-1 flex items-baseline justify-between gap-4">
-            <div class="flex items-baseline text-2xl font-semibold text-primary-400">
-                {{ $n(props.used) }}
-                <span class="ml-2 text-sm font-medium text-gray-500"
-                    >{{ $t('dashboard.resources.usageStats.from') }} {{ $n(props.total) }} {{ props.measurement }}</span
-                >
+    <UTooltip
+        :prevent="!tooltipInfo.length"
+        :class="tooltipInfo.length ? 'cursor-pointer' : ''"
+        :ui="{ width: 'max-w-2xl', base: 'text-wrap p-2 h-24' }"
+    >
+        <div
+            class="flex flex-col items-start xl:flex-row xl:justify-between xl:items-center gap-4 w-full rounded-lg ring-gray-200 ring-1 bg-white px-4 py-5 shadow-md sm:py-6"
+        >
+            <div class="flex items-center gap-2">
+                <UIcon v-if="icon" :name="icon" class="h-6 w-6" aria-hidden="true" />
+                <dt class="truncate text-sm font-semibold text-gray-500">{{ title }}</dt>
             </div>
-
-            <div
-                :class="[
-                    percentageColorClasses,
-                    'inline-flex items-baseline rounded-full px-2 text-xs py-0.5 font-medium',
-                ]"
-            >
-                {{ $n(percentage, 'percent') }}
+            <dd :class="`mt-1 text-2xl font-semibold tracking-tight ${percentageColorClasses}`">{{ percentage }} %</dd>
+        </div>
+        <template #text>
+            <div class="flex flex-col gap-4">
+                <p v-for="infoItem in tooltipInfo" :key="infoItem.label">
+                    {{ infoItem.label }}: <span class="font-semibold">{{ infoItem.value }}</span>
+                </p>
             </div>
-        </dd>
-    </div>
+        </template>
+    </UTooltip>
 </template>

@@ -32,6 +32,7 @@ export default defineNuxtConfig({
         authSecret: process.env.NUXT_NEXTAUTH_SECRET,
         intentionAnalyticsServerUrl: process.env.NUXT_INTENTION_ANALYTICS_SERVER_URL,
         modelsRepositoryUrl: process.env.NUXT_MODELS_REPOSITORY_URL,
+        prometheusUrl: process.env.NUXT_PROMETHEUS_URL,
         keycloak: {
             issuer: process.env.NUXT_KEYCLOAK_ISSUER,
             clientId: process.env.NUXT_KEYCLOAK_CLIENT_ID,

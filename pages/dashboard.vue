@@ -32,38 +32,33 @@ const { data: componentStatusData, pending: componentStatusLoading } = await use
 );
 
 //data for usage stats
-const { data: usageStatsData, pending: usageStatsLoading } = await useLazyFetch<UsageStatsData[]>(
-    '/api/dashboard/resource-usage',
-);
+const {
+    data: usageStatsData,
+    pending: usageStatsLoading,
+    error: usageStatsError,
+} = await useLazyFetch<UsageStatsData[]>('/api/dashboard/resource-usage');
 
-const computedUsageStats = computed<UsageStatsData[]>(() => {
-    const cpuUsage = usageStatsData.value?.find((item: UsageStatsData) => item.key === 'cpuUsage');
-    const diskUtilisation = usageStatsData.value?.find((item: UsageStatsData) => item.key === 'diskUtilisation');
-    const memoryUtilisation = usageStatsData.value?.find((item: UsageStatsData) => item.key === 'memoryUtilisation');
+const computedResourcesUsageStats = computed(() => {
+    const iconsMapping: Record<string, string> = {
+        cpu: 'ph:cpu',
+        memory: 'material-symbols:memory-alt-outline-rounded',
+        minio: 'simple-icons:minio',
+        mongoDb: 'tabler:brand-mongodb',
+        postgres: 'carbon:database-postgresql',
+        elasticSearchAvg: 'tabler:brand-elastic',
+    };
 
-    return [
-        {
-            title: t('dashboard.resources.usageStats.cpuUsage'),
-            key: 'cpuUsage',
-            used: cpuUsage?.used || 0,
-            total: cpuUsage?.total || 0,
-            measurement: t('dashboard.resources.usageStats.cores'),
-        },
-        {
-            title: t('dashboard.resources.usageStats.diskUtilisation'),
-            key: 'diskUtilisation',
-            used: diskUtilisation?.used || 0,
-            total: diskUtilisation?.total || 0,
-            measurement: 'GB',
-        },
-        {
-            title: t('dashboard.resources.usageStats.memoryUtilisation'),
-            key: 'memoryUtilisation',
-            used: memoryUtilisation?.used || 0,
-            total: memoryUtilisation?.total || 0,
-            measurement: 'GB',
-        },
-    ];
+    return (usageStatsData?.value || []).map((item: UsageStatsData) => ({
+        title: t(`dashboard.resources.usageStats.${item.key}`),
+        percentage: item.percentage,
+        icon: iconsMapping[item.key],
+        tooltipInfo: item.extraInfo
+            ? item.extraInfo.map((item: { key: string; value: number }) => ({
+                  label: t(`dashboard.resources.usageStats.${item.key}`),
+                  value: `${item.value} %`,
+              }))
+            : [],
+    }));
 });
 
 //data for monitoring cards
@@ -139,11 +134,12 @@ const computedWeeklyMoneyData = computed(() => ({
         <PageContainer>
             <div class="flex flex-col w-full">
                 <div class="grid grid-cols-2 gap-4 place-items-stretch">
-                    <UCard :ui="{ base: 'w-full' }">
+                    <!-- Components statuses -->
+                    <UCard :ui="{ base: 'w-full h-full' }">
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.componentStatus')" />
                         </template>
-                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-2">
+                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
                             <StatusCard
                                 v-for="item in componentStatusData"
                                 :key="item.title"
@@ -152,32 +148,36 @@ const computedWeeklyMoneyData = computed(() => ({
                             />
                         </div>
                         <!--TODO: Currently using fixed number of skeleton elements based on number of components-->
-                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-2">
-                            <USkeleton v-for="item in new Array(8)" :key="item" class="h-7 w-full" />
+                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
+                            <USkeleton v-for="item in new Array(10)" :key="item" class="h-7 w-full" />
                         </div>
                     </UCard>
-                    <UCard
-                        :ui="{
-                            strategy: 'override',
-                            base: 'flex flex-col',
-                            body: { base: 'flex flex-col flex-1' },
-                        }"
-                    >
+
+                    <!-- Resources usage -->
+                    <UCard :ui="{ base: 'w-full' }">
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.resourceUsage')" />
                         </template>
-                        <div v-if="!usageStatsLoading" class="flex flex-col flex-1 justify-between">
+                        <div v-if="!usageStatsLoading && !usageStatsError" class="grid grid-cols-2 w-full gap-6 mt-4">
                             <UsageCard
-                                v-for="item in computedUsageStats"
-                                :key="item.key"
+                                v-for="item in computedResourcesUsageStats"
+                                :key="item.title"
                                 :title="item.title || ''"
-                                :used="item.used"
-                                :total="item.total"
-                                :measurement="item.measurement"
+                                :icon="item.icon"
+                                :percentage="item.percentage"
+                                :tooltip-info="item.tooltipInfo"
                             />
                         </div>
-                        <div v-if="usageStatsLoading" class="flex flex-col flex-1 justify-between">
-                            <USkeleton v-for="item in new Array(3)" :key="item" class="h-16 w-full" />
+                        <div v-else-if="!usageStatsLoading && usageStatsError">
+                            <ErrorCard
+                                :error-msg="
+                                    usageStatsError?.statusMessage ??
+                                    t('dashboard.resources.usageStats.errorInRetrievingCpuAndMemoryStats')
+                                "
+                            />
+                        </div>
+                        <div v-else class="grid grid-cols-2 w-full gap-6 mt-4">
+                            <USkeleton v-for="item in new Array(6)" :key="item" class="h-20" />
                         </div>
                     </UCard>
                 </div>
