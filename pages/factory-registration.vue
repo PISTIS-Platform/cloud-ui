@@ -22,13 +22,12 @@ const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
-const orgName = ref('');
+const { data: userFactory, error: userFactoryError } = await useFetch<FactoryModelRepo>(
+    `/api/factories-registry/user-factory`,
+);
 
-const userFactory: FactoryModelRepo = await $fetch(`/api/factories-registry/user-factory`);
-
-if (userFactory) {
-    schemaState.publicIP = userFactory.ip ?? '';
-    orgName.value = userFactory.organizationName;
+if (userFactory.value) {
+    schemaState.publicIP = userFactory.value.ip ?? '';
 }
 
 const downloadInstructions = async () => {
@@ -56,7 +55,6 @@ const downloadConfigurations = async () => {
 };
 
 const submitIP = async () => {
-    console.log(schemaState);
     if (!schema.safeParse(schemaState).success) {
         return;
     }
@@ -80,9 +78,12 @@ const submitIP = async () => {
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <UCard :ui="{ base: 'w-full text-gray-700' }">
+            <ErrorCard v-if="userFactoryError" :error-msg="t('registry.registration.noFactoryFound')" />
+            <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                 <template #header>
-                    <SubHeading :title="`${t('registry.registration.title')} - ${orgName}`" />
+                    <SubHeading
+                        :title="`${t('registry.registration.title')} ${userFactory?.organizationName ? ' - ' : ''} ${userFactory?.organizationName ?? ''}`"
+                    />
                 </template>
                 <div class="w-full flex flex-col gap-4">
                     <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
@@ -139,6 +140,7 @@ const submitIP = async () => {
                                 <UFormGroup class="w-full" required name="publicIP">
                                     <UInput
                                         v-model="schemaState.publicIP"
+                                        :ui="{ base: 'disabled:bg-gray-100' }"
                                         class="w-full"
                                         size="lg"
                                         :placeholder="t('registry.registration.enterIP')"
@@ -150,7 +152,9 @@ const submitIP = async () => {
                                     class="w-28 flex justify-center"
                                     size="lg"
                                     type="submit"
-                                    :disabled="!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)"
+                                    :disabled="
+                                        (!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)) || submittingIP
+                                    "
                                     @click="submitIP"
                                     >{{ t('submit') }}</UButton
                                 >

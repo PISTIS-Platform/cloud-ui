@@ -99,6 +99,7 @@ export default defineI18nConfig(() => ({
                     invalidIP: 'Invalid IP Address',
                     errorInDownloadingInstructions: 'Error occurred in downloading instructions',
                     errorInDownloadingConfigurations: 'Error occurred in downloading your individual configurations',
+                    noFactoryFound: 'No factory found for this user',
                 },
                 servicesRegistry: {
                     title: 'Services Registry',
