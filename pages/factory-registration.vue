@@ -3,6 +3,9 @@ const { t } = useI18n();
 import { z } from 'zod';
 
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+import type FactoryModelRepo from '~/interfaces/factories-model';
+
+const R = useRamda();
 
 const schemaState = ref({
     publicIP: '',
@@ -18,6 +21,15 @@ const schema = z.object({
 const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
+
+const orgName = ref('');
+
+const userFactory: FactoryModelRepo = await $fetch(`/api/factories-registry/user-factory`);
+
+if (userFactory) {
+    schemaState.value.publicIP = userFactory.ip ?? '';
+    orgName.value = userFactory.organizationName;
+}
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;
@@ -66,7 +78,7 @@ const submitIP = async () => {
         <PageContainer>
             <UCard :ui="{ base: 'w-full text-gray-700' }">
                 <template #header>
-                    <SubHeading :title="t('registry.registration.title')" />
+                    <SubHeading :title="`${t('registry.registration.title')} - ${orgName}`" />
                 </template>
                 <div class="w-full flex flex-col gap-4">
                     <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
@@ -126,6 +138,7 @@ const submitIP = async () => {
                                         class="w-full"
                                         size="lg"
                                         :placeholder="t('registry.registration.enterIP')"
+                                        :disabled="!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)"
                                     />
                                 </UFormGroup>
                                 <UButton
@@ -133,11 +146,7 @@ const submitIP = async () => {
                                     class="w-28 flex justify-center"
                                     size="lg"
                                     type="submit"
-                                    :disabled="
-                                        !schemaState.publicIP ||
-                                        schemaState.publicIP === '' ||
-                                        !schema.safeParse(schemaState).success
-                                    "
+                                    :disabled="!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)"
                                     @click="submitIP"
                                     >{{ t('submit') }}</UButton
                                 >
