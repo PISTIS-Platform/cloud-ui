@@ -7,7 +7,7 @@ import type FactoryModelRepo from '~/interfaces/factories-model';
 
 const R = useRamda();
 
-const schemaState = ref({
+const schemaState = reactive({
     publicIP: '',
 });
 
@@ -27,7 +27,7 @@ const orgName = ref('');
 const userFactory: FactoryModelRepo = await $fetch(`/api/factories-registry/user-factory`);
 
 if (userFactory) {
-    schemaState.value.publicIP = userFactory.ip ?? '';
+    schemaState.publicIP = userFactory.ip ?? '';
     orgName.value = userFactory.organizationName;
 }
 
@@ -56,12 +56,16 @@ const downloadConfigurations = async () => {
 };
 
 const submitIP = async () => {
+    console.log(schemaState);
+    if (!schema.safeParse(schemaState).success) {
+        return;
+    }
     submittingIP.value = true;
 
     try {
         await $fetch(`api/factories-registry/setip`, {
             method: 'PUT',
-            body: { ip: schemaState.value.publicIP },
+            body: { ip: schemaState.publicIP },
         });
 
         showSuccessMessage(t('registry.IPUpdated'));
