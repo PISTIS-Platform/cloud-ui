@@ -78,7 +78,10 @@ const submitIP = async () => {
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <ErrorCard v-if="userFactoryError" :error-msg="t('registry.registration.noFactoryFound')" />
+            <ErrorCard
+                v-if="userFactoryError"
+                :error-msg="t('registry.registration.errorWhileRetrievingUserFactory')"
+            />
             <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                 <template #header>
                     <SubHeading
