@@ -46,7 +46,7 @@ const downloadConfigurations = async () => {
     downloadingConfigurations.value = true;
 
     try {
-        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.json');
+        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.yaml');
     } catch (error) {
         showErrorMessage(t('registry.registration.errorInDownloadingConfigurations'));
     } finally {
