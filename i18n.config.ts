@@ -110,6 +110,8 @@ export default defineI18nConfig(() => ({
                     invalidIP: 'Invalid IP Address',
                     errorInDownloadingInstructions: 'Error occurred in downloading instructions',
                     errorInDownloadingConfigurations: 'Error occurred in downloading your individual configurations',
+                    errorWhileRetrievingUserFactory:
+                        'Error occurred while retrieving factory. Please check if your organization has a registered factory',
                 },
                 servicesRegistry: {
                     title: 'Services Registry',
@@ -303,6 +305,7 @@ export default defineI18nConfig(() => ({
                     },
                 },
                 errors: {
+                    retrieveList: 'Error occurred while retrieving models list',
                     upload: 'Error occurred while uploading the model',
                     edit: 'Error occurred while updating the model',
                     download: 'Error occurred while downloading the model',

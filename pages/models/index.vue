@@ -53,15 +53,9 @@ const columns: TableColumn[] = [
 const {
     data: modelsData,
     pending: modelsLoading,
-    error: fetchListError,
+    error: modelsFetchError,
     refresh,
 } = await useLazyFetch<ModelsTableRow[]>('/api/models/table');
-
-watch(fetchListError, () => {
-    if (fetchListError.value) {
-        showErrorMessage(t('models.errors.list'));
-    }
-});
 
 const { page, filteredRows, paginatedRows, searchString, sortBy, pageCount } = useTable<ModelsTableRow>(modelsData, 5, {
     column: 'date',
@@ -154,7 +148,7 @@ async function deleteRepo() {
 
 <template>
     <div class="w-full h-full text-gray-700">
-        <UCard>
+        <UCard v-if="!modelsFetchError">
             <div class="flex justify-between flex-1">
                 <div class="flex flex-1">
                     <UInput
@@ -230,5 +224,9 @@ async function deleteRepo() {
                 </div>
             </UCard>
         </UModal>
+        <ErrorCard
+            v-if="modelsFetchError && !modelsLoading"
+            :error-msg="modelsFetchError.data?.data?.message ?? $t('models.errors.retrieveList')"
+        />
     </div>
 </template>

@@ -3,8 +3,11 @@ const { t } = useI18n();
 import { z } from 'zod';
 
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+import type FactoryModelRepo from '~/interfaces/factories-model';
 
-const schemaState = ref({
+const R = useRamda();
+
+const schemaState = reactive({
     publicIP: '',
 });
 
@@ -18,6 +21,18 @@ const schema = z.object({
 const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
+
+const { data: userFactory, error: userFactoryError } = useFetch<FactoryModelRepo>(
+    `/api/factories-registry/user-factory`,
+);
+
+watch(
+    userFactory,
+    () => {
+        schemaState.publicIP = userFactory.value?.ip ?? '';
+    },
+    { once: true },
+);
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;
@@ -35,7 +50,7 @@ const downloadConfigurations = async () => {
     downloadingConfigurations.value = true;
 
     try {
-        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.json');
+        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.yaml');
     } catch (error) {
         showErrorMessage(t('registry.registration.errorInDownloadingConfigurations'));
     } finally {
@@ -44,12 +59,15 @@ const downloadConfigurations = async () => {
 };
 
 const submitIP = async () => {
+    if (!schema.safeParse(schemaState).success) {
+        return;
+    }
     submittingIP.value = true;
 
     try {
         await $fetch(`api/factories-registry/setip`, {
             method: 'PUT',
-            body: { ip: schemaState.value.publicIP },
+            body: { ip: schemaState.publicIP },
         });
 
         showSuccessMessage(t('registry.IPUpdated'));
@@ -64,9 +82,15 @@ const submitIP = async () => {
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <UCard :ui="{ base: 'w-full text-gray-700' }">
+            <ErrorCard
+                v-if="userFactoryError"
+                :error-msg="t('registry.registration.errorWhileRetrievingUserFactory')"
+            />
+            <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                 <template #header>
-                    <SubHeading :title="t('registry.registration.title')" />
+                    <SubHeading
+                        :title="`${t('registry.registration.title')} ${userFactory?.organizationName ? ' - ' : ''} ${userFactory?.organizationName ?? ''}`"
+                    />
                 </template>
                 <div class="w-full flex flex-col gap-4">
                     <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
@@ -123,9 +147,11 @@ const submitIP = async () => {
                                 <UFormGroup class="w-full" required name="publicIP">
                                     <UInput
                                         v-model="schemaState.publicIP"
+                                        :ui="{ base: 'disabled:bg-gray-100' }"
                                         class="w-full"
                                         size="lg"
                                         :placeholder="t('registry.registration.enterIP')"
+                                        :disabled="!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)"
                                     />
                                 </UFormGroup>
                                 <UButton
@@ -134,9 +160,7 @@ const submitIP = async () => {
                                     size="lg"
                                     type="submit"
                                     :disabled="
-                                        !schemaState.publicIP ||
-                                        schemaState.publicIP === '' ||
-                                        !schema.safeParse(schemaState).success
+                                        (!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)) || submittingIP
                                     "
                                     @click="submitIP"
                                     >{{ t('submit') }}</UButton
