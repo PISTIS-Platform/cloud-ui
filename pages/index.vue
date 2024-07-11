@@ -70,7 +70,7 @@ const features = [
                 <NuxtLink
                     v-if="status === 'authenticated'"
                     :to="'/dashboard'"
-                    class="flex-shrink-0 rounded-md border border-primary-600 text-white text-lg hover:border hover:border-white py-2 px-4"
+                    class="flex-shrink-0 rounded-md border border-primary-600 text-white text-lg hover:border hover:border-white py-2 px-4 transition-all"
                     >Dashboard</NuxtLink
                 >
             </div>
@@ -79,7 +79,7 @@ const features = [
             <div class="flex">
                 <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
                     <button
-                        class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer"
+                        class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                     >
                         Find out more
                     </button></NuxtLink
@@ -101,13 +101,13 @@ const features = [
                 <div class="flex gap-4">
                     <button
                         v-if="status !== 'authenticated'"
-                        class="inline-flex items-center px-6 py-2 text-lg font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer"
+                        class="inline-flex items-center px-6 py-2 text-lg font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                         @click="signIn('keycloak', { callbackUrl })"
                     >
                         Sign In
                     </button>
                     <button
-                        class="inline-flex items-center px-6 py-2 text-lg font-medium text-white bg-primary-600 border border-white rounded-md hover:text-primary-800 hover:bg-white cursor-pointer"
+                        class="inline-flex items-center px-6 py-2 text-lg font-medium text-white bg-primary-600 border border-white rounded-md hover:text-primary-800 hover:bg-white cursor-pointer transition-all"
                     >
                         Register Now
                     </button>
