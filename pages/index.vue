@@ -91,7 +91,7 @@ const features = [
         </nav>
 
         <div
-            class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full mt-20 px-8 gap-24 sm:gap-12 2xl:gap-0 sm:px-16 2xl:px-48"
+            class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full mt-20 px-8 gap-12 sm:gap-12 2xl:gap-0 sm:px-16 2xl:px-48"
         >
             <div class="relative flex flex-col items-center sm:items-start justify-center space-y-6">
                 <h2 class="text-white text-center sm:text-left tracking-wide font-bold text-4xl xl:text-5xl">
@@ -127,7 +127,7 @@ const features = [
             />
         </div>
 
-        <div class="bg-white mt-20">
+        <div class="bg-white mt-16 sm:mt-20">
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 xl:gap-12 text-center px-8 sm:px-16 2xl:px-48 py-8">
                 <div
                     v-for="feature in features"
