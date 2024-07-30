@@ -5,6 +5,8 @@ import type { RegisteredService } from '~/interfaces/services-registry';
 
 const { t } = useI18n();
 
+const sarCheckbox = ref(false);
+
 const props = defineProps({
     registeredService: {
         type: Object as () => RegisteredService,
@@ -31,6 +33,7 @@ const schema = z.object({
         .trim()
         .min(1, { message: t('required') })
         .regex(new RegExp(/^[a-zA-Z0-9-/]+$/), { message: t('registry.servicesRegistry.invalidServiceUrl') }),
+    sarCheckbox: z.boolean().optional(),
 });
 
 const isFormValid = computed(() => {
@@ -83,6 +86,9 @@ const submitForm = async () => {
                             class="flex-1"
                             size="md"
                         />
+                    </UFormGroup>
+                    <UFormGroup :label="$t('registry.servicesRegistry.sar')" name="sarCheckbox" class="w-full">
+                        <UCheckbox v-model="sarCheckbox" name="sar" />
                     </UFormGroup>
                 </div>
                 <div class="flex gap-4 justify-between items-center mt-8">

@@ -115,6 +115,7 @@ export default defineI18nConfig(() => ({
                     errorInSave: 'An error occurred while saving a service mapping',
                     errorInUpdate: 'An error occurred while updating the service mapping',
                     invalidServiceUrl: 'Service URL can only contain alphanumeric characters, "/" and "-"',
+                    sar: 'Service account role',
                 },
                 createFactory: 'Create Factory',
                 registry: 'Factory Registry',
