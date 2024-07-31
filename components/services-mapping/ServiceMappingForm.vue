@@ -5,8 +5,6 @@ import type { RegisteredService } from '~/interfaces/services-registry';
 
 const { t } = useI18n();
 
-const sarCheckbox = ref(false);
-
 const props = defineProps({
     registeredService: {
         type: Object as () => RegisteredService,
@@ -18,6 +16,8 @@ const props = defineProps({
     },
 });
 const emit = defineEmits(['submitForm']);
+
+const sar = ref(props.registeredService.sar ? props.registeredService.sar : false);
 
 const body = ref<RegisteredService>({
     ...props.registeredService,
@@ -33,7 +33,7 @@ const schema = z.object({
         .trim()
         .min(1, { message: t('required') })
         .regex(new RegExp(/^[a-zA-Z0-9-/]+$/), { message: t('registry.servicesRegistry.invalidServiceUrl') }),
-    sarCheckbox: z.boolean().optional(),
+    sar: z.boolean().optional(),
 });
 
 const isFormValid = computed(() => {
@@ -48,10 +48,9 @@ const navigateToMainPage = async () => {
 
 const submitForm = async () => {
     if (!isFormValid.value) return;
-
+    body.value.sar = sar.value;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...bodyInfo } = body.value;
-
     emit('submitForm', bodyInfo);
 };
 </script>
@@ -88,7 +87,7 @@ const submitForm = async () => {
                         />
                     </UFormGroup>
                     <UFormGroup :label="$t('registry.servicesRegistry.sar')" name="sarCheckbox" class="w-full">
-                        <UCheckbox v-model="sarCheckbox" name="sar" />
+                        <UCheckbox v-model="sar" name="sar" />
                     </UFormGroup>
                 </div>
                 <div class="flex gap-4 justify-between items-center mt-8">

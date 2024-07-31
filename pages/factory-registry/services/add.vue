@@ -8,6 +8,7 @@ const registeredService = ref<RegisteredService>({
     id: '',
     serviceName: '',
     serviceUrl: '',
+    sar: false,
 });
 
 const pendingCreate = ref(false);
