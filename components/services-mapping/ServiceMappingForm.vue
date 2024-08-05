@@ -17,7 +17,7 @@ const props = defineProps({
 });
 const emit = defineEmits(['submitForm']);
 
-const sar = ref(props.registeredService.sar ? props.registeredService.sar : false);
+const sar = ref(props.registeredService.sar);
 
 const body = ref<RegisteredService>({
     ...props.registeredService,
