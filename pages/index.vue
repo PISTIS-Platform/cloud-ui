@@ -121,29 +121,26 @@ const features = [
         </div>
 
         <div class="bg-white mt-16 sm:mt-20">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 xl:gap-12 text-center px-8 sm:px-16 2xl:px-48 py-24">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 xl:gap-12 text-center px-8 sm:px-16 2xl:px-48 py-20">
                 <div
                     v-for="feature in features"
                     :key="feature.title"
                     class="flex flex-col justify-start items-center gap-4 rounded-lg py-8"
                 >
                     <UIcon :name="feature.icon" class="w-16 h-16 text-primary-600" />
-                    <h2 class="font-semibold text-2xl text-black">{{ feature.title }}</h2>
                     <p>{{ feature.description }}</p>
                 </div>
             </div>
         </div>
 
-        <footer
-            class="flex flex-col gap-4 w-full h-full bg-primary-600 px-8 pt-16 pb-10 sm:px-16 2xl:px-48 text-white text-sm"
-        >
-            <p>
+        <footer class="flex justify-start items-center gap-4 w-full bg-primary-950 px-8 pt-16 pb-10 sm:px-16 2xl:px-48">
+            <img class="w-12 h-8" src="/img/eu_flag.jpeg" alt="PISTIS logo" />
+            <p class="text-white text-sm">
                 This project has received funding from the European Union under Grant Agreement n° 101093016. Views and
                 opinions expressed are however those of the author(s) only and do not necessarily reflect those of the
                 European Union or the European Commission. Neither the European Union nor the granting authority can be
                 held responsible for them.”
             </p>
-            <img class="w-12 h-8" src="/img/eu_flag.jpeg" alt="PISTIS logo" />
         </footer>
     </div>
 </template>
