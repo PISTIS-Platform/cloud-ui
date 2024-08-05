@@ -12,47 +12,43 @@ const callbackUrl = '/dashboard';
 const features = [
     {
         title: 'Feature 1',
-        description: 'Lorem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:cpu-chip',
+        description: 'Sell your data assets and retrieve value',
+        icon: 'material-symbols:sell-outline',
     },
     {
         title: 'Feature 2',
-        description:
-            'Lorem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test rem ipsum test test Lorem',
-        icon: 'heroicons:arrow-down-on-square-stack',
+        description: 'Find data assets to buy',
+        icon: 'icon-park-outline:buy',
     },
     {
         title: 'Feature 3',
-        description: 'Lorem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:arrow-down-on-square-stack',
+        description: 'Check and improve the value of your data asset',
+        icon: 'carbon:data-quality-definition',
     },
     {
         title: 'Feature 4',
-        description:
-            'Lorem ipsum test test Lorem ipsum testrem ipsum test test Lorem ipsum test  Lorem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:cloud-arrow-down-20-solid',
+        description: 'Transform data assets into market-ready bundles',
+        icon: 'mdi:package-variant-plus',
     },
     {
         title: 'Feature 5',
-        description:
-            'Lorem ipsum test test Lorem ipsum test rem ipsum test test Lorem ipsum testrem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:cloud-arrow-down-20-solid',
+        description: 'Peer-to-Peer data transfer with no intermediaries',
+        icon: 'hugeicons:peer-to-peer-01',
     },
     {
         title: 'Feature 6',
-        description: 'Lorem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:arrow-down-on-square-stack',
+        description: 'Monitor proper data usage based on license agreements',
+        icon: 'icon-park-outline:agreement',
     },
     {
         title: 'Feature 7',
-        description:
-            'Lorem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test rem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:arrow-down-on-square-stack',
+        description: 'Track the evolution and lineage of data operations',
+        icon: 'carbon:ibm-cloud-pak-manta-automated-data-lineage',
     },
     {
         title: 'Feature 8',
-        description: 'Lorem ipsum test test Lorem ipsum test Lorem ipsum test test Lorem ipsum test',
-        icon: 'heroicons:arrow-down-on-square-stack',
+        description: 'Monitor the evolution of the data market',
+        icon: 'icon-park-outline:stock-market',
     },
 ];
 </script>
@@ -91,7 +87,7 @@ const features = [
         </nav>
 
         <div
-            class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full mt-20 px-8 gap-12 sm:gap-12 2xl:gap-0 sm:px-16 2xl:px-48"
+            class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full mt-20 gap-12 sm:gap-12 2xl:gap-0 px-8 sm:px-16 2xl:px-48"
         >
             <div class="relative flex flex-col items-center sm:items-start justify-center space-y-6">
                 <h2 class="text-white text-center sm:text-left tracking-wide font-bold text-4xl xl:text-5xl">
@@ -101,8 +97,10 @@ const features = [
                 <p
                     class="font-normal text-center sm:text-left tracking-wide text-lg lg:text-xl max-w-2xl sm:max-w-4xl text-white"
                 >
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus natus sed iusto consequuntur unde,
-                    quidem eos in perspiciatis voluptate quo quos debitis vitae adipisci, aut fugit sit, ullam hic cum!
+                    PISTIS allows member organisations to sell and buy data, opening up new revenue streams through the
+                    monetisation of data assets. Using the PISTIS infrastructure, organisations can improve the quality
+                    of their in-house data, and place them on the market, though different revenue mechanisms to enjoy
+                    monetary benefits via secure and privacy aware data sharing modes.
                 </p>
 
                 <div class="flex gap-4 text-sm font-normal lg:text-lg lg:font-medium">
@@ -112,11 +110,6 @@ const features = [
                         @click="signIn('keycloak', { callbackUrl })"
                     >
                         Sign In
-                    </button>
-                    <button
-                        class="inline-flex items-center px-6 py-2 text-white bg-primary-600 border border-white rounded-md hover:text-primary-800 hover:bg-white cursor-pointer transition-all"
-                    >
-                        Register Now
                     </button>
                 </div>
             </div>
@@ -128,7 +121,7 @@ const features = [
         </div>
 
         <div class="bg-white mt-16 sm:mt-20">
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 xl:gap-12 text-center px-8 sm:px-16 2xl:px-48 py-8">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 xl:gap-12 text-center px-8 sm:px-16 2xl:px-48 py-24">
                 <div
                     v-for="feature in features"
                     :key="feature.title"
@@ -140,5 +133,17 @@ const features = [
                 </div>
             </div>
         </div>
+
+        <footer
+            class="flex flex-col gap-4 w-full h-full bg-primary-600 px-8 pt-16 pb-10 sm:px-16 2xl:px-48 text-white text-sm"
+        >
+            <p>
+                This project has received funding from the European Union under Grant Agreement n° 101093016. Views and
+                opinions expressed are however those of the author(s) only and do not necessarily reflect those of the
+                European Union or the European Commission. Neither the European Union nor the granting authority can be
+                held responsible for them.”
+            </p>
+            <img class="w-12 h-8" src="/img/eu_flag.jpeg" alt="PISTIS logo" />
+        </footer>
     </div>
 </template>
