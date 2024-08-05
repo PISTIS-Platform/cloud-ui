@@ -75,14 +75,13 @@ const features = [
             </div>
 
             <!-- Pistis website Button -->
-            <div class="flex">
-                <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
-                    <button
-                        class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
-                    >
-                        Find out more
-                    </button></NuxtLink
+            <div v-if="status !== 'authenticated'" class="flex">
+                <button
+                    class="inline-flex items-center px-6 py-2 text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                    @click="signIn('keycloak', { callbackUrl })"
                 >
+                    Sign In
+                </button>
             </div>
         </nav>
 
@@ -104,13 +103,13 @@ const features = [
                 </p>
 
                 <div class="flex gap-4 text-sm font-normal lg:text-lg lg:font-medium">
-                    <button
-                        v-if="status !== 'authenticated'"
-                        class="inline-flex items-center px-6 py-2 text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
-                        @click="signIn('keycloak', { callbackUrl })"
+                    <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
+                        <button
+                            class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        >
+                            Find out more
+                        </button></NuxtLink
                     >
-                        Sign In
-                    </button>
                 </div>
             </div>
             <img
