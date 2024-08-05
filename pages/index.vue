@@ -74,7 +74,7 @@ const features = [
                 >
             </div>
 
-            <!-- Pistis website Button -->
+            <!-- Sign In button -->
             <div v-if="status !== 'authenticated'" class="flex">
                 <button
                     class="inline-flex items-center px-6 py-2 text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
@@ -102,6 +102,7 @@ const features = [
                     monetary benefits via secure and privacy aware data sharing modes.
                 </p>
 
+                <!-- Pistis website redirect button -->
                 <div class="flex gap-4 text-sm font-normal lg:text-lg lg:font-medium">
                     <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
                         <button
@@ -115,7 +116,7 @@ const features = [
             <img
                 class="w-96 h-80 sm:w-56 sm:h-60 2xl:w-96 2xl:h-80 rounded-full"
                 src="/img/data-share.png"
-                alt="PISTIS logo"
+                alt="Data Share image"
             />
         </div>
 
