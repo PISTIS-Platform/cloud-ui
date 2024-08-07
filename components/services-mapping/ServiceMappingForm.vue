@@ -31,6 +31,7 @@ const schema = z.object({
         .trim()
         .min(1, { message: t('required') })
         .regex(new RegExp(/^[a-zA-Z0-9-/]+$/), { message: t('registry.servicesRegistry.invalidServiceUrl') }),
+    sar: z.boolean().default(false),
 });
 
 const isFormValid = computed(() => {
@@ -45,10 +46,8 @@ const navigateToMainPage = async () => {
 
 const submitForm = async () => {
     if (!isFormValid.value) return;
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...bodyInfo } = body.value;
-
     emit('submitForm', bodyInfo);
 };
 </script>
@@ -83,6 +82,9 @@ const submitForm = async () => {
                             class="flex-1"
                             size="md"
                         />
+                    </UFormGroup>
+                    <UFormGroup :label="$t('registry.servicesRegistry.sar')" name="sarCheckbox" class="w-full">
+                        <UCheckbox v-model="body.sar" name="sar" />
                     </UFormGroup>
                 </div>
                 <div class="flex gap-4 justify-between items-center mt-8">
