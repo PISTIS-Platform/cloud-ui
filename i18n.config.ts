@@ -46,6 +46,12 @@ export default defineI18nConfig(() => ({
             delete: 'Delete',
             goBack: 'Go Back',
             title: 'Title',
+            notifications: {
+                title: 'Notifications',
+                markRead: 'Mark as read',
+                hide: 'Hide',
+                noNotifications: 'No notifications available.',
+            },
             dashboard: {
                 dashboard: 'Dashboard',
                 status: 'Status',
