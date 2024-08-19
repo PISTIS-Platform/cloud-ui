@@ -59,7 +59,9 @@ const notifications = ref([
     },
 ]);
 
-const unreadNotifications = computed(() => notifications.value.filter((notification) => !notification.readAt));
+const unreadNotifications = computed(() =>
+    notifications.value.filter((notification) => !notification.readAt && !notification.isHidden),
+);
 
 const notificationsNumberText = computed(() =>
     unreadNotifications.value.length > 9 ? '9+' : unreadNotifications.value.length,
