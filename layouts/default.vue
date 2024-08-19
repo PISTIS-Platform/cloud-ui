@@ -16,6 +16,54 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 ];
 
 const userNavigation: { name: string; to: string; icon?: string }[] = [];
+
+//TODO: Api call to get notifications here
+
+const notifications = ref([
+    {
+        id: '1',
+        userId: '2',
+        organizationId: '3',
+        message: 'Your notification text goes here.',
+        isHidden: false,
+        createdAt: new Date(),
+        readAt: null,
+    },
+    {
+        id: '2',
+        userId: '2',
+        organizationId: '3',
+        message:
+            'Sit ad dolor sint. Qui laboris Lorem elit velit. Incididunt nulla nisi ipsum et aliquip nulla fugiat ullamco. Quis sit elit exercitation mollit elit ut sint. Et id dolore velit cillum. Commodo fugiat proident elit irure exercitation deserunt sint. Nulla velit consectetur sit mollit ex.',
+        isHidden: false,
+        createdAt: new Date(),
+        readAt: null,
+    },
+    {
+        id: '3',
+        userId: '2',
+        organizationId: '3',
+        message: 'Your notification text goes here.',
+        isHidden: true,
+        createdAt: new Date(),
+        readAt: null,
+    },
+    {
+        id: '4',
+        userId: '2',
+        organizationId: '3',
+        message: 'Your notification text goes here.',
+        isHidden: false,
+        createdAt: new Date(),
+        readAt: new Date(),
+    },
+]);
+
+const unreadNotifications = computed(() => notifications.value.filter((notification) => !notification.readAt));
+
+const notificationsNumberText = computed(() =>
+    unreadNotifications.value.length > 9 ? '9+' : unreadNotifications.value.length,
+);
 </script>
 
 <template>
@@ -46,15 +94,18 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
                     <template v-if="status === 'authenticated'">
                         <div class="hidden md:block">
                             <div class="ml-4 flex items-center space-x-2 md:ml-6">
-                                <button
+                                <UButton
                                     type="button"
-                                    class="relative rounded-full bg-primary-700 w-10 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                                    class="flex gap-1 items-center relative rounded-full bg-primary-70 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
                                     to="/notifications"
                                 >
                                     <span class="absolute -inset-1.5" />
                                     <span class="sr-only">View notifications</span>
+                                    <div class="bg-red-500 rounded-full w-7 h-7 flex items-center justify-center">
+                                        {{ notificationsNumberText }}
+                                    </div>
                                     <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
-                                </button>
+                                </UButton>
 
                                 <!-- Profile dropdown -->
                                 <Menu as="div" class="relative">
@@ -164,14 +215,18 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
                             <div class="text-base font-medium text-white">{{ session?.user?.name }}</div>
                             <div class="text-sm -mt-0.5 text-primary-300">{{ session?.user?.email }}</div>
                         </div>
-                        <button
+                        <UButton
                             type="button"
-                            class="relative ml-auto flex-shrink-0 rounded-full bg-primary-700 p-1 text-primary-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                            class="flex gap-1 items-center relative rounded-full bg-primary-70 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                            to="/notifications"
                         >
                             <span class="absolute -inset-1.5" />
                             <span class="sr-only">View notifications</span>
+                            <div class="bg-red-500 rounded-full w-7 h-7 flex items-center justify-center">
+                                {{ notificationsNumberText }}
+                            </div>
                             <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
-                        </button>
+                        </UButton>
                     </div>
                     <div class="mt-3 space-y-1 px-5">
                         <DisclosureButton
