@@ -103,7 +103,10 @@ const notificationsNumberText = computed(() =>
                                 >
                                     <span class="absolute -inset-1.5" />
                                     <span class="sr-only">View notifications</span>
-                                    <div class="bg-red-500 rounded-full w-7 h-7 flex items-center justify-center">
+                                    <div
+                                        v-if="unreadNotifications.length"
+                                        class="bg-red-500 rounded-full w-7 h-7 flex items-center justify-center"
+                                    >
                                         {{ notificationsNumberText }}
                                     </div>
                                     <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
@@ -224,7 +227,10 @@ const notificationsNumberText = computed(() =>
                         >
                             <span class="absolute -inset-1.5" />
                             <span class="sr-only">View notifications</span>
-                            <div class="bg-red-500 rounded-full w-7 h-7 flex items-center justify-center">
+                            <div
+                                v-if="unreadNotifications.length"
+                                class="bg-red-500 rounded-full w-7 h-7 flex items-center justify-center"
+                            >
                                 {{ notificationsNumberText }}
                             </div>
                             <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
