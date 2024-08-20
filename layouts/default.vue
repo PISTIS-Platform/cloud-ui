@@ -19,45 +19,11 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
 
 //TODO: Api call to get notifications here
 
-const notifications = ref([
-    {
-        id: '1',
-        userId: '2',
-        organizationId: '3',
-        message: 'Your notification text goes here.',
-        isHidden: false,
-        createdAt: new Date(),
-        readAt: null,
-    },
-    {
-        id: '2',
-        userId: '2',
-        organizationId: '3',
-        message:
-            'Sit ad dolor sint. Qui laboris Lorem elit velit. Incididunt nulla nisi ipsum et aliquip nulla fugiat ullamco. Quis sit elit exercitation mollit elit ut sint. Et id dolore velit cillum. Commodo fugiat proident elit irure exercitation deserunt sint. Nulla velit consectetur sit mollit ex.',
-        isHidden: false,
-        createdAt: new Date(),
-        readAt: null,
-    },
-    {
-        id: '3',
-        userId: '2',
-        organizationId: '3',
-        message: 'Your notification text goes here.',
-        isHidden: true,
-        createdAt: new Date(),
-        readAt: null,
-    },
-    {
-        id: '4',
-        userId: '2',
-        organizationId: '3',
-        message: 'Your notification text goes here.',
-        isHidden: false,
-        createdAt: new Date(),
-        readAt: new Date(),
-    },
-]);
+import { useMessagesStore } from '~/store/messages';
+
+const messagesStore = useMessagesStore();
+
+const notifications = computed(() => messagesStore.getMessages);
 
 const unreadNotifications = computed(() =>
     notifications.value.filter((notification) => !notification.readAt && !notification.isHidden),
