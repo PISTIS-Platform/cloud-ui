@@ -6,6 +6,12 @@ useHead({
     bodyAttrs: { class: 'h-full' },
 });
 
+import { useMessagesStore } from '~/store/messages';
+
+const messagesStore = useMessagesStore();
+
+const { showInfoMessage } = useAlertMessage();
+
 const { status, signIn, signOut, data: session } = useAuth();
 
 const navigation: { name: string; to: string; roles: string[] }[] = [
@@ -17,11 +23,30 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 
 const userNavigation: { name: string; to: string; icon?: string }[] = [];
 
+//begin socket.io config
+import { io } from 'socket.io-client';
+
+const WS_URL = 'http://localhost:3002';
+
+const socket = io(WS_URL);
+
+socket.on('connect', () => {
+    console.log('Connected to NestJS WS');
+});
+
+socket.on('disconnect', () => {
+    console.log('Disconnected from NestJS WS');
+});
+
+socket.on('onMessage', (...args) => {
+    showInfoMessage(args[0].message);
+    console.log('MESSAGE RECEIVED');
+    messagesStore.addMessage(args[0]);
+});
+
+//end socket.io config
+
 //TODO: Api call to get notifications here
-
-import { useMessagesStore } from '~/store/messages';
-
-const messagesStore = useMessagesStore();
 
 const notifications = computed(() => messagesStore.getMessages);
 
