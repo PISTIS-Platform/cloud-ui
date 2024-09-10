@@ -42,6 +42,18 @@ const suspend = async (id: string | number) => {
         showErrorMessage(t('registry.factoryActivationError'));
     }
 };
+const recreate = async (id: string | number) => {
+    switchModalOpen.value = false;
+    try {
+        await $fetch(`/api/factories-registry/recreate/${id}`, {
+            method: 'put',
+        });
+        showSuccessMessage(t('registry.factoryRecreateSuccess'));
+        refresh();
+    } catch {
+        showErrorMessage(t('registry.factoryRecreateError'));
+    }
+};
 
 const getStatusColorClass = (status: string) => {
     return {
@@ -69,8 +81,13 @@ const columns = [
         sortable: true,
     },
     {
-        key: 'actions',
+        key: 'status',
         label: `${t('registry.status')}`,
+        class: 'text-center',
+    },
+    {
+        key: 'actions',
+        label: `${t('registry.actions')}`,
         class: 'text-center',
     },
 ];
@@ -115,7 +132,7 @@ const select = (row: any, actionGiven: string) => {
                         {{ t('registry.noIp') }}
                     </span>
                 </template>
-                <template #actions-data="{ row }">
+                <template #status-data="{ row }">
                     <div class="flex justify-center items-center">
                         <div class="flex items-center justify-start gap-1 w-52">
                             <UIcon
@@ -153,6 +170,15 @@ const select = (row: any, actionGiven: string) => {
                         </div>
                     </div>
                 </template>
+                <template #actions-data="{ row }">
+                    <div class="flex justify-center items-center">
+                        <div class="flex-col justify-end">
+                            <UButton variant="outline" @click="select(row, 'recreate')"
+                                >{{ t('registry.recreate') }}
+                            </UButton>
+                        </div>
+                    </div>
+                </template>
             </UTable>
 
             <!-- Display the pagination only if the total number of transactions is larger than the page count -->
@@ -164,7 +190,11 @@ const select = (row: any, actionGiven: string) => {
             <UCard class="flex flex-col justify-center items-center text-center text-gray-700 h-40">
                 <p class="font-bold text-xl">{{ $t('areYouSure') }}</p>
                 <span>{{
-                    action === 'activate' ? t('registry.areYouSureActivate') : t('registry.areYouSureSuspend')
+                    action === 'activate'
+                        ? t('registry.areYouSureActivate')
+                        : action === 'suspend'
+                          ? t('registry.areYouSureSuspend')
+                          : t('registry.areYouSureRecreate')
                 }}</span>
                 <br />
                 <span>{{ t('registry.organizationName') + ': ' + selectedRow.organizationName }}</span>
@@ -174,7 +204,13 @@ const select = (row: any, actionGiven: string) => {
                     }}</UButton>
                     <UButton
                         class="w-20 flex justify-center"
-                        @click="action === 'activate' ? activate(selectedRow.id) : suspend(selectedRow.id)"
+                        @click="
+                            action === 'activate'
+                                ? activate(selectedRow.id)
+                                : action === 'suspend'
+                                  ? suspend(selectedRow.id)
+                                  : recreate(selectedRow.organizationId)
+                        "
                         >{{ $t('yes') }}</UButton
                     >
                 </div>
