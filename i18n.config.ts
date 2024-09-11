@@ -172,7 +172,6 @@ export default defineI18nConfig(() => ({
                 recreate: 'Recreate',
                 factoryRecreateSuccess: 'Factory services recreated successfully',
                 factoryRecreateError: 'Error occurred while factory services recreation',
-                // factoryRecreated: ''
             },
             validation: {
                 atLeastNumberChars: 'Must be at least {count} characters',
