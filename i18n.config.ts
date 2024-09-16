@@ -49,6 +49,8 @@ export default defineI18nConfig(() => ({
             dashboard: {
                 dashboard: 'Dashboard',
                 status: 'Status',
+                wallet: 'Please activate your wallet',
+                walletButton: 'Activate',
                 resources: {
                     name: 'Resources',
                     title: 'Resources & Activities Monitor',
