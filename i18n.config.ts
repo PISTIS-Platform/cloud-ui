@@ -328,6 +328,7 @@ export default defineI18nConfig(() => ({
                 transaction: 'Transaction Id',
                 balance: 'Balance',
                 noTransactions: 'No transactions available',
+                lastWeek: 'more since last week',
             },
         },
     },

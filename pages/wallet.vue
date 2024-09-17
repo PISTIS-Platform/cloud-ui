@@ -1,34 +1,89 @@
 <script lang="ts" setup>
+import dayjs from 'dayjs';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+
 import type TableColumn from '~/interfaces/table-column';
 import type { Transaction } from '~/interfaces/wallet-table';
 
+dayjs.extend(isSameOrBefore);
+
 const { t } = useI18n();
 
-const { data /*error, refresh*/ } = await useLazyFetch<Transaction[]>('/api/wallet');
-
-const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transaction>(data, 10, {
+//TODO: Change the operation below when we have answer from ICCS/UBI
+/*const { data, error, refresh } = await useLazyFetch<Transaction[]>('/api/wallet');*/
+const data = [
+    {
+        transactionDate: '2024-09-17T13:09:38.901Z',
+        transactionId: '1',
+        amount: 400,
+    },
+    {
+        transactionDate: '2024-09-17T13:09:38.901Z',
+        transactionId: '2',
+        amount: 500,
+    },
+    {
+        transactionDate: '2024-09-16T13:09:38.901Z',
+        transactionId: '3',
+        amount: 50,
+    },
+    {
+        transactionDate: '2024-09-15T13:09:38.901Z',
+        transactionId: '4',
+        amount: 30,
+    },
+    {
+        transactionDate: '2024-09-01T13:09:38.901Z',
+        transactionId: '5',
+        amount: 100,
+    },
+    {
+        transactionDate: '2024-09-02T13:09:38.901Z',
+        transactionId: '6',
+        amount: 200,
+    },
+    {
+        transactionDate: '2024-09-02T13:09:38.901Z',
+        transactionId: '7',
+        amount: 400,
+    },
+];
+const currentDate = new Date();
+const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transaction[]>(data, 10, {
     column: 'transactionDate',
     direction: 'desc',
 });
 
+//TODO: Change the operation below when we have answer from ICCS/UBI
+const currentBalance = /*await useLazyFetch<Balance>('/api/wallet/balance');*/ 3500;
+
+const previousWeekTransactions = data.filter((item) =>
+    dayjs(item.transactionDate).isSameOrBefore(dayjs(currentDate).subtract(1, 'week')),
+);
+
+let pervBalance = 0;
+previousWeekTransactions.forEach((value) => {
+    pervBalance = pervBalance + value.amount;
+});
+
 const columns: TableColumn[] = [
-    {
-        key: 'amount',
-        label: t('wallet.amount'),
-        sortable: true,
-    },
     {
         key: 'transactionDate',
         label: t('wallet.date'),
         sortable: true,
-        class: 'text-center w-3/5',
+        class: 'text-center w-1/3',
     },
     {
         key: 'transactionId',
         label: t('wallet.transaction'),
-        class: 'w-4/5',
+        class: 'text-center w-1/3',
     },
-    { key: 'actions', label: '', sortable: false, class: 'w-1/12 text-center' },
+    {
+        key: 'amount',
+        label: t('wallet.amount'),
+        class: 'text-center w-1/3',
+        sortable: true,
+    },
 ];
 </script>
 
@@ -37,27 +92,42 @@ const columns: TableColumn[] = [
         <PageContainer>
             <div class="flex flex-col w-full">
                 <div class="w-full place-items-stretch pb-4">
-                    <UCard :ui="{ body: { base: '', padding: 'p-4 sm:p-4' } }">
-                        <div class="relative flex items-center">
-                            <div class="flex-shrink-0 mr-4">
-                                <UIcon
-                                    name="i-heroicons-currency-dollar-20-solid"
-                                    class="w-10 h-10 text-secondary-300"
-                                />
+                    <div class="relative flex items-center">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center w-full space-x-2">
+                                <div class="flex-shrink-0">
+                                    <UIcon
+                                        name="i-heroicons-currency-dollar-20-solid"
+                                        class="w-8 h-8 text-secondary-300"
+                                    />
+                                </div>
+                                <h3 class="text-base xl:text-lg font-normal">
+                                    {{ t('wallet.balance') }}
+                                </h3>
+                                <!-- TODO: need to change the values below when we have the endpoints from wallet -->
+                                <div :class="['text-lg font-bold text-green-800']">
+                                    {{ currentBalance }} {{ 'STC' }}
+                                </div>
                             </div>
-                            <div class="min-w-0 flex-1">
-                                <div class="flex justify-start items-center w-full space-x-2">
-                                    <h3 class="text-base xl:text-lg font-normal">
-                                        {{ t('wallet.balance') }}
-                                    </h3>
+                            <div class="flex items-center w-full space-x-2">
+                                <div class="flex-shrink-0">
+                                    <UIcon
+                                        :name="pervBalance > 0 ? 'i-heroicons-arrow-trending-up' : 'i-heroicons-minus'"
+                                        class="w-8 h-8 text-secondary-300"
+                                    />
                                 </div>
                                 <!-- TODO: need to change the values below when we have the endpoints from wallet -->
-                                <div :class="['text-lg font-bold', 1 > 0 ? 'text-green-800' : 'text-red-800']">
-                                    {{ '3500' }} {{ 'STC' }}
+                                <div
+                                    :class="['text-lg font-bold', pervBalance > 0 ? 'text-green-800' : 'text-gray-800']"
+                                >
+                                    {{ pervBalance }} {{ 'STC' }}
                                 </div>
+                                <h3 class="text-base xl:text-lg font-normal">
+                                    {{ t('wallet.lastWeek') }}
+                                </h3>
                             </div>
                         </div>
-                    </UCard>
+                    </div>
                 </div>
                 <div class="w-full place-items-stretch">
                     <UCard>

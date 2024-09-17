@@ -50,7 +50,7 @@ export const useTable = <T>(data: Ref<T[] | null>, numOfItems: number = 10, defa
         if (!paginatedResults.length && filteredRows.value.length && page.value !== 1) {
             return getPaginatedRows(page.value - 1);
         }
-
+        console.log(paginatedResults);
         return paginatedResults;
     });
 
