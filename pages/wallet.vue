@@ -86,29 +86,15 @@ const columns: TableColumn[] = [
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <div class="flex flex-col w-full">
-                <div class="w-full place-items-stretch pb-4">
-                    <div class="relative flex items-center">
-                        <div class="min-w-0 item-center flex-1">
-                            <div class="flex w-full space-x-2">
-                                <div class="flex-shrink-0 item-center">
-                                    <UIcon
-                                        name="i-heroicons-currency-dollar-20-solid"
-                                        class="w-8 h-8 text-secondary-300"
-                                    />
-                                </div>
-                                <h3 class="text-base xl:text-lg font-normal mt-1">
-                                    {{ t('wallet.balance') }}
-                                </h3>
-                                <div class="text-lg mt-1 font-bold text-green-800">
-                                    {{ currentBalance }} {{ 'STC' }}
-                                </div>
-                                <div class="mt-1">
-                                    {{ '(+' }}
-                                    <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
-                                    {{ t('wallet.balanceInMonth') + ')' }}
-                                </div>
-                            </div>
-                        </div>
+                <div class="relative w-full pb-4 flex items-center justify-end space-x-2">
+                    <h3 class="text-base xl:text-lg font-normal mt-1">
+                        {{ t('wallet.balance') }}
+                    </h3>
+                    <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance }} {{ 'STC' }}</div>
+                    <div class="mt-1">
+                        {{ '(+' }}
+                        <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
+                        {{ t('wallet.balanceInMonth') + ')' }}
                     </div>
                 </div>
                 <div class="w-full place-items-stretch">
