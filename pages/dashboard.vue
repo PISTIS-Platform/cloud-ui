@@ -127,36 +127,12 @@ const computedWeeklyMoneyData = computed(() => ({
         },
     ],
 }));
-
-const userWallet = computed(() => {
-    //TODO: Ask Marios where we can store the info of wallet(keycloak or ask in every login ICCS)
-    if ('userWallet') {
-        return true;
-    }
-    return false;
-});
-
-const alert = async () => {
-    //TODO: call ICCS to create the wallet, ask them for the payload
-    console.log('alert');
-};
 </script>
 
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <div class="flex flex-col w-full">
-                <div v-if="userWallet" class="pb-2">
-                    <UAlert
-                        class="bg-yellow-100"
-                        icon="i-heroicons-wallet"
-                        variant="solid"
-                        :title="t('dashboard.wallet')"
-                        :actions="[
-                            { variant: 'ghost', color: 'primary', label: t('dashboard.walletButton'), click: alert },
-                        ]"
-                    />
-                </div>
                 <div class="grid grid-cols-2 gap-4 place-items-stretch">
                     <!-- Components statuses -->
                     <UCard :ui="{ base: 'w-full h-full' }">
