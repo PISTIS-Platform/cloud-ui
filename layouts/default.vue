@@ -6,6 +6,12 @@ useHead({
     bodyAttrs: { class: 'h-full' },
 });
 
+const { showInfoMessage } = useAlertMessage();
+
+import { useMessagesStore } from '~/store/messages';
+
+const messagesStore = useMessagesStore();
+
 const { status, signIn, signOut, data: session } = useAuth();
 
 const navigation: { name: string; to: string; roles: string[] }[] = [
@@ -16,6 +22,44 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 ];
 
 const userNavigation: { name: string; to: string; icon?: string }[] = [];
+
+//begin websockets config
+const { data: wsData, send } = useWebSocket(`ws://${location.host}/api/notifications/messages`);
+
+function getAllNotifications() {
+    if (status.value !== 'authenticated') return;
+    send(
+        JSON.stringify({
+            action: 'getAllNotifications',
+        }),
+    );
+}
+
+getAllNotifications();
+
+//watching the data value where new messages come
+watch(wsData, (newValue) => {
+    if (!newValue) return;
+    const message = JSON.parse(newValue);
+    if (Array.isArray(message)) {
+        messagesStore.setMessages(message);
+        return;
+    }
+    showInfoMessage(message.message);
+    messagesStore.addMessage(message);
+});
+
+//end websockets config
+
+const notifications = computed(() => messagesStore.getMessages);
+
+const unreadNotifications = computed(() =>
+    notifications.value.filter((notification) => !notification.readAt && !notification.isHidden),
+);
+
+const notificationsNumberText = computed(() =>
+    unreadNotifications.value.length > 9 ? '9+' : unreadNotifications.value.length,
+);
 </script>
 
 <template>
@@ -46,15 +90,21 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
                     <template v-if="status === 'authenticated'">
                         <div class="hidden md:block">
                             <div class="ml-4 flex items-center space-x-2 md:ml-6">
-                                <button
+                                <UButton
                                     type="button"
-                                    class="relative rounded-full bg-primary-700 w-10 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                                    class="flex gap-1 items-center relative rounded-full bg-primary-70 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600 mr-1"
                                     to="/notifications"
                                 >
                                     <span class="absolute -inset-1.5" />
                                     <span class="sr-only">View notifications</span>
-                                    <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
-                                </button>
+                                    <div
+                                        v-if="unreadNotifications.length"
+                                        class="bg-red-500 rounded-full w-5 h-5 text-xs flex items-center justify-center absolute top-0 z-20 -right-0.5"
+                                    >
+                                        {{ notificationsNumberText }}
+                                    </div>
+                                    <UIcon name="i-heroicons-bell" class="h-7 w-7" aria-hidden="true" />
+                                </UButton>
 
                                 <!-- Profile dropdown -->
                                 <Menu as="div" class="relative">
@@ -164,14 +214,21 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
                             <div class="text-base font-medium text-white">{{ session?.user?.name }}</div>
                             <div class="text-sm -mt-0.5 text-primary-300">{{ session?.user?.email }}</div>
                         </div>
-                        <button
+                        <UButton
                             type="button"
-                            class="relative ml-auto flex-shrink-0 rounded-full bg-primary-700 p-1 text-primary-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                            class="relative flex gap-1 items-center relative rounded-full bg-primary-70 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                            to="/notifications"
                         >
                             <span class="absolute -inset-1.5" />
                             <span class="sr-only">View notifications</span>
-                            <UIcon name="i-heroicons-bell" class="h-6 w-6" aria-hidden="true" />
-                        </button>
+                            <div
+                                v-if="unreadNotifications.length"
+                                class="bg-red-500 rounded-full w-5 h-5 text-xs flex items-center justify-center absolute top-0 z-20 -right-0.5"
+                            >
+                                {{ notificationsNumberText }}
+                            </div>
+                            <UIcon name="i-heroicons-bell" class="h-7 w-7" aria-hidden="true" />
+                        </UButton>
                     </div>
                     <div class="mt-3 space-y-1 px-5">
                         <DisclosureButton
