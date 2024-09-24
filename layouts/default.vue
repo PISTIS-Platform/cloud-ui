@@ -23,19 +23,9 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 
 const userNavigation: { name: string; to: string; icon?: string }[] = [];
 
-//begin websockets config
-const { data: wsData, send } = useWebSocket(`ws://${location.host}/api/notifications/messages`);
-
-function getAllNotifications() {
-    if (status.value !== 'authenticated') return;
-    send(
-        JSON.stringify({
-            action: 'getAllNotifications',
-        }),
-    );
-}
-
-getAllNotifications();
+const { host, protocol } = location;
+const { data: wsData } = useWebSocket(`${protocol.replace('http', 'ws')}//${host}/api/messages`);
+// const { status: wsStatus, data: wsData, send, open, close } = useWebSocket(`ws://${location.host}/api/messages`);
 
 //watching the data value where new messages come
 watch(wsData, (newValue) => {
@@ -48,8 +38,6 @@ watch(wsData, (newValue) => {
     showInfoMessage(message.message);
     messagesStore.addMessage(message);
 });
-
-//end websockets config
 
 const notifications = computed(() => messagesStore.getMessages);
 
