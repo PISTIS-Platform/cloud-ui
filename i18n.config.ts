@@ -321,6 +321,14 @@ export default defineI18nConfig(() => ({
                     validFile: 'Please upload a valid file',
                 },
             },
+            notifications: {
+                notifications: 'Notifications',
+                title: 'Notifications',
+                markRead: 'Mark as read',
+                hide: 'Hide',
+                noNotifications: 'No notifications available.',
+                refund: 'Refund',
+            },
         },
     },
 }));
