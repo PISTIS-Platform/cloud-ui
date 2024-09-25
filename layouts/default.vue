@@ -21,7 +21,9 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
     { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
 ];
 
-const userNavigation: { name: string; to: string; icon?: string }[] = [];
+const userNavigation: { name: string; to: string; icon?: string }[] = [
+    { name: 'wallet.wallet', to: '/wallet', icon: 'i-heroicons-currency-dollar-20-solid' },
+];
 
 const { host, protocol } = location;
 const { data: wsData } = useWebSocket(`${protocol.replace('http', 'ws')}//${host}/api/messages`);
@@ -203,7 +205,7 @@ const notificationsNumberText = computed(() =>
                         </div>
                         <UButton
                             type="button"
-                            class="relative flex gap-1 items-center relative rounded-full bg-primary-70 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                            class="relative flex gap-1 items-center rounded-full bg-primary-70 h-10 p-1.5 text-primary-100 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
                             to="/notifications"
                         >
                             <span class="absolute -inset-1.5" />
