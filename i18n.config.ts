@@ -330,6 +330,14 @@ export default defineI18nConfig(() => ({
                 noTransactions: 'No transactions available',
                 balanceInMonth: 'this month',
             },
+            notifications: {
+                notifications: 'Notifications',
+                title: 'Notifications',
+                markRead: 'Mark as read',
+                hide: 'Hide',
+                noNotifications: 'No notifications available.',
+                refund: 'Refund',
+            },
         },
     },
 }));

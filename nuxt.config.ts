@@ -3,30 +3,40 @@ export default defineNuxtConfig({
     ssr: false,
     telemetry: false,
     devtools: { enabled: true },
+
     alias: {
         cookie: 'cookie',
     },
+
     typescript: {
         strict: true,
         typeCheck: false, // Enabling this makes development slower, but performs proper type checking
     },
+
     nitro: {
         preset: 'node-server',
+        experimental: {
+            websocket: true,
+        },
     },
+
     app: {
         head: {
             link: [{ rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' }],
         },
     },
+
     components: [
         {
             path: '~/components',
             pathPrefix: false,
         },
     ],
+
     imports: {
         dirs: ['composables/**'],
     },
+
     runtimeConfig: {
         factoryRegistryURL: process.env.NUXT_FACTORY_REGISTRY_URL,
         authSecret: process.env.NUXT_NEXTAUTH_SECRET,
@@ -39,7 +49,9 @@ export default defineNuxtConfig({
             clientId: process.env.NUXT_KEYCLOAK_CLIENT_ID,
             clientSecret: process.env.NUXT_KEYCLOAK_CLIENT_SECRET,
         },
+        wsUrl: process.env.NUXT_WS_URL,
     },
+
     modules: [
         '@pinia/nuxt', //
         '@nuxtjs/i18n',
@@ -53,9 +65,11 @@ export default defineNuxtConfig({
         strategy: 'no_prefix',
         defaultLocale: 'en',
     },
+
     colorMode: {
         preference: 'light',
     },
+
     auth: {
         baseURL: '/_auth',
         provider: {
@@ -70,4 +84,6 @@ export default defineNuxtConfig({
             isEnabled: true,
         },
     },
+
+    compatibilityDate: '2024-09-19',
 });
