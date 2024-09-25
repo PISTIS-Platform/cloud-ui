@@ -25,7 +25,6 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [];
 
 const { host, protocol } = location;
 const { data: wsData } = useWebSocket(`${protocol.replace('http', 'ws')}//${host}/api/messages`);
-// const { status: wsStatus, data: wsData, send, open, close } = useWebSocket(`ws://${location.host}/api/messages`);
 
 //watching the data value where new messages come
 watch(wsData, (newValue) => {
