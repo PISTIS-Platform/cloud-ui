@@ -38,6 +38,7 @@
         "@nuxtjs/eslint-config-typescript": "^12.1.0",
         "@nuxtjs/i18n": "^8.3.0",
         "@sidebase/nuxt-auth": "^0.7.0",
+        "@tailwindcss/forms": "^0.5.9",
         "@types/ramda": "^0.29.11",
         "@vueuse/core": "^10.9.0",
         "@vueuse/nuxt": "^10.9.0",
@@ -52,8 +53,8 @@
         "husky": "^9.0.11",
         "lint-staged": "^15.2.2",
         "nuxt-headlessui": "^1.1.5",
-        "typescript": "^5.2.2",
         "prettier": "^3.2.5",
+        "typescript": "^5.2.2",
         "vue-tsc": "^2.1.6"
     }
 }
