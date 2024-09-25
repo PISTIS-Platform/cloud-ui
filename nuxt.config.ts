@@ -43,6 +43,7 @@ export default defineNuxtConfig({
         intentionAnalyticsServerUrl: process.env.NUXT_INTENTION_ANALYTICS_SERVER_URL,
         modelsRepositoryUrl: process.env.NUXT_MODELS_REPOSITORY_URL,
         prometheusUrl: process.env.NUXT_PROMETHEUS_URL,
+        wallet: process.env.NUXT_WALLET_ID,
         walletUrl: process.env.NUXT_WALLET_URL,
         keycloak: {
             issuer: process.env.NUXT_KEYCLOAK_ISSUER,
