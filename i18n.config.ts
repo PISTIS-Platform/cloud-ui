@@ -321,6 +321,23 @@ export default defineI18nConfig(() => ({
                     validFile: 'Please upload a valid file',
                 },
             },
+            wallet: {
+                wallet: 'Wallet',
+                amount: 'Amount',
+                date: 'Transaction Date',
+                transaction: 'Transaction Id',
+                balance: 'Balance',
+                noTransactions: 'No transactions available',
+                balanceInMonth: 'this month',
+            },
+            notifications: {
+                notifications: 'Notifications',
+                title: 'Notifications',
+                markRead: 'Mark as read',
+                hide: 'Hide',
+                noNotifications: 'No notifications available.',
+                refund: 'Refund',
+            },
         },
     },
 }));
