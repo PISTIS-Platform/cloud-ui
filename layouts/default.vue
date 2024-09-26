@@ -26,8 +26,15 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [
 ];
 
 const { host, protocol } = location;
-const { data: wsData } = useWebSocket(`${protocol.replace('http', 'ws')}//${host}/api/messages`);
+const { data: wsData, send } = useWebSocket(`${protocol.replace('http', 'ws')}//${host}/api/notifications/messages`);
 
+//call to bring all notifications
+send(
+    JSON.stringify({
+        action: 'getAllNotifications',
+        userId: session.value?.user.sub,
+    }),
+);
 //watching the data value where new messages come
 watch(wsData, (newValue) => {
     if (!newValue) return;
