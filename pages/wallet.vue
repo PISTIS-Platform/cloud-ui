@@ -9,8 +9,6 @@ dayjs.extend(isBetween);
 
 const { t } = useI18n();
 
-//TODO: Change the operation below when we have answer from ICCS/UBI
-/*const { data, error, refresh } = await useLazyFetch<Transaction[]>('/api/wallet');*/
 const data = computed(() => [
     {
         transactionDate: '2024-09-17T13:09:38.901Z',
@@ -54,10 +52,12 @@ const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transa
     direction: 'desc',
 });
 
-//TODO: Change the operation below when we have answer from ICCS/UBI
-const currentBalance = /*await useLazyFetch<Balance>('/api/wallet/balance');*/ 3500;
+const currentBalance = await $fetch(`/api/wallet`, {
+    method: 'post',
+});
 
-const sumAmount = data.value
+//FIXME: Find sum amount when we have actual transactions from BC and display them next to balance
+const _sumAmount = data.value
     .filter((item) => dayjs(item.transactionDate).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
     .reduce((total, item) => total + item.amount, 0);
 
@@ -90,12 +90,12 @@ const columns: TableColumn[] = [
                     <h3 class="text-base xl:text-lg font-normal mt-1">
                         {{ t('wallet.balance') }}
                     </h3>
-                    <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance }} {{ 'STC' }}</div>
-                    <div class="mt-1">
+                    <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance.dlt_amount }} {{ 'PST' }}</div>
+                    <!-- <div class="mt-1">
                         {{ '(+' }}
                         <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
                         {{ t('wallet.balanceInMonth') + ')' }}
-                    </div>
+                    </div> -->
                 </div>
                 <div class="w-full place-items-stretch">
                     <UCard>
