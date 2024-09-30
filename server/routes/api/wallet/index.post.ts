@@ -1,12 +1,14 @@
 import { getToken } from '#auth';
-import { Transaction } from '~/interfaces/wallet-table';
 
-const { walletUrl } = useRuntimeConfig();
+const { walletUrl, walletAlias } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
+    const body = JSON.stringify({ wallet_alias: walletAlias });
 
-    return await $fetch<Transaction[]>(`${walletUrl}`, {
+    return await $fetch<any>(`${walletUrl}`, {
+        method: 'POST',
+        body,
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },

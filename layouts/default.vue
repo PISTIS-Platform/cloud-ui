@@ -21,8 +21,8 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
     { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
 ];
 
-const userNavigation: { name: string; to: string; icon?: string }[] = [
-    { name: 'wallet.wallet', to: '/wallet', icon: 'i-heroicons-currency-dollar-20-solid' },
+const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
+    { name: 'wallet.wallet', to: '/wallet', icon: 'i-heroicons-currency-dollar-20-solid', roles: ['PISTIS_ADMIN'] },
 ];
 
 const { host, protocol } = location;
@@ -122,20 +122,28 @@ const notificationsNumberText = computed(() =>
                                         <MenuItems
                                             class="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                         >
-                                            <MenuItem
-                                                v-for="item in userNavigation"
-                                                :key="item.name"
-                                                v-slot="{ active }"
+                                            <div
+                                                v-if="
+                                                    status === 'authenticated' &&
+                                                    session?.roles?.includes('PISTIS_ADMIN')
+                                                "
                                             >
-                                                <NuxtLink
-                                                    :to="item.to"
-                                                    :class="[
-                                                        active ? 'bg-primary-100' : undefined,
-                                                        'block px-4 py-2 text-sm text-gray-700',
-                                                    ]"
-                                                    >{{ $t(item.name) }}</NuxtLink
+                                                <MenuItem
+                                                    v-for="item in userNavigation"
+                                                    :key="item.name"
+                                                    v-slot="{ active }"
                                                 >
-                                            </MenuItem>
+                                                    <NuxtLink
+                                                        :to="item.to"
+                                                        :class="[
+                                                            active ? 'bg-primary-100' : undefined,
+                                                            'block px-4 py-2 text-sm text-gray-700',
+                                                        ]"
+                                                        >{{ $t(item.name) }}</NuxtLink
+                                                    >
+                                                </MenuItem>
+                                            </div>
+
                                             <MenuItem v-slot="{ active }">
                                                 <a
                                                     href="javascript:void(0)"
