@@ -22,6 +22,8 @@ const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
+const config = useRuntimeConfig();
+
 const { data: userFactory, error: userFactoryError } = useFetch<FactoryModelRepo>(
     `/api/factories-registry/user-factory`,
 );
@@ -33,6 +35,12 @@ watch(
     },
     { once: true },
 );
+
+watch(userFactoryError, async () => {
+    if (userFactoryError) {
+        await navigateTo(config.public.catalogUrl, { external: true });
+    }
+});
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;

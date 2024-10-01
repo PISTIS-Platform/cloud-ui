@@ -38,6 +38,9 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
+        public: {
+            catalogUrl: process.env.NUXT_CATALOG_URL,
+        },
         factoryRegistryURL: process.env.NUXT_FACTORY_REGISTRY_URL,
         authSecret: process.env.NUXT_NEXTAUTH_SECRET,
         intentionAnalyticsServerUrl: process.env.NUXT_INTENTION_ANALYTICS_SERVER_URL,
