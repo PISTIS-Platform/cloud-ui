@@ -25,6 +25,9 @@ export default defineWebSocketHandler({
         sockets.get(peer.id)?.on('disconnect', () => {
             console.log('Disconnected from NestJS WS');
         });
+        sockets.get(peer.id)?.on('connect_error', (error) => {
+            console.log('ERROR CONNECTING TO WS FROM NITRO: ', error);
+        });
         //sockets.get(peer.id)?.emit('join', 'test_room_' + peer.id);
         //listens to messages, specifically 'onMessage'
         sockets.get(peer.id)?.on('onMessage', (...args) => {
