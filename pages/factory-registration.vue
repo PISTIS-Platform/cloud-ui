@@ -26,21 +26,15 @@ const config = useRuntimeConfig();
 
 const { data: userFactory, error: userFactoryError } = useFetch<FactoryModelRepo>(
     `/api/factories-registry/user-factory`,
-);
-
-watch(
-    userFactory,
-    () => {
-        schemaState.publicIP = userFactory.value?.ip ?? '';
+    {
+        onResponse({ response }) {
+            schemaState.publicIP = response._data.ip;
+        },
+        onResponseError() {
+            navigateTo(config.public.catalogUrl, { external: true });
+        },
     },
-    { once: true },
 );
-
-watch(userFactoryError, async () => {
-    if (userFactoryError) {
-        await navigateTo(config.public.catalogUrl, { external: true });
-    }
-});
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;
