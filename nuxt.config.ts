@@ -53,7 +53,7 @@ export default defineNuxtConfig({
             clientId: process.env.NUXT_KEYCLOAK_CLIENT_ID,
             clientSecret: process.env.NUXT_KEYCLOAK_CLIENT_SECRET,
         },
-        wsUrl: process.env.NUXT_WS_URL,
+        notificationsUrl: process.env.NUXT_NOTIFICATIONS_URL,
     },
 
     modules: [

@@ -6,8 +6,6 @@ useHead({
     bodyAttrs: { class: 'h-full' },
 });
 
-const { showInfoMessage } = useAlertMessage();
-
 import { useMessagesStore } from '~/store/messages';
 
 const messagesStore = useMessagesStore();
@@ -25,37 +23,24 @@ const userNavigation: { name: string; to: string; icon?: string; roles: string[]
     { name: 'wallet.wallet', to: '/wallet', icon: 'i-heroicons-currency-dollar-20-solid', roles: ['PISTIS_ADMIN'] },
 ];
 
-const { host, protocol } = location;
-const { data: wsData, send } = useWebSocket(`${protocol.replace('http', 'ws')}//${host}/api/notifications/messages`);
+const notificationCount = ref(0);
 
-//call to bring all notifications
-send(
-    JSON.stringify({
-        action: 'getAllNotifications',
-        userId: session.value?.user.sub,
-    }),
-);
-//watching the data value where new messages come
-watch(wsData, (newValue) => {
-    if (!newValue) return;
-    const message = JSON.parse(newValue);
-    if (Array.isArray(message)) {
-        messagesStore.setMessages(message);
-        return;
-    }
-    showInfoMessage(message.message);
-    messagesStore.addMessage(message);
+const { refresh } = useFetch('/api/notifications/count', {
+    onResponse({ response }) {
+        notificationCount.value = response._data;
+    },
 });
 
-const notifications = computed(() => messagesStore.getMessages);
+const computedNotifications = computed(() => messagesStore.getMessages);
 
-const unreadNotifications = computed(() =>
-    notifications.value.filter((notification) => !notification.readAt && !notification.isHidden),
+watch(
+    computedNotifications,
+    () => {
+        refresh();
+    },
+    { deep: true },
 );
-
-const notificationsNumberText = computed(() =>
-    unreadNotifications.value.length > 9 ? '9+' : unreadNotifications.value.length,
-);
+const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9+' : notificationCount.value));
 </script>
 
 <template>
@@ -94,7 +79,7 @@ const notificationsNumberText = computed(() =>
                                     <span class="absolute -inset-1.5" />
                                     <span class="sr-only">View notifications</span>
                                     <div
-                                        v-if="unreadNotifications.length"
+                                        v-if="notificationCount"
                                         class="bg-red-500 rounded-full w-5 h-5 text-xs flex items-center justify-center absolute top-0 z-20 -right-0.5"
                                     >
                                         {{ notificationsNumberText }}
@@ -226,7 +211,7 @@ const notificationsNumberText = computed(() =>
                             <span class="absolute -inset-1.5" />
                             <span class="sr-only">View notifications</span>
                             <div
-                                v-if="unreadNotifications.length"
+                                v-if="notificationCount"
                                 class="bg-red-500 rounded-full w-5 h-5 text-xs flex items-center justify-center absolute top-0 z-20 -right-0.5"
                             >
                                 {{ notificationsNumberText }}
