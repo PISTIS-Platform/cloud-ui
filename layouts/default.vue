@@ -79,7 +79,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                                     <span class="absolute -inset-1.5" />
                                     <span class="sr-only">View notifications</span>
                                     <div
-                                        v-if="notificationCount"
+                                        v-if="notificationCount >= 1"
                                         class="bg-red-500 rounded-full w-5 h-5 text-xs flex items-center justify-center absolute top-0 z-20 -right-0.5"
                                     >
                                         {{ notificationsNumberText }}
@@ -211,7 +211,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                             <span class="absolute -inset-1.5" />
                             <span class="sr-only">View notifications</span>
                             <div
-                                v-if="notificationCount"
+                                v-if="notificationCount >= 1"
                                 class="bg-red-500 rounded-full w-5 h-5 text-xs flex items-center justify-center absolute top-0 z-20 -right-0.5"
                             >
                                 {{ notificationsNumberText }}
