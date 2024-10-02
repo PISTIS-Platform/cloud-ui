@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const modelId = getRouterParam(event, 'modelId');
 
-    return await $fetch(`${modelsRepositoryUrl}/models/${modelId}`, {
+    return $fetch(`${modelsRepositoryUrl}/models/${modelId}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token?.access_token}`,

@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const factoryId = getRouterParam(event, 'factoryId');
 
-    return await $fetch(`${factoryRegistryURL}/factories/${factoryId}/suspend`, {
+    return $fetch(`${factoryRegistryURL}/factories/${factoryId}/suspend`, {
         method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token?.access_token}`,

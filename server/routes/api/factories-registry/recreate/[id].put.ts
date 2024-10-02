@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const organizationId = getRouterParam(event, 'id');
 
-    return await $fetch(`${factoryRegistryURL}/factories/recreate/${organizationId}`, {
+    return $fetch(`${factoryRegistryURL}/factories/recreate/${organizationId}`, {
         method: 'PUT',
         headers: {
             Authorization: `Bearer ${token?.access_token}`,

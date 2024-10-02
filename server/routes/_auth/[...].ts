@@ -88,7 +88,7 @@ export const authOptions = {
             }
 
             if (token.expires_at && Date.now() > token.expires_at) {
-                return await refreshAccessToken(token);
+                return refreshAccessToken(token);
             }
 
             return Promise.resolve(token);
