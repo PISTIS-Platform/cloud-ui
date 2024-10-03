@@ -7,6 +7,7 @@ const { t } = useI18n();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 
 const route = useRoute();
+const shouldDisableName: boolean = true;
 
 const {
     data: registeredService,
@@ -58,6 +59,7 @@ const updateServiceMapping = async (body: RegisteredService) => {
             v-if="registeredService && !pendingFetch"
             :registered-service="registeredService"
             :should-disable-button="pendingEdit"
+            :should-disable-name="shouldDisableName"
             @submit-form="(body: RegisteredService) => updateServiceMapping(body)"
         />
         <ErrorCard

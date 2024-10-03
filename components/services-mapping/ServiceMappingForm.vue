@@ -14,6 +14,10 @@ const props = defineProps({
         type: Boolean,
         required: true,
     },
+    shouldDisableName: {
+        type: Boolean,
+        default: false,
+    },
 });
 const emit = defineEmits(['submitForm']);
 
@@ -65,6 +69,7 @@ const submitForm = async () => {
                     >
                         <UInput
                             v-model="body.serviceName"
+                            :disabled="shouldDisableName"
                             :placeholder="$t('registry.servicesRegistry.serviceName')"
                             class="flex-1"
                             size="md"
