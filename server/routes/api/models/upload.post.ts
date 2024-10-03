@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const body = await readFormData(event);
     const token = await getToken({ event });
 
-    return await $fetch(`${modelsRepositoryUrl}/models`, {
+    return $fetch(`${modelsRepositoryUrl}/models`, {
         method: 'POST',
         body,
         headers: {

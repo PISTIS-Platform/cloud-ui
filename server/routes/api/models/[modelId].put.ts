@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const modelId = getRouterParam(event, 'modelId');
     const body = await readBody(event);
 
-    return await $fetch(`${modelsRepositoryUrl}/models/${modelId}`, {
+    return $fetch(`${modelsRepositoryUrl}/models/${modelId}`, {
         method: 'PUT',
         body,
         headers: {

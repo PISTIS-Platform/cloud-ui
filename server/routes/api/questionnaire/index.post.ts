@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const token = await getToken({ event });
 
-    return await $fetch(`${intentionAnalyticsServerUrl}/questionnaire`, {
+    return $fetch(`${intentionAnalyticsServerUrl}/questionnaire`, {
         method: 'POST',
         body,
         headers: {

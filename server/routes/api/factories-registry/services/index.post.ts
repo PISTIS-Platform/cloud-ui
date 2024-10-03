@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const token = await getToken({ event });
 
-    return await $fetch(`${factoryRegistryURL}/factories/services`, {
+    return $fetch(`${factoryRegistryURL}/factories/services`, {
         method: 'POST',
         body,
         headers: {

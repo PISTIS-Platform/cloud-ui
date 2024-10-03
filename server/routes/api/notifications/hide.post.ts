@@ -1,14 +1,13 @@
 import { getToken } from '#auth';
 
-const { factoryRegistryURL } = useRuntimeConfig();
+const { notificationsUrl } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
-    const token = await getToken({ event });
     const body = await readBody(event);
+    const token = await getToken({ event });
 
-    return $fetch(`${factoryRegistryURL}/factories`, {
-        method: 'POST',
-        body,
+    return $fetch(`${notificationsUrl}/${body.notificationId}/hide`, {
+        method: 'PATCH',
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },

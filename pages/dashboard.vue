@@ -121,7 +121,7 @@ const computedWeeklyMoneyData = computed(() => ({
     labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
         {
-            label: 'STC',
+            label: 'PST',
             backgroundColor: '#f87979',
             data: weeklyMoneyData.value || [],
         },

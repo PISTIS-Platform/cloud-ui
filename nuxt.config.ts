@@ -38,6 +38,9 @@ export default defineNuxtConfig({
     },
 
     runtimeConfig: {
+        public: {
+            catalogUrl: process.env.NUXT_CATALOG_URL,
+        },
         factoryRegistryURL: process.env.NUXT_FACTORY_REGISTRY_URL,
         authSecret: process.env.NUXT_NEXTAUTH_SECRET,
         intentionAnalyticsServerUrl: process.env.NUXT_INTENTION_ANALYTICS_SERVER_URL,
@@ -50,7 +53,7 @@ export default defineNuxtConfig({
             clientId: process.env.NUXT_KEYCLOAK_CLIENT_ID,
             clientSecret: process.env.NUXT_KEYCLOAK_CLIENT_SECRET,
         },
-        wsUrl: process.env.NUXT_WS_URL,
+        notificationsUrl: process.env.NUXT_NOTIFICATIONS_URL,
     },
 
     modules: [

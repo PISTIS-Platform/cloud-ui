@@ -35,7 +35,7 @@ const getDiskUsageByVolume = async (volume: string, percentageMultiplier: number
 topk(1, kubelet_volume_stats_capacity_bytes{job="kubelet", metrics_path="/metrics", namespace="default", persistentvolumeclaim="${volume}"})
 * 100)`;
 
-    return await getPrometheusResult(q, percentageMultiplier);
+    return getPrometheusResult(q, percentageMultiplier);
 };
 
 export default defineEventHandler(async () => {
