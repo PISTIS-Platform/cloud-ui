@@ -7,37 +7,42 @@ import dayjs from 'dayjs';
 import { useFetch, useRoute } from 'nuxt/app';
 
 const route = useRoute();
-console.log(route.params);
+
 const { data } = await useFetch(`/api/catalog/${route.params.assetId}`);
-// console.log(data.value);
-const title = data.value[10]['dct:title']['@value'];
-console.log('TITLE: ', title);
-const isExclusive = data.value[10]['https://www.pistis-project.eu/ns/voc#isExclusive']['@value'];
-console.log('Is Exclusive:', isExclusive);
+
+const searchString = 'http://pistis-market.eu/offers';
+//Search in data to find the index of the offer
+const index = data.value.findIndex((item) => item['@id'] && item['@id'].includes(searchString));
+//Title of the asset
+const title = data.value[index]['dct:title']['@value'];
+//Value of exclusiveness
+const isExclusive = data.value[index]['https://www.pistis-project.eu/ns/voc#isExclusive']['@value'];
+//Value of the region availability
 const region =
-    data.value[10]['https://www.pistis-project.eu/ns/voc#spatialAvailability'] === ''
+    data.value[index]['https://www.pistis-project.eu/ns/voc#spatialAvailability'] === ''
         ? 'available worldwide'
-        : `available in ${data.value[10]['https://www.pistis-project.eu/ns/voc#spatialAvailability']}`;
-console.log('Region:', region);
-const transferable = data.value[10]['https://www.pistis-project.eu/ns/voc#transferable'];
-console.log('Transferable:', transferable);
-const termDate = data.value[10]['https://www.pistis-project.eu/ns/voc#termDate']['@value'];
-console.log('TermDate:', termDate);
-const additionalRenewalTerms = data.value[10]['https://www.pistis-project.eu/ns/voc#additionalRenewalTerms'];
-console.log('additionalRenewalTerms:', additionalRenewalTerms);
-const nonRenewalDays = data.value[10]['https://www.pistis-project.eu/ns/voc#additionalRenewalTerms'];
-console.log('nonRenewalDays:', nonRenewalDays);
-const contractBreachDays = data.value[10]['https://www.pistis-project.eu/ns/voc#contractBreachDays']['@value'];
-console.log('contractBreachDays:', contractBreachDays);
-const type = data.value[10]['https://www.pistis-project.eu/ns/voc#type'];
-console.log('type:', type);
-const price = data.value[10]['https://www.pistis-project.eu/ns/voc#price']['@value'];
-console.log('price:', price);
-const personalDataTerms = data.value[8]['https://www.pistis-project.eu/ns/voc#containsPersonalData'];
-console.log('personalDataTerms:', personalDataTerms);
+        : `available in ${data.value[index]['https://www.pistis-project.eu/ns/voc#spatialAvailability']}`;
+//Value of transfer status
+const transferable = data.value[index]['https://www.pistis-project.eu/ns/voc#transferable'];
+//Value of term date
+const termDate = data.value[index]['https://www.pistis-project.eu/ns/voc#termDate']['@value'];
+//Value of additional terms
+const additionalRenewalTerms = data.value[index]['https://www.pistis-project.eu/ns/voc#additionalRenewalTerms'];
+//Value of no renewal days
+const nonRenewalDays = data.value[index]['https://www.pistis-project.eu/ns/voc#additionalRenewalTerms'];
+//Value of contract breach days
+const contractBreachDays = data.value[index]['https://www.pistis-project.eu/ns/voc#contractBreachDays']['@value'];
+//Value of contract type
+const type = data.value[index]['https://www.pistis-project.eu/ns/voc#type'];
+//Value of price offer
+const price = data.value[index]['https://www.pistis-project.eu/ns/voc#price']['@value'];
+//Value of terms for personal data
+const personalDataTerms = data.value[index]['https://www.pistis-project.eu/ns/voc#personalData']['@value'] ?? null;
+//FIXME: Value of extra terms(not found for now we will need to add a dataset with extra terms)
 const extraTerms = '';
-const subscriptionFrequency = data.value[10]['https://www.pistis-project.eu/ns/voc#PersonalDataTerms'];
-console.log('subscriptionFrequency:', subscriptionFrequency);
+//FIXME: Metadata don't include sud frequency
+const subscriptionFrequency = '';
+//FIXME: Metadata don't include recurrent Payment
 const recurrentPaymentText = '';
 </script>
 
