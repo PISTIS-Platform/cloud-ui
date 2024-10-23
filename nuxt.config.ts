@@ -54,6 +54,7 @@ export default defineNuxtConfig({
             clientSecret: process.env.NUXT_KEYCLOAK_CLIENT_SECRET,
         },
         notificationsUrl: process.env.NUXT_NOTIFICATIONS_URL,
+        metadataUrl: process.env.NUXT_METADATA_URL,
     },
 
     modules: [
