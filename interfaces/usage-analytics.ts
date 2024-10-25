@@ -4,6 +4,8 @@ export enum QuestionType {
     RADIO = 'Radio Button',
 }
 
+export const MAX_CHARACTERS_TEXT_LIMIT = 255;
+
 export interface QuestionOption {
     id?: string;
     text?: string;
@@ -31,4 +33,20 @@ export interface Questionnaire {
     isActive: boolean;
     publicationDate?: string | null;
     questions: Question[];
+}
+
+export interface SelectedOption {
+    id: string;
+    value: string;
+    isSelected: boolean;
+}
+
+export interface QuestionAnswer {
+    id: string;
+    text?: string;
+    questionType: QuestionType | string | undefined;
+    availableOptions?: SelectedOption[];
+    selectedOptions?: SelectedOption[];
+    question?: Question;
+    isValid?: boolean | undefined;
 }
