@@ -314,7 +314,7 @@ const submitIP = async () => {
             </div>
 
             <div v-else class="flex flex-col w-full">
-                <div class="flex flex-col justify-end md:flex-row gap-6 lg:gap-8 w-full mt-8 mb-6">
+                <div class="flex flex-col justify-end md:flex-row gap-6 lg:gap-8 w-full mb-6">
                     <WalletCard
                         v-for="card in cardInfoData"
                         :key="card.title"
