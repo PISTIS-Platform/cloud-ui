@@ -22,16 +22,11 @@ const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
-const config = useRuntimeConfig();
-
 const { data: userFactory, error: userFactoryError } = useFetch<FactoryModelRepo>(
     `/api/factories-registry/user-factory`,
     {
         onResponse({ response }) {
             schemaState.publicIP = response._data.ip;
-        },
-        onResponseError() {
-            navigateTo(config.public.catalogUrl, { external: true });
         },
     },
 );
