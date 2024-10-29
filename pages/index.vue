@@ -152,7 +152,9 @@ const features = [
             </div>
         </div>
 
-        <footer class="flex justify-start items-center gap-4 w-full bg-primary-950 px-8 py-4 sm:px-16 2xl:px-48">
+        <footer
+            class="flex justify-start items-center gap-4 w-full bg-primary-950 px-8 py-4 sm:px-16 2xl:px-48 flipped"
+        >
             <img class="w-12 h-8" src="/img/eu_flag.jpeg" alt="PISTIS logo" />
             <p class="text-white text-sm">
                 This project has received funding from the European Union under Grant Agreement n° 101093016. Views and
