@@ -3,6 +3,7 @@ export interface Transaction {
     transactionDate: Date;
     transactionId: string;
     amount: number;
+    type: string;
 }
 
 export interface Balance {
