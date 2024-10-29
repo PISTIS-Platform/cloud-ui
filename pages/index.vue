@@ -55,7 +55,7 @@ const features = [
 
 <template>
     <div class="w-full h-full bg-cover" style="background-image: url('/img/data-share.png')">
-        <div class="bg-primary-900/80">
+        <div class="bg-primary-950/90">
             <nav
                 aria-label="Global"
                 class="relative flex flex-row sm:items-center justify-between px-8 sm:px-8 2xl:px-36 py-6"
@@ -70,14 +70,14 @@ const features = [
                     <NuxtLink
                         v-if="status === 'authenticated'"
                         :to="'/dashboard'"
-                        class="flex-shrink-0 rounded-md border border-primary-600 text-white text-lg hover:border hover:border-white py-2 px-4 transition-all"
+                        class="flex-shrink-0 rounded-md border border-primary-950 text-white text-lg hover:border hover:border-white py-2 px-4 transition-all"
                         >Dashboard</NuxtLink
                     >
                 </div>
                 <!-- Sign In button -->
                 <div v-if="status !== 'authenticated'" class="flex">
                     <button
-                        class="inline-flex items-center px-6 py-2 text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                         @click="signIn('keycloak', { callbackUrl })"
                     >
                         Sign In
@@ -103,7 +103,7 @@ const features = [
                     <div class="flex gap-4 text-sm font-normal lg:text-lg lg:font-medium">
                         <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
                             <button
-                                class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-600 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                                class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-950 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                             >
                                 Find out more
                             </button></NuxtLink
@@ -118,7 +118,7 @@ const features = [
                         :key="feature.title"
                         class="flex flex-col justify-start items-center gap-4 rounded-lg py-8"
                     >
-                        <UIcon :name="feature.icon" class="w-16 h-16 text-primary-600" />
+                        <UIcon :name="feature.icon" class="w-16 h-16 text-primary-950" />
                         <p>{{ feature.description }}</p>
                     </div>
                 </div>

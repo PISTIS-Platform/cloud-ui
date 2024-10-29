@@ -22,7 +22,7 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 ];
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'home', to: '/', icon: '', roles: [] },
+    { name: 'home', to: 'dashboard', icon: '', roles: [] },
     { name: 'marketplace', to: config.public.marketplaceUrl, icon: '', roles: [] },
     { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
     // { name: 'wallet.wallet', to: '/wallet', icon: '', roles: ['PISTIS_ADMIN'] },
@@ -76,7 +76,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                                     v-for="item in userNavigation"
                                     :key="item.name"
                                     :to="item.to"
-                                    :target="item.to === '/' ? '' : '_blank'"
+                                    :target="item.to === 'dashboard' ? '' : '_blank'"
                                     class="text-white hover:bg-primary-600 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
                                     active-class="bg-primary-800"
                                     >{{ $t(item.name) }}</NuxtLink
@@ -160,7 +160,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                                                 >
                                                     <NuxtLink
                                                         :to="item.to"
-                                                        :target="item.to === '/' ? '' : '_blank'"
+                                                        :target="item.to === 'dashboard' ? '' : '_blank'"
                                                         :class="[
                                                             active ? 'bg-primary-100' : undefined,
                                                             'block px-4 py-2 text-sm text-gray-700',
