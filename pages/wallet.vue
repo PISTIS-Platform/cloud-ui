@@ -52,9 +52,14 @@ const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transa
     direction: 'desc',
 });
 
-const currentBalance = await $fetch(`/api/wallet`, {
+const currentBalance = await $fetch(`/api/wallet/balance`, {
     method: 'post',
 });
+
+// FIXME: Uncomment this when the wallet supports POST request for transactions
+// const currentTransactions = await $fetch(`/api/wallet/transactions`, {
+//     method: 'get',
+// });
 
 //FIXME: Find sum amount when we have actual transactions from BC and display them next to balance
 const _sumAmount = data.value
@@ -90,14 +95,15 @@ const columns: TableColumn[] = [
                     <h3 class="text-base xl:text-lg font-normal mt-1">
                         {{ t('wallet.balance') }}
                     </h3>
-                    <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance.dlt_amount }} {{ 'PST' }}</div>
+                    <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance.dlt_amount }} {{ 'EUR' }}</div>
                     <!-- <div class="mt-1">
                         {{ '(+' }}
                         <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
                         {{ t('wallet.balanceInMonth') + ')' }}
                     </div> -->
                 </div>
-                <div class="w-full place-items-stretch">
+                <!-- FIXME: remove v-if when we have actual numbers in transactions-->
+                <div v-if="false" class="w-full place-items-stretch">
                     <UCard>
                         <UTable
                             v-model:sort="sortBy"

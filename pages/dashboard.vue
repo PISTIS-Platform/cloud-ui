@@ -121,7 +121,7 @@ const computedWeeklyMoneyData = computed(() => ({
     labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
     datasets: [
         {
-            label: 'PST',
+            label: 'EUR',
             backgroundColor: '#f87979',
             data: weeklyMoneyData.value || [],
         },
@@ -200,7 +200,8 @@ const computedWeeklyMoneyData = computed(() => ({
                     <div v-if="monitoringCardsLoading" class="flex w-full gap-4">
                         <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
                     </div>
-                    <div class="flex gap-8 mt-4 w-full">
+                    <!-- FIXME: remove v-if when we have actual numbers in transactions-->
+                    <div v-if="false" class="flex gap-8 mt-4 w-full">
                         <div v-if="!weeklyTransactionsLoading" class="w-full p-4">
                             <div>
                                 <h3>{{ t('dashboard.resources.weeklyTransactions') }}</h3>
