@@ -279,7 +279,15 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
         <main class="flex flex-col flex-1 overflow-y-auto text-gray-700">
             <slot />
         </main>
-        <footer class="bg-primary-900 h-12"></footer>
+        <footer class="flex justify-start items-center gap-4 w-full bg-primary-950 px-8 py-4 sm:px-16 2xl:px-48">
+            <img class="w-12 h-8" src="/img/eu_flag.jpeg" alt="PISTIS logo" />
+            <p class="text-white text-sm">
+                This project has received funding from the European Union under Grant Agreement n° 101093016. Views and
+                opinions expressed are however those of the author(s) only and do not necessarily reflect those of the
+                European Union or the European Commission. Neither the European Union nor the granting authority can be
+                held responsible for them.
+            </p>
+        </footer>
     </div>
 </template>
 
