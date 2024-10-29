@@ -39,23 +39,19 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            catalogUrl: process.env.NUXT_PUBLIC_CATALOG_URL,
             marketplaceUrl: '',
         },
-        factoryRegistryURL: process.env.NUXT_FACTORY_REGISTRY_URL,
-        authSecret: process.env.NUXT_NEXTAUTH_SECRET,
-        intentionAnalyticsServerUrl: process.env.NUXT_INTENTION_ANALYTICS_SERVER_URL,
-        modelsRepositoryUrl: process.env.NUXT_MODELS_REPOSITORY_URL,
-        prometheusUrl: process.env.NUXT_PROMETHEUS_URL,
-        walletAlias: process.env.NUXT_WALLET_ALIAS,
-        walletUrl: process.env.NUXT_WALLET_URL,
+        authSecret: '',
         keycloak: {
-            issuer: process.env.NUXT_KEYCLOAK_ISSUER,
-            clientId: process.env.NUXT_KEYCLOAK_CLIENT_ID,
-            clientSecret: process.env.NUXT_KEYCLOAK_CLIENT_SECRET,
+            issuer: '',
+            clientId: '',
+            clientSecret: '',
         },
-        notificationsUrl: process.env.NUXT_NOTIFICATIONS_URL,
-        metadataUrl: process.env.NUXT_METADATA_URL,
+        factoryRegistryURL: '',
+        intentionAnalyticsServerUrl: '',
+        modelsRepositoryUrl: '',
+        prometheusUrl: '',
+        walletAlias: '',
     },
 
     modules: [
