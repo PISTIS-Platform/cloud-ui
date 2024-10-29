@@ -9,62 +9,43 @@ dayjs.extend(isBetween);
 
 const { t } = useI18n();
 
-const data = computed(() => [
-    {
-        transactionDate: '2024-09-17T13:09:38.901Z',
-        transactionId: '1',
-        amount: 400,
-    },
-    {
-        transactionDate: '2024-09-17T13:09:38.901Z',
-        transactionId: '2',
-        amount: 500,
-    },
-    {
-        transactionDate: '2024-09-16T13:09:38.901Z',
-        transactionId: '3',
-        amount: 50,
-    },
-    {
-        transactionDate: '2024-09-15T13:09:38.901Z',
-        transactionId: '4',
-        amount: 30,
-    },
-    {
-        transactionDate: '2024-08-01T13:09:38.901Z',
-        transactionId: '5',
-        amount: 100,
-    },
-    {
-        transactionDate: '2024-08-02T13:09:38.901Z',
-        transactionId: '6',
-        amount: 200,
-    },
-    {
-        transactionDate: '2024-08-02T13:09:38.901Z',
-        transactionId: '7',
-        amount: 400,
-    },
-]);
+const currentBalance = await $fetch(`/api/wallet/balance`, {
+    method: 'post',
+});
+
+const transactions = await $fetch(`/api/wallet/transactions`, {
+    method: 'post',
+});
+
+const incoming = transactions.incoming.map((item: any) => {
+    return {
+        transactionDate: item.included_at,
+        transactionId: item.transaction_id,
+        amount: item.payload.Basic.amount,
+        type: 'incoming',
+    };
+});
+
+const outgoing = transactions.outgoing.map((item: any) => {
+    return {
+        transactionDate: item.included_at,
+        transactionId: item.transaction_id,
+        amount: item.payload.Basic.amount,
+        type: 'outgoing',
+    };
+});
+
+const data = computed(() => [...incoming, ...outgoing]);
 
 const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transaction[]>(data, 10, {
     column: 'transactionDate',
     direction: 'desc',
 });
 
-const currentBalance = await $fetch(`/api/wallet/balance`, {
-    method: 'post',
-});
-
-// FIXME: Uncomment this when the wallet supports POST request for transactions
-// const currentTransactions = await $fetch(`/api/wallet/transactions`, {
-//     method: 'get',
-// });
-
 //FIXME: Find sum amount when we have actual transactions from BC and display them next to balance
-const _sumAmount = data.value
-    .filter((item) => dayjs(item.transactionDate).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
-    .reduce((total, item) => total + item.amount, 0);
+const sumAmount = incoming
+    .filter((item: any) => dayjs(item.included_at).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
+    .reduce((total: any, item: any) => total + item.amount, 0);
 
 const columns: TableColumn[] = [
     {
@@ -84,6 +65,12 @@ const columns: TableColumn[] = [
         class: 'text-start w-1/3',
         sortable: true,
     },
+    {
+        key: 'type',
+        label: 'Type',
+        sortable: true,
+        class: 'text-center w-1/5',
+    },
 ];
 </script>
 
@@ -96,14 +83,13 @@ const columns: TableColumn[] = [
                         {{ t('wallet.balance') }}
                     </h3>
                     <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance.dlt_amount }} {{ 'EUR' }}</div>
-                    <!-- <div class="mt-1">
+                    <div class="mt-1">
                         {{ '(+' }}
                         <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
                         {{ t('wallet.balanceInMonth') + ')' }}
-                    </div> -->
+                    </div>
                 </div>
-                <!-- FIXME: remove v-if when we have actual numbers in transactions-->
-                <div v-if="false" class="w-full place-items-stretch">
+                <div class="w-full place-items-stretch">
                     <UCard>
                         <UTable
                             v-model:sort="sortBy"
