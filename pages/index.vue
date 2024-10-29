@@ -5,9 +5,24 @@ definePageMeta({
     layout: 'home',
 });
 
-const { status, signIn } = useAuth();
-
 const callbackUrl = '/dashboard';
+
+const config = useRuntimeConfig();
+
+const { status, signIn, signOut, data: session } = useAuth();
+
+const navigation: { name: string; to: string; roles: string[] }[] = [
+    { name: 'dashboard.dashboard', to: '/dashboard', roles: [] },
+    { name: 'registry.registry', to: '/factory-registry', roles: ['PISTIS_ADMIN'] },
+    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['PISTIS_ADMIN'] },
+    { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
+];
+
+const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
+    { name: 'home', to: 'dashboard', icon: '', roles: [] },
+    { name: 'marketplace', to: config.public.marketplaceUrl, icon: '', roles: [] },
+    { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
+];
 
 const features = [
     {
@@ -54,8 +69,8 @@ const features = [
 </script>
 
 <template>
-    <div class="w-full h-full bg-cover" style="background-image: url('/img/data-share.png')">
-        <div class="bg-primary-950/90">
+    <div class="w-full h-full bg-cover flipped" style="background-image: url('/img/data-share.png')">
+        <div class="bg-primary-950/90 flipped">
             <nav
                 aria-label="Global"
                 class="relative flex flex-row sm:items-center justify-between px-8 sm:px-8 2xl:px-36 py-6"
@@ -67,20 +82,32 @@ const features = [
                             <img class="h-12 w-36 sm:h-16 sm:w-60" src="/img/PISTIS_logo_white.png" alt="PISTIS logo" />
                         </NuxtLink>
                     </div>
-                    <NuxtLink
-                        v-if="status === 'authenticated'"
-                        :to="'/dashboard'"
-                        class="flex-shrink-0 rounded-md border border-primary-950 text-white text-lg hover:border hover:border-white py-2 px-4 transition-all"
-                        >Dashboard</NuxtLink
-                    >
+                    <div v-if="status === 'authenticated'">
+                        <NuxtLink
+                            v-for="page in session?.roles?.includes('PISTIS_ADMIN') ? navigation : userNavigation"
+                            :key="page.to"
+                            :to="page.to"
+                            class="flex-shrink-0 rounded-md text-white text-lg hover:bg-primary-600 py-2 px-4 transition-all"
+                            >{{ $t(page.name) }}</NuxtLink
+                        >
+                    </div>
                 </div>
                 <!-- Sign In button -->
                 <div v-if="status !== 'authenticated'" class="flex">
                     <button
-                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                         @click="signIn('keycloak', { callbackUrl })"
                     >
                         Sign In
+                    </button>
+                </div>
+                <!-- Sign out button-->
+                <div v-if="status === 'authenticated'" class="flex">
+                    <button
+                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        @click="signOut({ callbackUrl: '/' })"
+                    >
+                        Sign Out
                     </button>
                 </div>
             </nav>
@@ -103,7 +130,7 @@ const features = [
                     <div class="flex gap-4 text-sm font-normal lg:text-lg lg:font-medium">
                         <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
                             <button
-                                class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-950 bg-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                                class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-950 bg-primary-600 border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                             >
                                 Find out more
                             </button></NuxtLink
@@ -136,3 +163,14 @@ const features = [
         </footer>
     </div>
 </template>
+
+<style scoped>
+.flipped {
+    -moz-transform: scaleX(-1);
+    -o-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+    filter: FlipH;
+    -ms-filter: 'FlipH';
+}
+</style>

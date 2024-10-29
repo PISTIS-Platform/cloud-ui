@@ -22,7 +22,7 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 ];
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'home', to: 'dashboard', icon: '', roles: [] },
+    { name: 'dashboard.dashboard', to: 'dashboard', icon: '', roles: [] },
     { name: 'marketplace', to: config.public.marketplaceUrl, icon: '', roles: [] },
     { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
     // { name: 'wallet.wallet', to: '/wallet', icon: '', roles: ['PISTIS_ADMIN'] },
