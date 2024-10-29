@@ -95,7 +95,7 @@ const features = [
                 <!-- Sign In button -->
                 <div v-if="status !== 'authenticated'" class="flex">
                     <button
-                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 text-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                         @click="signIn('keycloak', { callbackUrl })"
                     >
                         Sign In
@@ -104,7 +104,7 @@ const features = [
                 <!-- Sign out button-->
                 <div v-if="status === 'authenticated'" class="flex">
                     <button
-                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 text-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                         @click="signOut({ callbackUrl: '/' })"
                     >
                         Sign Out
@@ -130,7 +130,7 @@ const features = [
                     <div class="flex gap-4 text-sm font-normal lg:text-lg lg:font-medium">
                         <NuxtLink target="_blank" :to="'https://www.pistis-project.eu/'" class="flex-shrink-0">
                             <button
-                                class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-950 bg-primary-600 border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                                class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-950 bg-primary-600 text-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                             >
                                 Find out more
                             </button></NuxtLink
