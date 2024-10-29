@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const assetId = getRouterParam(event, 'assetId');
     const token = await getToken({ event });
 
-    return await $fetch(`${intentionAnalyticsServerUrl}/questionnaire/${assetId}/active-questionnaire/`, {
+    return await $fetch(`${intentionAnalyticsServerUrl}/questionnaire/${assetId}/active-questionnaire/general-users`, {
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },
