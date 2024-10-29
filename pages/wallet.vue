@@ -22,7 +22,7 @@ const incoming = transactions.incoming.map((item: any) => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
-        type: 'incoming',
+        type: 'Incoming',
     };
 });
 
@@ -31,7 +31,7 @@ const outgoing = transactions.outgoing.map((item: any) => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
-        type: 'outgoing',
+        type: 'Outgoing',
     };
 });
 
@@ -106,6 +106,19 @@ const columns: TableColumn[] = [
                                     $d(new Date(row.transactionDate), 'short')
                                 }}</span>
                                 <span v-else>&mdash;</span>
+                            </template>
+                            <template #type-data="{ row }">
+                                <div class="text-center">
+                                    <span
+                                        :class="[
+                                            'rounded-md px-4 py-1 font-medium',
+                                            row.type === 'Incoming'
+                                                ? 'bg-green-100 text-green-800'
+                                                : 'bg-red-100 text-red-800',
+                                        ]"
+                                        >{{ row.type }}
+                                    </span>
+                                </div>
                             </template>
                         </UTable>
                         <!-- Display the pagination only if the total number filtered rows is larger than the page count -->
