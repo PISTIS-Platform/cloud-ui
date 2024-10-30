@@ -11,13 +11,22 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import weekday from 'dayjs/plugin/weekday';
 import { Bar } from 'vue-chartjs';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(weekday);
 
 const { t } = useI18n();
 
 import type ComponentStatusData from '~/interfaces/component-status-data';
 import type MonitoringCardsData from '~/interfaces/monitoring-cards-data';
 import type UsageStatsData from '~/interfaces/usage-stats-data';
+import type { TransactionsType } from '~/interfaces/wallet-transactions';
 
 const chartOptions = {
     responsive: true,
@@ -96,11 +105,44 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
     ];
 });
 
-//data for weekly transactions bar chart
-const { data: weeklyTransactionsData, pending: weeklyTransactionsLoading } = await useLazyFetch(
-    '/api/dashboard/weekly-transactions',
-);
+const transactions: TransactionsType = await $fetch(`/api/wallet/transactions`, {
+    method: 'post',
+});
 
+const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
+const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
+
+if (transactions) {
+    const startOfWeek = dayjs().startOf('week');
+    const endOfWeek = dayjs().endOf('week');
+
+    transactions.incoming.forEach((transaction) => {
+        const transactionDate = dayjs(transaction.included_at);
+        //Check if incoming transaction date is between the week
+        if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+            //Take the index of the day in the week
+            const dayIndex = transactionDate.weekday();
+            //Add transaction if the day is in the week
+            weeklyTransactionsData.value[dayIndex] += 1;
+            //Add the amount of the transaction if the day is in the week
+            weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+        }
+    });
+
+    transactions.outgoing.forEach((transaction) => {
+        const transactionDate = dayjs(transaction.included_at);
+        //Check if outgoing transaction date is between the week
+        if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+            //Take the index of the day in the week
+            const dayIndex = transactionDate.weekday();
+            //Add transaction if the day is in the week
+            weeklyTransactionsData.value[dayIndex] += 1;
+            //Add the amount of the transaction if the day is in the week
+            weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+        }
+    });
+}
+//Weekly transactions bar chart
 const computedWeeklyTransactionsData = computed(() => ({
     //TODO: Get weekdays automatically from i18n somehow
     labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -112,10 +154,7 @@ const computedWeeklyTransactionsData = computed(() => ({
         },
     ],
 }));
-
-//data for weekly money bar chart
-const { data: weeklyMoneyData, pending: weeklyMoneyLoading } = await useLazyFetch('/api/dashboard/weekly-money');
-
+//Weekly money bar chart
 const computedWeeklyMoneyData = computed(() => ({
     //TODO: Get weekdays automatically from i18n somehow
     labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -200,8 +239,7 @@ const computedWeeklyMoneyData = computed(() => ({
                     <div v-if="monitoringCardsLoading" class="flex w-full gap-4">
                         <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
                     </div>
-                    <!-- FIXME: remove v-if when we have actual numbers in transactions-->
-                    <div v-if="false" class="flex gap-8 mt-4 w-full">
+                    <div class="flex gap-8 mt-4 w-full">
                         <div v-if="!weeklyTransactionsLoading" class="w-full p-4">
                             <div>
                                 <h3>{{ t('dashboard.resources.weeklyTransactions') }}</h3>

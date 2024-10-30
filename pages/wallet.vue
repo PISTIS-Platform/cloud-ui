@@ -4,38 +4,69 @@ import isBetween from 'dayjs/plugin/isBetween';
 
 import type TableColumn from '~/interfaces/table-column';
 import type { Transaction } from '~/interfaces/wallet-table';
+import type { TransactionsType } from '~/interfaces/wallet-transactions.js';
 
 dayjs.extend(isBetween);
 
 const { t } = useI18n();
-
-const currentBalance = await $fetch(`/api/wallet/balance`, {
-    method: 'post',
+const isHovered = ref(null);
+const currentBalance = ref(null);
+const transactions = ref<TransactionsType>({
+    incoming: [],
+    outgoing: [],
 });
-
-const transactions = await $fetch(`/api/wallet/transactions`, {
-    method: 'post',
-});
-
-const incoming = transactions.incoming.map((item: any) => {
-    return {
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
+const incoming = ref([
+    {
+        transactionDate: '',
+        transactionId: '',
+        amount: '',
         type: 'Incoming',
-    };
-});
-
-const outgoing = transactions.outgoing.map((item: any) => {
-    return {
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
+    },
+]);
+const outgoing = ref([
+    {
+        transactionDate: '',
+        transactionId: '',
+        amount: '',
         type: 'Outgoing',
-    };
+    },
+]);
+const loading = ref(true);
+onMounted(async () => {
+    try {
+        currentBalance.value = await $fetch(`/api/wallet/balance`, {
+            method: 'post',
+        });
+
+        transactions.value = await $fetch(`/api/wallet/transactions`, {
+            method: 'post',
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    } finally {
+        loading.value = false;
+    }
+
+    incoming.value = transactions.value.incoming.map((item: any) => {
+        return {
+            transactionDate: item.included_at,
+            transactionId: item.transaction_id,
+            amount: item.payload.Basic.amount,
+            type: 'Incoming',
+        };
+    });
+
+    outgoing.value = transactions.value.outgoing.map((item: any) => {
+        return {
+            transactionDate: item.included_at,
+            transactionId: item.transaction_id,
+            amount: item.payload.Basic.amount,
+            type: 'Outgoing',
+        };
+    });
 });
 
-const data = computed(() => [...incoming, ...outgoing]);
+const data = computed(() => [...incoming.value, ...outgoing.value]);
 
 const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transaction[]>(data, 10, {
     column: 'transactionDate',
@@ -43,7 +74,7 @@ const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transa
 });
 
 //FIXME: Find sum amount when we have actual transactions from BC and display them next to balance
-const sumAmount = incoming
+const sumAmount = incoming.value
     .filter((item: any) => dayjs(item.included_at).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
     .reduce((total: any, item: any) => total + item.amount, 0);
 
@@ -72,12 +103,20 @@ const columns: TableColumn[] = [
         class: 'text-center w-1/5',
     },
 ];
+
+const truncateId = (item: string, length: number) => {
+    return item.length > length ? item.slice(0, length) + '...' : item;
+};
 </script>
 
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <div class="flex flex-col w-full">
+            <div v-if="loading" class="flex flex-col w-full text-lg mt-1">
+                Loading
+                <UProgress animation="swing" color="primary" />
+            </div>
+            <div v-else class="flex flex-col w-full">
                 <div class="relative w-full pb-4 flex items-center justify-end space-x-2">
                     <h3 class="text-base xl:text-lg font-normal mt-1">
                         {{ t('wallet.balance') }}
@@ -117,6 +156,16 @@ const columns: TableColumn[] = [
                                                 : 'bg-red-100 text-red-800',
                                         ]"
                                         >{{ row.type }}
+                                    </span>
+                                </div>
+                            </template>
+                            <template #transactionId-data="{ row }">
+                                <div @mouseover="isHovered = row.transactionId" @mouseleave="isHovered = null">
+                                    <span v-if="isHovered === row.transactionId">
+                                        {{ row.transactionId }}
+                                    </span>
+                                    <span v-else>
+                                        {{ truncateId(row.transactionId, 10) }}
                                     </span>
                                 </div>
                             </template>
