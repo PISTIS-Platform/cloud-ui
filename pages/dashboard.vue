@@ -132,12 +132,10 @@ try {
     loading.value = false;
 }
 
-console.log(transactions.value);
 const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
 const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
 
 if (transactions.value) {
-    console.log('mphka');
     const startOfWeek = dayjs().startOf('week');
     const endOfWeek = dayjs().endOf('week');
 
