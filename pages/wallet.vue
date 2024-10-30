@@ -94,7 +94,7 @@ const columns: TableColumn[] = [
     {
         key: 'amount',
         label: t('wallet.amount') + ` (EUR)`,
-        class: 'text-center w-1/5 flex justify-center font-bold',
+        class: 'w-1/5 flex justify-center',
         sortable: true,
     },
     {
@@ -169,7 +169,7 @@ const columns: TableColumn[] = [
                                 </div>
                             </template>
                             <template #amount-data="{ row }">
-                                <span class="font-bold">
+                                <span class="font-bold text-center w-1/5 flex justify-center">
                                     {{ row.amount.toFixed(2) }}
                                 </span>
                             </template>
