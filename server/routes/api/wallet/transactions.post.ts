@@ -1,4 +1,4 @@
-import { getToken } from '#auth';
+import { getServerSession, getToken } from '#auth';
 
 const {
     public: { marketplaceUrl },
@@ -6,6 +6,8 @@ const {
 } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
+    const session = await getServerSession(event);
+    if (!session?.roles?.includes('PISTIS_ADMIN')) return { incoming: [], outgoing: [] };
     const token = await getToken({ event });
     const body = JSON.stringify({ wallet_alias: walletAlias });
 

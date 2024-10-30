@@ -334,7 +334,7 @@ export default defineI18nConfig(() => ({
                 wallet: 'Wallet',
                 amount: 'Amount',
                 date: 'Transaction Date',
-                transaction: 'Transaction Id',
+                transaction: 'Transaction ID',
                 balance: 'Balance',
                 noTransactions: 'No transactions available',
                 balanceInMonth: 'this month',

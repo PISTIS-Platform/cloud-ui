@@ -1,8 +1,12 @@
 import * as R from 'ramda';
 
+import { getServerSession } from '#auth';
 import ComponentStatusData from '~/interfaces/component-status-data';
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+    const session = await getServerSession(event);
+    if (!session?.roles?.includes('PISTIS_ADMIN')) return [];
+
     const componentStatuses: ComponentStatusData[] = [
         {
             title: 'Data Exchange Governance',

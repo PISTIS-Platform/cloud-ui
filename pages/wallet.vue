@@ -86,42 +86,44 @@ const columns: TableColumn[] = [
         class: 'text-start w-1/3',
     },
     {
-        key: 'transactionId',
-        label: t('wallet.transaction'),
-        class: 'text-start w-1/3',
-    },
-    {
-        key: 'amount',
-        label: t('wallet.amount'),
-        class: 'text-start w-1/3',
-        sortable: true,
-    },
-    {
         key: 'type',
         label: 'Type',
         sortable: true,
         class: 'text-center w-1/5',
     },
+    {
+        key: 'amount',
+        label: t('wallet.amount') + ` (EUR)`,
+        class: 'w-1/5 flex justify-center',
+        sortable: true,
+    },
+    {
+        key: 'transactionId',
+        label: t('wallet.transaction'),
+        class: 'text-start w-1/3',
+    },
 ];
 
-const truncateId = (item: string, length: number) => {
-    return item.length > length ? item.slice(0, length) + '...' : item;
-};
+//TODO: Uncomment if more space is needed in table
+// const truncateId = (item: string, length: number) => {
+//     return item.length > length ? item.slice(0, length) + '...' : item;
+// };
 </script>
 
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <div v-if="loading" class="flex flex-col w-full text-lg mt-1">
-                Loading
-                <UProgress animation="swing" color="primary" />
+                <UProgress animation="carousel" color="primary" />
             </div>
             <div v-else class="flex flex-col w-full">
                 <div class="relative w-full pb-4 flex items-center justify-end space-x-2">
                     <h3 class="text-base xl:text-lg font-normal mt-1">
                         {{ t('wallet.balance') }}
                     </h3>
-                    <div class="text-lg mt-1 font-bold text-green-800">{{ currentBalance.dlt_amount }} {{ 'EUR' }}</div>
+                    <div class="text-lg mt-1 font-bold text-green-800">
+                        {{ currentBalance.dlt_amount.toFixed(2) }} {{ 'EUR' }}
+                    </div>
                     <div class="mt-1">
                         {{ '(+' }}
                         <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
@@ -161,13 +163,15 @@ const truncateId = (item: string, length: number) => {
                             </template>
                             <template #transactionId-data="{ row }">
                                 <div @mouseover="isHovered = row.transactionId" @mouseleave="isHovered = null">
-                                    <span v-if="isHovered === row.transactionId">
+                                    <span>
                                         {{ row.transactionId }}
                                     </span>
-                                    <span v-else>
-                                        {{ truncateId(row.transactionId, 10) }}
-                                    </span>
                                 </div>
+                            </template>
+                            <template #amount-data="{ row }">
+                                <span class="font-bold text-center w-1/5 flex justify-center">
+                                    {{ row.amount.toFixed(2) }}
+                                </span>
                             </template>
                         </UTable>
                         <!-- Display the pagination only if the total number filtered rows is larger than the page count -->
