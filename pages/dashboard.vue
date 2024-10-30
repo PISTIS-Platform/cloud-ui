@@ -295,7 +295,12 @@ const submitIP = async () => {
                             v-if="componentStatusStatus === 'pending'"
                             class="flex w-full flex-col gap-4 overflow-y-scroll"
                         >
-                            <USkeleton v-for="item in new Array(10)" :key="item" class="h-7 w-full" />
+                            <USkeleton
+                                v-for="item in new Array(10)"
+                                :key="item"
+                                :ui="{ background: 'bg-gray-200' }"
+                                class="h-7 w-full"
+                            />
                         </div>
                     </UCard>
 
@@ -326,7 +331,12 @@ const submitIP = async () => {
                             />
                         </div>
                         <div v-else class="grid grid-cols-2 w-full gap-6 mt-4">
-                            <USkeleton v-for="item in new Array(6)" :key="item" class="h-20" />
+                            <USkeleton
+                                v-for="item in new Array(6)"
+                                :key="item"
+                                :ui="{ background: 'bg-gray-200' }"
+                                class="h-20"
+                            />
                         </div>
                     </UCard>
                 </div>
@@ -347,7 +357,12 @@ const submitIP = async () => {
                         />
                     </div>
                     <div v-if="monitoringCardsStatus === 'pending'" class="flex w-full gap-4">
-                        <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
+                        <USkeleton
+                            v-for="item in new Array(3)"
+                            :key="item"
+                            :ui="{ background: 'bg-gray-200' }"
+                            class="h-[84px] w-full"
+                        />
                     </div>
 
                     <div class="flex gap-8 mt-4 w-full">
@@ -361,14 +376,22 @@ const submitIP = async () => {
                                 />
                             </div>
                         </div>
-                        <USkeleton v-if="transactionsStatus === 'pending'" class="w-full h-96" />
+                        <USkeleton
+                            v-if="transactionsStatus === 'pending'"
+                            :ui="{ background: 'bg-gray-200' }"
+                            class="w-full h-96"
+                        />
                         <div v-if="transactionsStatus !== 'pending'" class="w-full p-4">
                             <div class="w-full">
                                 <h3 class="pl-4">{{ t('dashboard.resources.weeklyMoney') }}</h3>
                                 <Bar class="w-full h-full" :data="computedWeeklyMoneyData" :options="chartOptions" />
                             </div>
                         </div>
-                        <USkeleton v-if="transactionsStatus === 'pending'" class="w-full h-96" />
+                        <USkeleton
+                            v-if="transactionsStatus === 'pending'"
+                            :ui="{ background: 'bg-gray-200' }"
+                            class="w-full h-96"
+                        />
                     </div>
                 </UCard>
             </div>
@@ -390,7 +413,11 @@ const submitIP = async () => {
                     v-if="userFactoryError && userFactoryStatus !== 'pending'"
                     :error-msg="t('registry.registration.errorWhileRetrievingUserFactory')"
                 />
-                <USkeleton v-else-if="userFactoryStatus === 'pending'" class="w-full h-96" />
+                <USkeleton
+                    v-else-if="userFactoryStatus === 'pending'"
+                    :ui="{ background: 'bg-gray-200' }"
+                    class="w-full h-96"
+                />
                 <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                     <template #header>
                         <SubHeading :title="`${t('registry.registration.title')}`" />
