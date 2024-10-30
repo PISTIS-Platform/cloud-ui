@@ -74,9 +74,13 @@ const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transa
 });
 
 //FIXME: Find sum amount when we have actual transactions from BC and display them next to balance
-const sumAmount = incoming.value
-    .filter((item: any) => dayjs(item.included_at).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
-    .reduce((total: any, item: any) => total + item.amount, 0);
+const sumAmount = computed(() =>
+    incoming.value
+        .filter((item: any) => dayjs(item.transactionDate).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
+        .reduce((total: any, item: any) => total + item.amount, 0),
+);
+
+console.log({ sumAmount });
 
 const columns: TableColumn[] = [
     {
@@ -122,7 +126,7 @@ const columns: TableColumn[] = [
                         {{ t('wallet.balance') }}
                     </h3>
                     <div class="text-lg mt-1 font-bold text-green-800">
-                        {{ currentBalance.dlt_amount.toFixed(2) }} {{ 'EUR' }}
+                        {{ currentBalance?.dlt_amount?.toFixed(2) }} {{ 'EUR' }}
                     </div>
                     <div class="mt-1">
                         {{ '(+' }}
