@@ -115,10 +115,6 @@ const currentBalance = ref();
 const { status: transactionsStatus } = useLazyFetch(`api/wallet/transactions`, {
     method: 'POST',
     async onResponse({ response }) {
-        const data = await $fetch(`api/wallet/balance`, {
-            method: 'POST',
-        });
-        currentBalance.value = data;
         const transactions: TransactionsType = response._data;
         const startOfWeek = dayjs().startOf('week');
         const endOfWeek = dayjs().endOf('week');
@@ -147,6 +143,11 @@ const { status: transactionsStatus } = useLazyFetch(`api/wallet/transactions`, {
                 weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
             }
         });
+
+        const data = await $fetch(`api/wallet/balance`, {
+            method: 'POST',
+        });
+        currentBalance.value = data;
     },
 });
 
