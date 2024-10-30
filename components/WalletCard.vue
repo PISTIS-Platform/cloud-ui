@@ -40,7 +40,9 @@ const R = useRamda();
                     </h3>
                 </div>
                 <div :class="['text-lg font-bold', amount > 0 ? 'text-green-800' : 'text-red-800']">
-                    <span v-if="status !== 'pending'">{{ amount ?? 'N/A' }} {{ R.isNil(amount) ? '' : coin }}</span>
+                    <span v-if="status !== 'pending'"
+                        >{{ !R.isNil(amount) ? amount.toFixed(2) : 'N/A' }} {{ R.isNil(amount) ? '' : coin }}</span
+                    >
                     <UIcon v-if="status === 'pending'" name="svg-spinners:3-dots-fade" />
                 </div>
             </div>
