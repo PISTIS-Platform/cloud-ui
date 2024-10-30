@@ -109,22 +109,39 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
         },
     ];
 });
+const transactions = ref<TransactionsType>({
+    incoming: [],
+    outgoing: [],
+});
 
-const { data: transactions, status: weeklyTransactionsStatus } = await useLazyFetch<TransactionsType>(
-    `/api/wallet/transactions`,
-    {
+const loading = ref(true);
+const currentBalance = ref(null);
+
+try {
+    if (!session.value?.roles?.includes('PISTIS_ADMIN')) {
+        currentBalance.value = await $fetch(`/api/wallet/balance`, {
+            method: 'post',
+        });
+    }
+    transactions.value = await $fetch(`/api/wallet/transactions`, {
         method: 'post',
-    },
-);
+    });
+} catch (error) {
+    console.error('Error fetching data:', error);
+} finally {
+    loading.value = false;
+}
 
+console.log(transactions.value);
 const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
 const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
 
-if (transactions) {
+if (transactions.value) {
+    console.log('mphka');
     const startOfWeek = dayjs().startOf('week');
     const endOfWeek = dayjs().endOf('week');
 
-    transactions.value?.incoming.forEach((transaction) => {
+    transactions.value.incoming.forEach((transaction) => {
         const transactionDate = dayjs(transaction.included_at);
         //Check if incoming transaction date is between the week
         if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
@@ -137,7 +154,7 @@ if (transactions) {
         }
     });
 
-    transactions.value?.outgoing.forEach((transaction) => {
+    transactions.value.outgoing.forEach((transaction) => {
         const transactionDate = dayjs(transaction.included_at);
         //Check if outgoing transaction date is between the week
         if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
@@ -150,6 +167,7 @@ if (transactions) {
         }
     });
 }
+
 //Weekly transactions bar chart
 const computedWeeklyTransactionsData = computed(() => ({
     //TODO: Get weekdays automatically from i18n somehow
@@ -174,9 +192,6 @@ const computedWeeklyMoneyData = computed(() => ({
         },
     ],
 }));
-const { data: currentBalance, status: currentBalanceStatus } = await useLazyFetch(`/api/wallet/balance`, {
-    method: 'POST',
-});
 
 //Top cards for simple user
 const cardInfoData = computed(() => [
@@ -343,9 +358,9 @@ const submitIP = async () => {
                     <div v-if="monitoringCardsStatus === 'pending'" class="flex w-full gap-4">
                         <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
                     </div>
-                    <!-- FIXME: remove v-if when we have actual numbers in transactions-->
-                    <div v-if="false" class="flex gap-8 mt-4 w-full">
-                        <div v-if="weeklyTransactionsStatus !== 'pending'" class="w-full p-4">
+
+                    <div class="flex gap-8 mt-4 w-full">
+                        <div v-if="!loading" class="w-full p-4">
                             <div>
                                 <h3>{{ t('dashboard.resources.weeklyTransactions') }}</h3>
                                 <Bar
@@ -355,14 +370,14 @@ const submitIP = async () => {
                                 />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyTransactionsStatus === 'pending'" class="w-full h-96" />
-                        <div v-if="weeklyTransactionsStatus !== 'pending'" class="w-full p-4">
+                        <USkeleton v-if="loading" class="w-full h-96" />
+                        <div v-if="!loading" class="w-full p-4">
                             <div class="w-full">
                                 <h3 class="pl-4">{{ t('dashboard.resources.weeklyMoney') }}</h3>
                                 <Bar class="w-full h-full" :data="computedWeeklyMoneyData" :options="chartOptions" />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyTransactionsStatus === 'pending'" class="w-full h-96" />
+                        <USkeleton v-if="loading" class="w-full h-96" />
                     </div>
                 </UCard>
             </div>
@@ -370,8 +385,8 @@ const submitIP = async () => {
             <!-- Non-admin starts here-->
             <div v-else class="flex flex-col w-full">
                 <div class="flex flex-col justify-end md:flex-row gap-6 lg:gap-8 w-full mb-6">
-                    <USkeleton v-if="currentBalanceStatus === 'pending'" class="w-full md:w-1/3 h-26" />
-                    <div v-if="currentBalanceStatus !== 'pending'" class="w-full flex justify-end">
+                    <USkeleton v-if="loading" class="w-full md:w-1/3 h-26" />
+                    <div v-if="!loading" class="w-full flex justify-end">
                         <WalletCard
                             v-for="card in cardInfoData"
                             :key="card.title"
