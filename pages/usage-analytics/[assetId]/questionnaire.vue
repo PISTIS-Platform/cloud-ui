@@ -115,8 +115,6 @@ const saveAnswers = async () => {
         setTimeout(() => {
             router.push({ name: 'usage-analytics' });
         }, 3000);
-
-        //TODO:: add any navigation after success (?)
     } catch (error) {
         showErrorMessage(t('usage-analytics.errorInSubmitAnswers'));
 
