@@ -111,6 +111,23 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
 });
 
 const currentBalance = ref();
+const startOfWeek = dayjs().startOf('week');
+const endOfWeek = dayjs().endOf('week');
+
+const transformTransactions = (transactions: Record<string, any>[]) => {
+    transactions.forEach((transaction: Record<string, any>) => {
+        const transactionDate = dayjs(transaction.included_at);
+        //Check if incoming transaction date is between the week
+        if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+            //Take the index of the day in the week
+            const dayIndex = transactionDate.weekday();
+            //Add transaction if the day is in the week
+            weeklyTransactionsData.value[dayIndex] += 1;
+            //Add the amount of the transaction if the day is in the week
+            weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+        }
+    });
+};
 
 //NOTE: Using 'nested' API calls due to partner's restriction about parallel calls to wallet not being possible
 const { status: transactionsStatus } = useLazyFetch(`api/wallet/transactions`, {
@@ -118,33 +135,8 @@ const { status: transactionsStatus } = useLazyFetch(`api/wallet/transactions`, {
     async onResponse({ response }) {
         const transactions: TransactionsType = response._data;
         if (transactions.incoming.length && transactions.outgoing.length) {
-            const startOfWeek = dayjs().startOf('week');
-            const endOfWeek = dayjs().endOf('week');
-            transactions.incoming.forEach((transaction) => {
-                const transactionDate = dayjs(transaction.included_at);
-                //Check if incoming transaction date is between the week
-                if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
-                    //Take the index of the day in the week
-                    const dayIndex = transactionDate.weekday();
-                    //Add transaction if the day is in the week
-                    weeklyTransactionsData.value[dayIndex] += 1;
-                    //Add the amount of the transaction if the day is in the week
-                    weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
-                }
-            });
-
-            transactions.outgoing.forEach((transaction) => {
-                const transactionDate = dayjs(transaction.included_at);
-                //Check if outgoing transaction date is between the week
-                if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
-                    //Take the index of the day in the week
-                    const dayIndex = transactionDate.weekday();
-                    //Add transaction if the day is in the week
-                    weeklyTransactionsData.value[dayIndex] += 1;
-                    //Add the amount of the transaction if the day is in the week
-                    weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
-                }
-            });
+            transformTransactions(transactions.incoming);
+            transformTransactions(transactions.outgoing);
         }
 
         if (!session?.value?.roles?.includes('PISTIS_ADMIN')) {
