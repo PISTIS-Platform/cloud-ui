@@ -26,6 +26,10 @@ export default defineI18nConfig(() => ({
     },
     messages: {
         en: {
+            balance: 'Balance',
+            home: 'Home',
+            marketplace: 'Marketplace',
+            distributedQuery: 'Distributed Query',
             download: 'Download',
             submit: 'Submit',
             addNew: 'Add New',
