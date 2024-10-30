@@ -71,13 +71,13 @@ const isSubmitDisabled = computed(() => {
 });
 
 const saveAnswers = async () => {
-    // if even at least 1 answer has validation errors -> do not proceed
-    if (answers.value.some((a: QuestionAnswer) => !a.isValid)) {
-        showErrorMessage(t('usage-analytics.checkAnswers'));
+    if (!questionnaire.value) {
         return;
     }
 
-    if (!questionnaire.value) {
+    // if even at least 1 answer has validation errors -> do not proceed
+    if (answers.value.some((a: QuestionAnswer) => !a.isValid)) {
+        showErrorMessage(t('usage-analytics.checkAnswers'));
         return;
     }
 
@@ -112,8 +112,9 @@ const saveAnswers = async () => {
         });
 
         showSuccessMessage(t('usage-analytics.answersSubmitted'));
-        await delay(3);
-        router.push({ name: 'usage-analytics' });
+        setTimeout(() => {
+            router.push({ name: 'usage-analytics' });
+        }, 3000);
 
         //TODO:: add any navigation after success (?)
     } catch (error) {

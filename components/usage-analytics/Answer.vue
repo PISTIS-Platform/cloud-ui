@@ -111,7 +111,7 @@ const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
             <!-- Display Content based on question type -->
 
             <!-- Text based Question -->
-            <div v-if="props.answer.questionType === QuestionType.TEXT">
+            <div v-if="answer.questionType === QuestionType.TEXT">
                 <UFormGroup name="text">
                     <UTextarea
                         :model-value="answer.text"
@@ -122,7 +122,7 @@ const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
                 </UFormGroup>
             </div>
 
-            <div v-else-if="props.answer.questionType === QuestionType.CHECKBOX">
+            <div v-else-if="answer.questionType === QuestionType.CHECKBOX">
                 <UFormGroup name="selectedOptions">
                     <div class="flex gap-6">
                         <div v-for="option in selectedOptions" :key="option.id">
