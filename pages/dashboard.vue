@@ -16,12 +16,17 @@ import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import weekday from 'dayjs/plugin/weekday';
 import { Bar } from 'vue-chartjs';
+import { z } from 'zod';
+
+import type FactoryModelRepo from '~/interfaces/factories-model';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(weekday);
 
 const { t } = useI18n();
+
+const { data: session } = useAuth();
 
 import type ComponentStatusData from '~/interfaces/component-status-data';
 import type MonitoringCardsData from '~/interfaces/monitoring-cards-data';
@@ -36,14 +41,14 @@ const chartOptions = {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 //data for component statuses
-const { data: componentStatusData, pending: componentStatusLoading } = await useLazyFetch<ComponentStatusData[]>(
+const { data: componentStatusData, status: componentStatusStatus } = await useLazyFetch<ComponentStatusData[]>(
     '/api/dashboard/component-status',
 );
 
 //data for usage stats
 const {
     data: usageStatsData,
-    pending: usageStatsLoading,
+    status: usageStatsStatus,
     error: usageStatsError,
 } = await useLazyFetch<UsageStatsData[]>('/api/dashboard/resource-usage');
 
@@ -71,7 +76,7 @@ const computedResourcesUsageStats = computed(() => {
 });
 
 //data for monitoring cards
-const { data: monitoringCardsData, pending: monitoringCardsLoading } = await useLazyFetch<MonitoringCardsData[]>(
+const { data: monitoringCardsData, status: monitoringCardsStatus } = await useLazyFetch<MonitoringCardsData[]>(
     '/api/dashboard/monitoring-cards',
 );
 
@@ -105,9 +110,12 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
     ];
 });
 
-const transactions: TransactionsType = await $fetch(`/api/wallet/transactions`, {
-    method: 'post',
-});
+const { data: transactions, status: weeklyTransactionsStatus } = await useLazyFetch<TransactionsType>(
+    `/api/wallet/transactions`,
+    {
+        method: 'post',
+    },
+);
 
 const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
 const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
@@ -116,7 +124,7 @@ if (transactions) {
     const startOfWeek = dayjs().startOf('week');
     const endOfWeek = dayjs().endOf('week');
 
-    transactions.incoming.forEach((transaction) => {
+    transactions.value?.incoming.forEach((transaction) => {
         const transactionDate = dayjs(transaction.included_at);
         //Check if incoming transaction date is between the week
         if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
@@ -129,7 +137,7 @@ if (transactions) {
         }
     });
 
-    transactions.outgoing.forEach((transaction) => {
+    transactions.value?.outgoing.forEach((transaction) => {
         const transactionDate = dayjs(transaction.included_at);
         //Check if outgoing transaction date is between the week
         if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
@@ -166,19 +174,109 @@ const computedWeeklyMoneyData = computed(() => ({
         },
     ],
 }));
+const { data: currentBalance, status: currentBalanceStatus } = await useLazyFetch(`/api/wallet/balance`, {
+    method: 'POST',
+});
+
+//Top cards for simple user
+const cardInfoData = computed(() => [
+    {
+        title: t('balance'),
+        iconName: 'i-heroicons-currency-dollar-20-solid',
+        amount: currentBalance.value?.dlt_amount,
+    },
+]);
+
+//Factory registration
+
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+
+const R = useRamda();
+
+const schemaState = reactive({
+    publicIP: '',
+});
+
+const schema = z.object({
+    publicIP: z
+        .string()
+        .min(1, t('required'))
+        .ip({ version: 'v4', message: t('registry.registration.invalidIP') }),
+});
+
+const downloadingInstructions = ref(false);
+const downloadingConfigurations = ref(false);
+const submittingIP = ref(false);
+
+const {
+    data: userFactory,
+    error: userFactoryError,
+    status: userFactoryStatus,
+} = useFetch<FactoryModelRepo>(`/api/factories-registry/user-factory`, {
+    onResponse({ response }) {
+        schemaState.publicIP = response._data.ip;
+    },
+});
+
+const downloadInstructions = async () => {
+    downloadingInstructions.value = true;
+
+    try {
+        await useDownloadFile(`/api/factories-registry/download-instructions`, 'test.txt');
+    } catch (error) {
+        showErrorMessage(t('registry.registration.errorInDownloadingInstructions'));
+    } finally {
+        downloadingInstructions.value = false;
+    }
+};
+
+const downloadConfigurations = async () => {
+    downloadingConfigurations.value = true;
+
+    try {
+        await useDownloadFile(`/api/factories-registry/download-keycloak-clients`, 'keycloak-clients.yaml');
+    } catch (error) {
+        showErrorMessage(t('registry.registration.errorInDownloadingConfigurations'));
+    } finally {
+        downloadingConfigurations.value = false;
+    }
+};
+
+const submitIP = async () => {
+    if (!schema.safeParse(schemaState).success) {
+        return;
+    }
+    submittingIP.value = true;
+
+    try {
+        await $fetch(`api/factories-registry/setip`, {
+            method: 'PUT',
+            body: { ip: schemaState.publicIP },
+        });
+
+        showSuccessMessage(t('registry.IPUpdated'));
+    } catch (error) {
+        showErrorMessage(t('registry.IPSubmitError'));
+    } finally {
+        submittingIP.value = false;
+    }
+};
 </script>
 
 <template>
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <div class="flex flex-col w-full">
+            <div v-if="session?.roles?.includes('PISTIS_ADMIN')" class="flex flex-col w-full">
                 <div class="grid grid-cols-2 gap-4 place-items-stretch">
                     <!-- Components statuses -->
                     <UCard :ui="{ base: 'w-full h-full' }">
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.componentStatus')" />
                         </template>
-                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
+                        <div
+                            v-if="componentStatusStatus !== 'pending'"
+                            class="flex w-full flex-col gap-4 overflow-y-scroll"
+                        >
                             <StatusCard
                                 v-for="item in componentStatusData"
                                 :key="item.title"
@@ -187,7 +285,10 @@ const computedWeeklyMoneyData = computed(() => ({
                             />
                         </div>
                         <!--TODO: Currently using fixed number of skeleton elements based on number of components-->
-                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
+                        <div
+                            v-if="componentStatusStatus === 'pending'"
+                            class="flex w-full flex-col gap-4 overflow-y-scroll"
+                        >
                             <USkeleton v-for="item in new Array(10)" :key="item" class="h-7 w-full" />
                         </div>
                     </UCard>
@@ -197,7 +298,10 @@ const computedWeeklyMoneyData = computed(() => ({
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.resourceUsage')" />
                         </template>
-                        <div v-if="!usageStatsLoading && !usageStatsError" class="grid grid-cols-2 w-full gap-6 mt-4">
+                        <div
+                            v-if="usageStatsStatus !== 'pending' && !usageStatsError"
+                            class="grid grid-cols-2 w-full gap-6 mt-4"
+                        >
                             <UsageCard
                                 v-for="item in computedResourcesUsageStats"
                                 :key="item.title"
@@ -207,7 +311,7 @@ const computedWeeklyMoneyData = computed(() => ({
                                 :tooltip-info="item.tooltipInfo"
                             />
                         </div>
-                        <div v-else-if="!usageStatsLoading && usageStatsError">
+                        <div v-else-if="usageStatsStatus !== 'pending' && usageStatsError">
                             <ErrorCard
                                 :error-msg="
                                     usageStatsError?.statusMessage ??
@@ -225,7 +329,7 @@ const computedWeeklyMoneyData = computed(() => ({
                     <template #header>
                         <SubHeading :title="t('dashboard.resources.platformActivities')" />
                     </template>
-                    <div v-if="!monitoringCardsLoading" class="flex w-full gap-4">
+                    <div v-if="monitoringCardsStatus !== 'pending'" class="flex w-full gap-4">
                         <MonitoringCard
                             v-for="card in computedMonitoringCards"
                             :key="card.title"
@@ -236,11 +340,12 @@ const computedWeeklyMoneyData = computed(() => ({
                             :change="card.change"
                         />
                     </div>
-                    <div v-if="monitoringCardsLoading" class="flex w-full gap-4">
+                    <div v-if="monitoringCardsStatus === 'pending'" class="flex w-full gap-4">
                         <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
                     </div>
-                    <div class="flex gap-8 mt-4 w-full">
-                        <div v-if="!weeklyTransactionsLoading" class="w-full p-4">
+                    <!-- FIXME: remove v-if when we have actual numbers in transactions-->
+                    <div v-if="false" class="flex gap-8 mt-4 w-full">
+                        <div v-if="weeklyTransactionsStatus !== 'pending'" class="w-full p-4">
                             <div>
                                 <h3>{{ t('dashboard.resources.weeklyTransactions') }}</h3>
                                 <Bar
@@ -250,14 +355,120 @@ const computedWeeklyMoneyData = computed(() => ({
                                 />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyTransactionsLoading" class="w-full h-96" />
-                        <div v-if="!weeklyMoneyLoading" class="w-full p-4">
+                        <USkeleton v-if="weeklyTransactionsStatus === 'pending'" class="w-full h-96" />
+                        <div v-if="weeklyTransactionsStatus !== 'pending'" class="w-full p-4">
                             <div class="w-full">
                                 <h3 class="pl-4">{{ t('dashboard.resources.weeklyMoney') }}</h3>
                                 <Bar class="w-full h-full" :data="computedWeeklyMoneyData" :options="chartOptions" />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyMoneyLoading" class="w-full h-96" />
+                        <USkeleton v-if="weeklyTransactionsStatus === 'pending'" class="w-full h-96" />
+                    </div>
+                </UCard>
+            </div>
+
+            <!-- Non-admin starts here-->
+            <div v-else class="flex flex-col w-full">
+                <div class="flex flex-col justify-end md:flex-row gap-6 lg:gap-8 w-full mb-6">
+                    <USkeleton v-if="currentBalanceStatus === 'pending'" class="w-full md:w-1/3 h-26" />
+                    <div v-if="currentBalanceStatus !== 'pending'" class="w-full flex justify-end">
+                        <WalletCard
+                            v-for="card in cardInfoData"
+                            :key="card.title"
+                            class="w-full md:w-1/3"
+                            :title="card.title"
+                            :amount="card.amount"
+                            :icon-name="card.iconName"
+                        />
+                    </div>
+                </div>
+                <ErrorCard
+                    v-if="userFactoryError && userFactoryStatus !== 'pending'"
+                    :error-msg="t('registry.registration.errorWhileRetrievingUserFactory')"
+                />
+                <USkeleton v-else-if="userFactoryStatus === 'pending'" class="w-full h-96" />
+                <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
+                    <template #header>
+                        <SubHeading
+                            :title="`${t('registry.registration.title')} ${userFactory?.organizationName ? ' - ' : ''} ${userFactory?.organizationName ?? ''}`"
+                        />
+                    </template>
+                    <div class="w-full flex flex-col gap-4">
+                        <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
+                        <div class="flex w-full justify-between items-center flex-wrap xl:flex-nowrap">
+                            <span class="flex gap-4 whitespace-nowrap">
+                                <span class="text-lg font-bold">1.</span>
+                                <span>{{ t('registry.registration.downloadInstructions') }}</span>
+                            </span>
+                            <UTooltip
+                                :text="t('registry.registration.downloadInstructions')"
+                                :ui="{ width: 'max-w-2xl text-center' }"
+                            >
+                                <UButton
+                                    class="w-28 flex justify-center disabled:opacity-40"
+                                    size="lg"
+                                    :disabled="downloadingInstructions"
+                                    @click="downloadInstructions"
+                                    >{{ t('download') }}</UButton
+                                >
+                            </UTooltip>
+                        </div>
+
+                        <div class="flex w-full justify-between items-center flex-wrap xl:flex-nowrap">
+                            <span class="flex gap-4 whitespace-nowrap">
+                                <span class="text-lg font-bold">2.</span>
+                                <span>{{ t('registry.registration.downloadConfig') }}</span>
+                            </span>
+                            <UTooltip
+                                :text="t('registry.registration.downloadConfig')"
+                                :ui="{ width: 'max-w-2xl text-center' }"
+                            >
+                                <UButton
+                                    class="w-28 flex justify-center disabled:opacity-40"
+                                    size="lg"
+                                    :disabled="downloadingConfigurations"
+                                    @click="downloadConfigurations"
+                                    >{{ t('download') }}</UButton
+                                >
+                            </UTooltip>
+                        </div>
+
+                        <div class="flex w-full justify-between items-center gap-4 xl:gap-16 flex-wrap md:flex-nowrap">
+                            <span class="flex gap-4 whitespace-nowrap">
+                                <span class="text-lg font-bold">3.</span>
+                                <span>{{ t('registry.registration.defineIP') }}</span>
+                            </span>
+                            <UForm
+                                :schema="schema"
+                                :state="schemaState"
+                                class="space-y-5 w-full flex items-end justify-end"
+                                @submit="submitIP"
+                            >
+                                <div class="flex items-start gap-4 w-4/5">
+                                    <UFormGroup class="w-full" required name="publicIP">
+                                        <UInput
+                                            v-model="schemaState.publicIP"
+                                            :ui="{ base: 'disabled:bg-gray-100' }"
+                                            class="w-full"
+                                            size="lg"
+                                            :placeholder="t('registry.registration.enterIP')"
+                                            :disabled="!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)"
+                                        />
+                                    </UFormGroup>
+                                    <UButton
+                                        :key="schemaState.publicIP"
+                                        class="w-28 flex justify-center"
+                                        size="lg"
+                                        type="submit"
+                                        :disabled="
+                                            (!R.isNil(userFactory?.ip) && !R.isEmpty(userFactory?.ip)) || submittingIP
+                                        "
+                                        @click="submitIP"
+                                        >{{ t('submit') }}</UButton
+                                    >
+                                </div>
+                            </UForm>
+                        </div>
                     </div>
                 </UCard>
             </div>

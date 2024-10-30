@@ -1,18 +1,14 @@
 import { getToken } from '#auth';
 
-const {
-    public: { marketplaceUrl },
-} = useRuntimeConfig();
+const { intentionAnalyticsServerUrl } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
+    const assetId = getRouterParam(event, 'assetId');
     const token = await getToken({ event });
-    const id = getRouterParam(event, 'id');
 
-    const response = await $fetch(`${marketplaceUrl}/srv/repo/datasets/${id}`, {
+    return await $fetch(`${intentionAnalyticsServerUrl}/questionnaire/${assetId}/active-questionnaire/general-users`, {
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },
     });
-
-    return response['@graph'];
 });

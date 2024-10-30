@@ -1,15 +1,13 @@
 import { getToken } from '#auth';
 
-const {
-    public: { marketplaceUrl },
-    walletAlias,
-} = useRuntimeConfig();
+const { intentionAnalyticsServerUrl } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
+    const query = getQuery(event);
+    const body = await readBody(event);
     const token = await getToken({ event });
-    const body = JSON.stringify({ wallet_alias: walletAlias });
 
-    return $fetch<any>(`${marketplaceUrl}/srv/payments/v0/dlt/transactions`, {
+    return await $fetch(`${intentionAnalyticsServerUrl}/questionnaire/${query.id}/${query.version}/answers`, {
         method: 'POST',
         body,
         headers: {
