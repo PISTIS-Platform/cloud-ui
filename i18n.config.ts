@@ -106,7 +106,7 @@ export default defineI18nConfig(() => ({
                 },
                 registration: {
                     title: 'Factory Registration',
-                    welcome: 'Welcome to the Factory Registration page. Please follow these steps to get started:',
+                    welcome: 'If you have not already configured your factory, please follow the steps below:',
                     downloadInstructions: 'Download the deployment instructions for your factory',
                     downloadConfig: 'Download the required configuration for your individual factory',
                     defineIP: 'Define the public IP of the factory once it is up and running',

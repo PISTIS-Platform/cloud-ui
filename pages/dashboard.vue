@@ -402,9 +402,7 @@ const submitIP = async () => {
                 <USkeleton v-else-if="userFactoryStatus === 'pending'" class="w-full h-96" />
                 <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                     <template #header>
-                        <SubHeading
-                            :title="`${t('registry.registration.title')} ${userFactory?.organizationName ? ' - ' : ''} ${userFactory?.organizationName ?? ''}`"
-                        />
+                        <SubHeading :title="`${t('registry.registration.title')}`" />
                     </template>
                     <div class="w-full flex flex-col gap-4">
                         <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
