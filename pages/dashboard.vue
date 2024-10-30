@@ -29,14 +29,14 @@ const chartOptions = {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 //data for component statuses
-const { data: componentStatusData, pending: componentStatusLoading } = await useLazyFetch<ComponentStatusData[]>(
+const { data: componentStatusData, status: componentStatusStatus } = await useLazyFetch<ComponentStatusData[]>(
     '/api/dashboard/component-status',
 );
 
 //data for usage stats
 const {
     data: usageStatsData,
-    pending: usageStatsLoading,
+    status: usageStatsStatus,
     error: usageStatsError,
 } = await useLazyFetch<UsageStatsData[]>('/api/dashboard/resource-usage');
 
@@ -64,7 +64,7 @@ const computedResourcesUsageStats = computed(() => {
 });
 
 //data for monitoring cards
-const { data: monitoringCardsData, pending: monitoringCardsLoading } = await useLazyFetch<MonitoringCardsData[]>(
+const { data: monitoringCardsData, status: monitoringCardsStatus } = await useLazyFetch<MonitoringCardsData[]>(
     '/api/dashboard/monitoring-cards',
 );
 
@@ -99,7 +99,7 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
 });
 
 //data for weekly transactions bar chart
-const { data: weeklyTransactionsData, pending: weeklyTransactionsLoading } = await useLazyFetch(
+const { data: weeklyTransactionsData, status: weeklyTransactionsStatus } = await useLazyFetch(
     '/api/dashboard/weekly-transactions',
 );
 
@@ -116,7 +116,7 @@ const computedWeeklyTransactionsData = computed(() => ({
 }));
 
 //data for weekly money bar chart
-const { data: weeklyMoneyData, pending: weeklyMoneyLoading } = await useLazyFetch('/api/dashboard/weekly-money');
+const { data: weeklyMoneyData, status: weeklyMoneyStatus } = await useLazyFetch('/api/dashboard/weekly-money');
 
 const computedWeeklyMoneyData = computed(() => ({
     //TODO: Get weekdays automatically from i18n somehow
@@ -129,8 +129,8 @@ const computedWeeklyMoneyData = computed(() => ({
         },
     ],
 }));
-const { data: currentBalance } = await useLazyFetch(`/api/wallet/balance`, {
-    method: 'post',
+const { data: currentBalance, status: currentBalanceStatus } = await useLazyFetch(`/api/wallet/balance`, {
+    method: 'POST',
 });
 
 //Top cards for simple user
@@ -165,14 +165,15 @@ const downloadingInstructions = ref(false);
 const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
-const { data: userFactory, error: userFactoryError } = useFetch<FactoryModelRepo>(
-    `/api/factories-registry/user-factory`,
-    {
-        onResponse({ response }) {
-            schemaState.publicIP = response._data.ip;
-        },
+const {
+    data: userFactory,
+    error: userFactoryError,
+    status: userFactoryStatus,
+} = useFetch<FactoryModelRepo>(`/api/factories-registry/user-factory`, {
+    onResponse({ response }) {
+        schemaState.publicIP = response._data.ip;
     },
-);
+});
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;
@@ -229,7 +230,10 @@ const submitIP = async () => {
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.componentStatus')" />
                         </template>
-                        <div v-if="!componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
+                        <div
+                            v-if="componentStatusStatus !== 'pending'"
+                            class="flex w-full flex-col gap-4 overflow-y-scroll"
+                        >
                             <StatusCard
                                 v-for="item in componentStatusData"
                                 :key="item.title"
@@ -238,7 +242,10 @@ const submitIP = async () => {
                             />
                         </div>
                         <!--TODO: Currently using fixed number of skeleton elements based on number of components-->
-                        <div v-if="componentStatusLoading" class="flex w-full flex-col gap-4 overflow-y-scroll">
+                        <div
+                            v-if="componentStatusStatus === 'pending'"
+                            class="flex w-full flex-col gap-4 overflow-y-scroll"
+                        >
                             <USkeleton v-for="item in new Array(10)" :key="item" class="h-7 w-full" />
                         </div>
                     </UCard>
@@ -248,7 +255,10 @@ const submitIP = async () => {
                         <template #header>
                             <SubHeading :title="t('dashboard.resources.resourceUsage')" />
                         </template>
-                        <div v-if="!usageStatsLoading && !usageStatsError" class="grid grid-cols-2 w-full gap-6 mt-4">
+                        <div
+                            v-if="usageStatsStatus !== 'pending' && !usageStatsError"
+                            class="grid grid-cols-2 w-full gap-6 mt-4"
+                        >
                             <UsageCard
                                 v-for="item in computedResourcesUsageStats"
                                 :key="item.title"
@@ -258,7 +268,7 @@ const submitIP = async () => {
                                 :tooltip-info="item.tooltipInfo"
                             />
                         </div>
-                        <div v-else-if="!usageStatsLoading && usageStatsError">
+                        <div v-else-if="usageStatsStatus !== 'pending' && usageStatsError">
                             <ErrorCard
                                 :error-msg="
                                     usageStatsError?.statusMessage ??
@@ -276,7 +286,7 @@ const submitIP = async () => {
                     <template #header>
                         <SubHeading :title="t('dashboard.resources.platformActivities')" />
                     </template>
-                    <div v-if="!monitoringCardsLoading" class="flex w-full gap-4">
+                    <div v-if="monitoringCardsStatus !== 'pending'" class="flex w-full gap-4">
                         <MonitoringCard
                             v-for="card in computedMonitoringCards"
                             :key="card.title"
@@ -287,12 +297,12 @@ const submitIP = async () => {
                             :change="card.change"
                         />
                     </div>
-                    <div v-if="monitoringCardsLoading" class="flex w-full gap-4">
+                    <div v-if="monitoringCardsStatus === 'pending'" class="flex w-full gap-4">
                         <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
                     </div>
                     <!-- FIXME: remove v-if when we have actual numbers in transactions-->
                     <div v-if="false" class="flex gap-8 mt-4 w-full">
-                        <div v-if="!weeklyTransactionsLoading" class="w-full p-4">
+                        <div v-if="weeklyTransactionsStatus !== 'pending'" class="w-full p-4">
                             <div>
                                 <h3>{{ t('dashboard.resources.weeklyTransactions') }}</h3>
                                 <Bar
@@ -302,33 +312,38 @@ const submitIP = async () => {
                                 />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyTransactionsLoading" class="w-full h-96" />
-                        <div v-if="!weeklyMoneyLoading" class="w-full p-4">
+                        <USkeleton v-if="weeklyTransactionsStatus === 'pending'" class="w-full h-96" />
+                        <div v-if="weeklyMoneyStatus !== 'pending'" class="w-full p-4">
                             <div class="w-full">
                                 <h3 class="pl-4">{{ t('dashboard.resources.weeklyMoney') }}</h3>
                                 <Bar class="w-full h-full" :data="computedWeeklyMoneyData" :options="chartOptions" />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyMoneyLoading" class="w-full h-96" />
+                        <USkeleton v-if="weeklyMoneyStatus === 'pending'" class="w-full h-96" />
                     </div>
                 </UCard>
             </div>
 
+            <!-- Non-admin starts here-->
             <div v-else class="flex flex-col w-full">
                 <div class="flex flex-col justify-end md:flex-row gap-6 lg:gap-8 w-full mb-6">
-                    <WalletCard
-                        v-for="card in cardInfoData"
-                        :key="card.title"
-                        class="w-full md:w-1/3"
-                        :title="card.title"
-                        :amount="card.amount"
-                        :icon-name="card.iconName"
-                    />
+                    <USkeleton v-if="currentBalanceStatus === 'pending'" class="w-full md:w-1/3 h-26" />
+                    <div v-if="currentBalanceStatus !== 'pending'" class="w-full flex justify-end">
+                        <WalletCard
+                            v-for="card in cardInfoData"
+                            :key="card.title"
+                            class="w-full md:w-1/3"
+                            :title="card.title"
+                            :amount="card.amount"
+                            :icon-name="card.iconName"
+                        />
+                    </div>
                 </div>
                 <ErrorCard
-                    v-if="userFactoryError"
+                    v-if="userFactoryError && userFactoryStatus !== 'pending'"
                     :error-msg="t('registry.registration.errorWhileRetrievingUserFactory')"
                 />
+                <USkeleton v-else-if="userFactoryStatus === 'pending'" class="w-full h-96" />
                 <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                     <template #header>
                         <SubHeading
