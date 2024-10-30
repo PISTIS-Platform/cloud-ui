@@ -74,13 +74,15 @@ const { page, pageCount, filteredRows, paginatedRows, sortBy } = useTable<Transa
 });
 
 //FIXME: Find sum amount when we have actual transactions from BC and display them next to balance
-const sumAmount = computed(() =>
-    incoming.value
-        .filter((item: any) => dayjs(item.transactionDate).isBetween(dayjs().startOf('month'), dayjs(), 'day'))
-        .reduce((total: any, item: any) => total + item.amount, 0),
-);
-
-console.log({ sumAmount });
+const sumAmount = computed(() => {
+    const incomingSum = incoming.value
+        .filter((item: any) => dayjs(item.transactionDate).isBetween(dayjs().startOf('month'), dayjs(), 'day', '[]'))
+        .reduce((total: any, item: any) => total + item.amount, 0);
+    const outgoingSum = outgoing.value
+        .filter((item: any) => dayjs(item.transactionDate).isBetween(dayjs().startOf('month'), dayjs(), 'day', '[]'))
+        .reduce((total: any, item: any) => total - item.amount, 0);
+    return incomingSum + outgoingSum;
+});
 
 const columns: TableColumn[] = [
     {
