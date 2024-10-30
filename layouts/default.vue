@@ -27,6 +27,11 @@ const userNavigation: { name: string; to: string; icon?: string; roles: string[]
     { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
 ];
 
+const dropdownNavigation: { name: string; to: string; icon?: string; roles: string[] }[] =
+    session.value?.roles?.includes('PISTIS_ADMIN')
+        ? [{ name: 'wallet.wallet', to: '/wallet', roles: ['PISTIS_ADMIN'] }]
+        : [];
+
 const notificationCount = ref(0);
 
 const { refresh } = useFetch('/api/notifications/count', {
@@ -136,7 +141,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                                                 "
                                             >
                                                 <MenuItem
-                                                    v-for="item in navigation"
+                                                    v-for="item in dropdownNavigation"
                                                     :key="item.name"
                                                     v-slot="{ active }"
                                                 >
@@ -153,7 +158,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
 
                                             <div v-else-if="status === 'authenticated'">
                                                 <MenuItem
-                                                    v-for="item in userNavigation"
+                                                    v-for="item in dropdownNavigation"
                                                     :key="item.name"
                                                     v-slot="{ active }"
                                                 >

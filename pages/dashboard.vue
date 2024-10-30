@@ -11,7 +11,18 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
+import dayjs from 'dayjs';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import weekday from 'dayjs/plugin/weekday';
 import { Bar } from 'vue-chartjs';
+import { z } from 'zod';
+
+import type FactoryModelRepo from '~/interfaces/factories-model';
+
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(weekday);
 
 const { t } = useI18n();
 
@@ -20,6 +31,7 @@ const { data: session } = useAuth();
 import type ComponentStatusData from '~/interfaces/component-status-data';
 import type MonitoringCardsData from '~/interfaces/monitoring-cards-data';
 import type UsageStatsData from '~/interfaces/usage-stats-data';
+import type { TransactionsType } from '~/interfaces/wallet-transactions';
 
 const chartOptions = {
     responsive: true,
@@ -97,12 +109,64 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
         },
     ];
 });
+const transactions = ref<TransactionsType>({
+    incoming: [],
+    outgoing: [],
+});
 
-//data for weekly transactions bar chart
-const { data: weeklyTransactionsData, status: weeklyTransactionsStatus } = await useLazyFetch(
-    '/api/dashboard/weekly-transactions',
-);
+const loading = ref(true);
+const currentBalance = ref(null);
 
+try {
+    if (!session.value?.roles?.includes('PISTIS_ADMIN')) {
+        currentBalance.value = await $fetch(`/api/wallet/balance`, {
+            method: 'post',
+        });
+    }
+    transactions.value = await $fetch(`/api/wallet/transactions`, {
+        method: 'post',
+    });
+} catch (error) {
+    console.error('Error fetching data:', error);
+} finally {
+    loading.value = false;
+}
+
+const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
+const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
+
+if (transactions.value) {
+    const startOfWeek = dayjs().startOf('week');
+    const endOfWeek = dayjs().endOf('week');
+
+    transactions.value.incoming.forEach((transaction) => {
+        const transactionDate = dayjs(transaction.included_at);
+        //Check if incoming transaction date is between the week
+        if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+            //Take the index of the day in the week
+            const dayIndex = transactionDate.weekday();
+            //Add transaction if the day is in the week
+            weeklyTransactionsData.value[dayIndex] += 1;
+            //Add the amount of the transaction if the day is in the week
+            weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+        }
+    });
+
+    transactions.value.outgoing.forEach((transaction) => {
+        const transactionDate = dayjs(transaction.included_at);
+        //Check if outgoing transaction date is between the week
+        if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+            //Take the index of the day in the week
+            const dayIndex = transactionDate.weekday();
+            //Add transaction if the day is in the week
+            weeklyTransactionsData.value[dayIndex] += 1;
+            //Add the amount of the transaction if the day is in the week
+            weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+        }
+    });
+}
+
+//Weekly transactions bar chart
 const computedWeeklyTransactionsData = computed(() => ({
     //TODO: Get weekdays automatically from i18n somehow
     labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -114,10 +178,7 @@ const computedWeeklyTransactionsData = computed(() => ({
         },
     ],
 }));
-
-//data for weekly money bar chart
-const { data: weeklyMoneyData, status: weeklyMoneyStatus } = await useLazyFetch('/api/dashboard/weekly-money');
-
+//Weekly money bar chart
 const computedWeeklyMoneyData = computed(() => ({
     //TODO: Get weekdays automatically from i18n somehow
     labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -129,9 +190,6 @@ const computedWeeklyMoneyData = computed(() => ({
         },
     ],
 }));
-const { data: currentBalance, status: currentBalanceStatus } = await useLazyFetch(`/api/wallet/balance`, {
-    method: 'POST',
-});
 
 //Top cards for simple user
 const cardInfoData = computed(() => [
@@ -143,10 +201,8 @@ const cardInfoData = computed(() => [
 ]);
 
 //Factory registration
-import { z } from 'zod';
 
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
-import type FactoryModelRepo from '~/interfaces/factories-model';
 
 const R = useRamda();
 
@@ -300,9 +356,9 @@ const submitIP = async () => {
                     <div v-if="monitoringCardsStatus === 'pending'" class="flex w-full gap-4">
                         <USkeleton v-for="item in new Array(3)" :key="item" class="h-[84px] w-full" />
                     </div>
-                    <!-- FIXME: remove v-if when we have actual numbers in transactions-->
-                    <div v-if="false" class="flex gap-8 mt-4 w-full">
-                        <div v-if="weeklyTransactionsStatus !== 'pending'" class="w-full p-4">
+
+                    <div class="flex gap-8 mt-4 w-full">
+                        <div v-if="!loading" class="w-full p-4">
                             <div>
                                 <h3>{{ t('dashboard.resources.weeklyTransactions') }}</h3>
                                 <Bar
@@ -312,14 +368,14 @@ const submitIP = async () => {
                                 />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyTransactionsStatus === 'pending'" class="w-full h-96" />
-                        <div v-if="weeklyMoneyStatus !== 'pending'" class="w-full p-4">
+                        <USkeleton v-if="loading" class="w-full h-96" />
+                        <div v-if="!loading" class="w-full p-4">
                             <div class="w-full">
                                 <h3 class="pl-4">{{ t('dashboard.resources.weeklyMoney') }}</h3>
                                 <Bar class="w-full h-full" :data="computedWeeklyMoneyData" :options="chartOptions" />
                             </div>
                         </div>
-                        <USkeleton v-if="weeklyMoneyStatus === 'pending'" class="w-full h-96" />
+                        <USkeleton v-if="loading" class="w-full h-96" />
                     </div>
                 </UCard>
             </div>
@@ -327,8 +383,8 @@ const submitIP = async () => {
             <!-- Non-admin starts here-->
             <div v-else class="flex flex-col w-full">
                 <div class="flex flex-col justify-end md:flex-row gap-6 lg:gap-8 w-full mb-6">
-                    <USkeleton v-if="currentBalanceStatus === 'pending'" class="w-full md:w-1/3 h-26" />
-                    <div v-if="currentBalanceStatus !== 'pending'" class="w-full flex justify-end">
+                    <USkeleton v-if="loading" class="w-full md:w-1/3 h-26" />
+                    <div v-if="!loading" class="w-full flex justify-end">
                         <WalletCard
                             v-for="card in cardInfoData"
                             :key="card.title"
