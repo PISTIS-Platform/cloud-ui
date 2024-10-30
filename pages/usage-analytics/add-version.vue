@@ -195,6 +195,8 @@ const navigateToMainPage = async () => {
     });
 };
 
+const { data: session } = useAuth();
+
 const createVersion = async () => {
     const questionsBody = questions.value.map((question: Question) => {
         return {
@@ -220,7 +222,7 @@ const createVersion = async () => {
                 description: (questionnaire.value.description || '').trim(),
                 isActive: false, //by default set it to false
                 isForVerifiedBuyers: questionnaire.value.isForVerifiedBuyers,
-                creatorId: '1234', //FIXME:: replace with actual creator id when this information will be available
+                creatorId: session.value?.user?.sub || '',
                 questions: questionsBody,
             },
         });

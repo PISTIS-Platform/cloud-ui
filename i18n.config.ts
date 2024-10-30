@@ -184,6 +184,7 @@ export default defineI18nConfig(() => ({
                 positive: 'Must be a positive number',
                 moreThanNumberChars: 'Cannot be more than {count} characters',
                 validValue: 'Must be a valid {name}',
+                required: 'Required',
             },
             'usage-analytics': {
                 'usage-analytics': 'Usage Analytics',
@@ -208,7 +209,6 @@ export default defineI18nConfig(() => ({
                 edit: 'Edit Questionnaire',
                 reset: 'Reset Questionnaire',
                 save: 'Save Questionnaire',
-                submitAnswers: 'Submit Answers',
                 title: 'Title',
                 version: 'Version',
                 description: 'Description',
@@ -266,6 +266,11 @@ export default defineI18nConfig(() => ({
                 errorInDeactivation: 'An error occurred while deactivating questionnaire version',
                 noActiveQuestionnaireFound: 'No Questionnaire was found',
                 answerTextInfo: 'Enter your answer',
+                checkAnswers: 'Please ensure all answers are filled correctly before submitting the form',
+                submitAnswers: 'Submit Answers',
+                answersSubmitted: 'Your answers have been submitted successfully',
+                errorInSubmitAnswers: 'Error occurred while submitting answers',
+                noQuestionsWereFound: 'No questions were found for this questionnaire',
             },
             models: {
                 models: 'Models Repository',

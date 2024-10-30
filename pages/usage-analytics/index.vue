@@ -64,7 +64,7 @@ const toggleIsActive = async (questionnaire: Questionnaire, value: boolean) => {
 
 const navigateToCreateEdit = async (row?: Questionnaire) => {
     await navigateTo({
-        path: '/questionnaires/add-version',
+        path: '/usage-analytics/add-version',
         query: {
             version: row?.version || null,
             id: row?.id || null,
