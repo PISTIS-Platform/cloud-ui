@@ -112,6 +112,7 @@ const computedMonitoringCards = computed<MonitoringCardsData[]>(() => {
 
 const currentBalance = ref();
 
+//NOTE: Using 'nested' API calls due to partner's restriction about parallel calls to wallet not being possible
 const { status: transactionsStatus } = useLazyFetch(`api/wallet/transactions`, {
     method: 'POST',
     async onResponse({ response }) {
