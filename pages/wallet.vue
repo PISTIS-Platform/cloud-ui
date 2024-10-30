@@ -127,12 +127,17 @@ const columns: TableColumn[] = [
                     <h3 class="text-base xl:text-lg font-normal mt-1">
                         {{ t('wallet.balance') }}
                     </h3>
-                    <div class="text-lg mt-1 font-bold text-green-800">
+                    <div
+                        class="text-lg mt-1 font-bold"
+                        :class="currentBalance?.dlt_amount >= 0 ? 'text-green-800' : 'text-red-800'"
+                    >
                         {{ currentBalance?.dlt_amount?.toFixed(2) }} {{ 'EUR' }}
                     </div>
                     <div class="mt-1">
-                        {{ '(+' }}
-                        <span class="text-lg font-bold text-green-800"> {{ sumAmount }} </span>
+                        {{ '(' }}
+                        <span class="text-lg font-bold" :class="sumAmount >= 0 ? 'text-green-800' : 'text-red-800'">
+                            {{ sumAmount.toFixed(2) }}
+                        </span>
                         {{ t('wallet.balanceInMonth') + ')' }}
                     </div>
                 </div>
