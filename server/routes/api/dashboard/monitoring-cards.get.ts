@@ -1,6 +1,9 @@
+import { getServerSession } from '#auth';
 import MonitoringCardsData from '~/interfaces/monitoring-cards-data';
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+    const session = await getServerSession(event);
+    if (!session?.roles?.includes('PISTIS_ADMIN')) return [];
     const monitoringCards: MonitoringCardsData[] = [
         {
             key: 'factories',

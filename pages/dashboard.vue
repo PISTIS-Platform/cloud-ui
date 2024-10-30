@@ -116,38 +116,42 @@ const { status: transactionsStatus } = useLazyFetch(`api/wallet/transactions`, {
     method: 'POST',
     async onResponse({ response }) {
         const transactions: TransactionsType = response._data;
-        const startOfWeek = dayjs().startOf('week');
-        const endOfWeek = dayjs().endOf('week');
-        transactions.incoming.forEach((transaction) => {
-            const transactionDate = dayjs(transaction.included_at);
-            //Check if incoming transaction date is between the week
-            if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
-                //Take the index of the day in the week
-                const dayIndex = transactionDate.weekday();
-                //Add transaction if the day is in the week
-                weeklyTransactionsData.value[dayIndex] += 1;
-                //Add the amount of the transaction if the day is in the week
-                weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
-            }
-        });
+        if (transactions.incoming.length && transactions.outgoing.length) {
+            const startOfWeek = dayjs().startOf('week');
+            const endOfWeek = dayjs().endOf('week');
+            transactions.incoming.forEach((transaction) => {
+                const transactionDate = dayjs(transaction.included_at);
+                //Check if incoming transaction date is between the week
+                if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+                    //Take the index of the day in the week
+                    const dayIndex = transactionDate.weekday();
+                    //Add transaction if the day is in the week
+                    weeklyTransactionsData.value[dayIndex] += 1;
+                    //Add the amount of the transaction if the day is in the week
+                    weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+                }
+            });
 
-        transactions.outgoing.forEach((transaction) => {
-            const transactionDate = dayjs(transaction.included_at);
-            //Check if outgoing transaction date is between the week
-            if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
-                //Take the index of the day in the week
-                const dayIndex = transactionDate.weekday();
-                //Add transaction if the day is in the week
-                weeklyTransactionsData.value[dayIndex] += 1;
-                //Add the amount of the transaction if the day is in the week
-                weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
-            }
-        });
+            transactions.outgoing.forEach((transaction) => {
+                const transactionDate = dayjs(transaction.included_at);
+                //Check if outgoing transaction date is between the week
+                if (transactionDate.isSameOrAfter(startOfWeek) && transactionDate.isSameOrBefore(endOfWeek)) {
+                    //Take the index of the day in the week
+                    const dayIndex = transactionDate.weekday();
+                    //Add transaction if the day is in the week
+                    weeklyTransactionsData.value[dayIndex] += 1;
+                    //Add the amount of the transaction if the day is in the week
+                    weeklyMoneyData.value[dayIndex] += transaction.payload.Basic.amount;
+                }
+            });
+        }
 
-        const data = await $fetch(`api/wallet/balance`, {
-            method: 'POST',
-        });
-        currentBalance.value = data;
+        if (!session?.value?.roles?.includes('PISTIS_ADMIN')) {
+            const data = await $fetch(`api/wallet/balance`, {
+                method: 'POST',
+            });
+            currentBalance.value = data;
+        }
     },
 });
 
@@ -370,10 +374,7 @@ const submitIP = async () => {
 
             <!-- Non-admin starts here-->
             <div v-else class="flex flex-col w-full">
-                <div v-if="transactionsStatus === 'pending'" class="w-full flex justify-end mb-6">
-                    <USkeleton class="w-full max-w-96 h-24" />
-                </div>
-                <div v-if="transactionsStatus !== 'pending'" class="w-full flex justify-end mb-6">
+                <div class="w-full flex justify-end mb-6">
                     <WalletCard
                         v-for="card in cardInfoData"
                         :key="card.title"
@@ -381,6 +382,7 @@ const submitIP = async () => {
                         :title="card.title"
                         :amount="card.amount"
                         :icon-name="card.iconName"
+                        :status="transactionsStatus"
                     />
                 </div>
                 <ErrorCard
