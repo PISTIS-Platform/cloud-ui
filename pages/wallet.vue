@@ -103,10 +103,10 @@ const columns: TableColumn[] = [
         class: 'text-center w-1/5',
     },
 ];
-
-const truncateId = (item: string, length: number) => {
-    return item.length > length ? item.slice(0, length) + '...' : item;
-};
+//TODO:Uncomment this in case we add more info in table
+// const truncateId = (item: string, length: number) => {
+//     return item.length > length ? item.slice(0, length) + '...' : item;
+// };
 </script>
 
 <template>
@@ -161,12 +161,13 @@ const truncateId = (item: string, length: number) => {
                             </template>
                             <template #transactionId-data="{ row }">
                                 <div @mouseover="isHovered = row.transactionId" @mouseleave="isHovered = null">
-                                    <span v-if="isHovered === row.transactionId">
+                                    <!-- <span v-if="isHovered === row.transactionId">
                                         {{ row.transactionId }}
                                     </span>
                                     <span v-else>
                                         {{ truncateId(row.transactionId, 10) }}
-                                    </span>
+                                    </span> -->
+                                    {{ row.transactionId }}
                                 </div>
                             </template>
                         </UTable>
