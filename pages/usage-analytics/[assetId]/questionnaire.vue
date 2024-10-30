@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { v4 as uuidv4 } from 'uuid';
+
 import type {
     Question,
     QuestionAnswer,
@@ -29,29 +31,22 @@ if (error.value || !questionnaire.value) {
 
     errorMsg.value = serverError?.data?.data?.message || t('usage-analytics.errorWhileRetrievingActiveVersion');
 } else {
-    let answerId = 0;
-
     answers.value =
         questionnaire.value?.questions?.map((question: Question) => {
             let availableOptions: SelectedOption[] = [];
 
             if (question?.options) {
-                let id = 0;
                 availableOptions = question?.options.map((option: QuestionOption) => {
-                    id++;
-
                     return {
-                        id: id.toString(),
+                        id: uuidv4(),
                         value: option?.text || '',
                         isSelected: false,
                     };
                 });
             }
 
-            answerId++;
-
             return {
-                id: answerId.toString(),
+                id: uuidv4(),
                 text: '',
                 questionType: question.type,
                 availableOptions,
@@ -97,7 +92,7 @@ const saveAnswers = async () => {
             questionId: answer.question?.id ?? '',
             questionTitle: answer.question?.title ?? '',
             text: answer?.text,
-            options: answer.selectedOptions?.map((option: SelectedOption) => option.value),
+            options: answer?.selectedOptions,
         })),
     };
 
@@ -155,7 +150,7 @@ const saveAnswers = async () => {
                         <Answer
                             :answer="answer"
                             @update:text="(value: string) => (answer.text = value)"
-                            @update:selected-options="(value: SelectedOption[]) => (answer.selectedOptions = value)"
+                            @update:selected-options="(value: string[]) => (answer.selectedOptions = value)"
                             @is-valid="(isValid: boolean) => (answer.isValid = isValid)"
                         />
                     </UCard>

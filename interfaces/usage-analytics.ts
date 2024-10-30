@@ -46,7 +46,7 @@ export interface QuestionAnswer {
     text?: string;
     questionType: QuestionType | string | undefined;
     availableOptions?: SelectedOption[];
-    selectedOptions?: SelectedOption[];
+    selectedOptions?: string[];
     question?: Question;
     isValid?: boolean | undefined;
 }

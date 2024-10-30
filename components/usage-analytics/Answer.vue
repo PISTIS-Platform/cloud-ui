@@ -42,26 +42,18 @@ const schema = computed(() => {
     }
 
     return z.object({
-        selectedOptions: z
-            .array(
-                z.object({
-                    isSelected: z.boolean(),
-                    id: z.string(),
-                    value: z.string(),
-                }),
-            )
-            .refine(
-                (options) => {
-                    if (props.answer.question?.isRequired && !options.length) {
-                        return false;
-                    }
+        selectedOptions: z.array(z.string()).refine(
+            (options) => {
+                if (props.answer.question?.isRequired && !options.length) {
+                    return false;
+                }
 
-                    return true;
-                },
-                {
-                    message: t('usage-analytics.selectedOptionsMinLength'),
-                },
-            ),
+                return true;
+            },
+            {
+                message: t('usage-analytics.selectedOptionsMinLength'),
+            },
+        ),
     });
 });
 
@@ -74,22 +66,13 @@ watch(isValid, () => {
     emit('isValid', isValid.value);
 });
 
-const selectedOptions = ref<SelectedOption[]>(props.answer?.availableOptions || []);
+const availableOptions = ref<SelectedOption[]>(props.answer?.availableOptions || []);
+const selectedOptions = ref<string[]>([]);
 
 const selectedRadioOption = ref<string>('');
-const updateRadioOptionSelection = (id: string) => {
-    //for radio button, first, make all options false
-    selectedOptions.value = selectedOptions.value.map((o: SelectedOption) => ({
-        ...o,
-        isSelected: false,
-    }));
 
-    // then make only the selected one true
-    updateSelectedOptions(id, true);
-};
-
-const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
-    const optionObject = selectedOptions.value.find((o: SelectedOption) => o.id === id);
+const updateCheckboxSelectedOptions = (id: string | number, isSelected: boolean) => {
+    const optionObject = availableOptions.value.find((o: SelectedOption) => o.id === id);
 
     if (!optionObject) {
         return;
@@ -97,11 +80,12 @@ const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
 
     optionObject.isSelected = isSelected;
 
+    selectedOptions.value = availableOptions.value
+        .filter((o: SelectedOption) => o.isSelected)
+        .map((o: SelectedOption) => o.value);
+
     // emit only options who are selected
-    emit(
-        'update:selectedOptions',
-        selectedOptions.value.filter((o: SelectedOption) => o.isSelected),
-    );
+    emit('update:selectedOptions', selectedOptions.value);
 };
 </script>
 
@@ -111,7 +95,7 @@ const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
             <!-- Display Content based on question type -->
 
             <!-- Text based Question -->
-            <div v-if="answer.questionType === QuestionType.TEXT">
+            <div v-if="props.answer.questionType === QuestionType.TEXT">
                 <UFormGroup name="text">
                     <UTextarea
                         :model-value="answer.text"
@@ -122,14 +106,16 @@ const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
                 </UFormGroup>
             </div>
 
-            <div v-else-if="answer.questionType === QuestionType.CHECKBOX">
+            <div v-else-if="props.answer.questionType === QuestionType.CHECKBOX">
                 <UFormGroup name="selectedOptions">
                     <div class="flex gap-6">
-                        <div v-for="option in selectedOptions" :key="option.id">
+                        <div v-for="option in answer?.availableOptions" :key="option.id">
                             <UCheckbox
                                 :model-value="option.isSelected"
                                 :label="option.value"
-                                @update:model-value="(value: boolean) => updateSelectedOptions(option.id, value)"
+                                @update:model-value="
+                                    (value: boolean) => updateCheckboxSelectedOptions(option.id, value)
+                                "
                             />
                         </div>
                     </div>
@@ -140,12 +126,12 @@ const updateSelectedOptions = (id: string | number, isSelected: boolean) => {
                 <UFormGroup name="selectedOptions">
                     <div class="flex gap-6">
                         <URadio
-                            v-for="option of selectedOptions"
+                            v-for="option of answer?.availableOptions"
                             :key="option.id"
                             :model-value="selectedRadioOption"
                             v-bind="option"
                             :label="option.value"
-                            @update:model-value="(value: string) => updateRadioOptionSelection(option.id)"
+                            @update:model-value="(value: string) => emit('update:selectedOptions', [value])"
                         />
                     </div>
                 </UFormGroup>
