@@ -66,6 +66,8 @@ const features = [
         icon: 'icon-park-outline:stock-market',
     },
 ];
+
+const isModalOpen = ref(false);
 </script>
 
 <template>
@@ -93,9 +95,15 @@ const features = [
                     </div>
                 </div>
                 <!-- Sign In button -->
-                <div v-if="status !== 'authenticated'" class="flex">
+                <div v-if="status !== 'authenticated'" class="flex gap-4">
                     <button
-                        class="inline-flex items-center px-6 py-2 text-primary-950 bg-primary-600 text-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
+                        class="items-center px-6 py-2 text-white hover:bg-gray-100 border border-neutral-200 hover:text-primary-900 rounded-md cursor-pointer transition-all"
+                        @click="isModalOpen = !isModalOpen"
+                    >
+                        Register
+                    </button>
+                    <button
+                        class="items-center px-6 py-2 text-primary-950 bg-primary-600 text-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                         @click="signIn('keycloak', { callbackUrl })"
                     >
                         Sign In
@@ -151,6 +159,34 @@ const features = [
                 </div>
             </div>
         </div>
+
+        <UModal
+            v-model="isModalOpen"
+            :ui="{
+                overlay: {
+                    background: 'bg-gray-600/75',
+                },
+            }"
+        >
+            <UCard class="max-w-2xl sm:max-w-4xl" :ui="{ divide: 'divide-transparent', footer: { padding: 'p-0' } }">
+                <p class="font-normal text-center sm:text-left text-base lg:text-lg">
+                    Registration is closed for the Alpha version of the platform. If you would like to get access to the
+                    PISTIS platform at this point, send us an email to the following address:
+                    <span class="text-primary-600">register - at - pistis-market.eu</span>
+                </p>
+
+                <template #footer>
+                    <div class="flex justify-center pb-4">
+                        <button
+                            class="px-4 py-2 text-white bg-primary-500 border border-transparent rounded-md hover:text-neutral-200 cursor-pointer transition-all"
+                            @click="isModalOpen = false"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </template>
+            </UCard>
+        </UModal>
 
         <footer
             class="flex justify-start items-center gap-4 w-full bg-primary-950 px-8 py-4 sm:px-16 2xl:px-48 flipped"
