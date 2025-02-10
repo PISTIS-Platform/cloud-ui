@@ -3,7 +3,13 @@ export interface Transaction {
     transactionDate: Date;
     transactionId: string;
     amount: number;
-    type: string;
+    type?: string;
+    seller?: string;
+    buyer?: string;
+    assetId?: string;
+    assetTitle?: string;
+    assetLink?: string;
+    terms?: string;
 }
 
 export interface Balance {

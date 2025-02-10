@@ -13,11 +13,16 @@ export default defineEventHandler(async (event) => {
     const body = JSON.stringify({ wallet_alias: walletAliasObject[walletKey].alias });
     const token = await getToken({ event });
 
-    return $fetch<any>(`${marketplaceUrl}/srv/payments/v0/dlt/transactions`, {
+    const transactions = await $fetch<any>(`${marketplaceUrl}/srv/payments/v0/dlt/transactions`, {
         method: 'POST',
         body,
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },
     });
+
+    console.log(transactions.incoming[0]);
+    console.log(transactions.outgoing[0]);
+
+    return transactions;
 });

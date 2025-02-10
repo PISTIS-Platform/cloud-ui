@@ -50,6 +50,18 @@ export default defineI18nConfig(() => ({
             delete: 'Delete',
             goBack: 'Go Back',
             title: 'Title',
+            auditor: {
+                title: 'Transaction Auditor',
+                date: 'Date',
+                transactionId: 'Transaction ID',
+                assetId: 'Asset ID',
+                assetTitle: 'Asset Title',
+                amount: 'Amount',
+                terms: 'Terms and Conditions',
+                seller: 'Seller',
+                buyer: 'Buyer',
+                type: 'Type',
+            },
             dashboard: {
                 dashboard: 'Dashboard',
                 status: 'Status',
