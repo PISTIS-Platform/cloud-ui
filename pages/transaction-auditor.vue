@@ -157,6 +157,7 @@ const truncateId = (item: string, length: number) => {
                         <template #assetId-data="{ row }">
                             <UTooltip
                                 :text="row.assetTitle"
+                                :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
@@ -175,6 +176,7 @@ const truncateId = (item: string, length: number) => {
                         <template #seller-data="{ row }">
                             <UTooltip
                                 :text="row.seller"
+                                :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
@@ -187,6 +189,7 @@ const truncateId = (item: string, length: number) => {
                         <template #buyer-data="{ row }">
                             <UTooltip
                                 :text="row.buyer"
+                                :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
