@@ -61,9 +61,13 @@ const incomingTransactions = computed(() => {
         type: 'Incoming',
         //FIXME: Dummy data until available
         assetId: uuid(),
-        assetTitle: 'Asset Title',
+        assetTitle: 'Sample Asset Title',
         assetLink: 'http://google.com',
-        terms: 'Ullamco enim Lorem in fugiat labore non fugiat magna nostrud duis aliqua in sit. Aliqua do eiusmod et excepteur laboris magna incididunt. Adipisicing eu nulla aute irure. Nostrud non consequat pariatur aliquip dolor quis eu tempor anim esse aute est elit. Et ut eiusmod exercitation do esse et. Lorem ipsum esse esse est officia nulla sint consectetur. Sunt qui ea commodo esse ipsum laboris et cillum nostrud excepteur tempor elit.',
+        terms: `Enim nisi exercitation nisi ad incididunt. Eiusmod culpa ea minim aute aute aliquip culpa nisi ad ea commodo. Anim labore culpa consequat. Cillum aute culpa ad ex. Elit consectetur et id in velit. Ullamco est in excepteur labore proident adipisicing minim sint id. Ullamco ea reprehenderit irure aliqua deserunt eiusmod tempor labore velit minim excepteur aliquip. Amet aute est in exercitation dolore aliqua nulla eiusmod.
+
+Proident dolor sit adipisicing. Ullamco culpa consequat quis. Velit cupidatat anim veniam amet. Commodo consectetur aute elit. Commodo cupidatat id deserunt magna velit est ex aliqua eu ad aute exercitation ea sit.
+
+Esse duis enim cillum ipsum qui magna sit adipisicing occaecat excepteur aliqua officia. Deserunt aliquip nulla irure est occaecat. Ipsum dolor culpa minim nulla in aliqua labore. Excepteur ea in dolor et minim laborum esse tempor dolor amet incididunt ea in minim nulla. Enim esse officia aliquip voluptate magna dolor consectetur. Fugiat incididunt aliquip fugiat velit qui officia excepteur do qui sunt ipsum cupidatat mollit do aliqua. Cillum cillum qui id voluptate sint dolore. Laborum non nostrud eu esse qui nisi aliquip.`,
     }));
 });
 
@@ -79,7 +83,7 @@ const outgoingTransactions = computed(() => {
         type: 'Outgoing',
         //FIXME: Dummy data until available
         assetId: uuid(),
-        assetTitle: 'Asset Title',
+        assetTitle: 'Sample Asset Title',
         assetLink: 'http://google.com',
         terms: 'Ullamco enim Lorem in fugiat labore non fugiat magna nostrud duis aliqua in sit. Aliqua do eiusmod et excepteur laboris magna incididunt. Adipisicing eu nulla aute irure. Nostrud non consequat pariatur aliquip dolor quis eu tempor anim esse aute est elit. Et ut eiusmod exercitation do esse et. Lorem ipsum esse esse est officia nulla sint consectetur. Sunt qui ea commodo esse ipsum laboris et cillum nostrud excepteur tempor elit.',
     }));
@@ -95,6 +99,15 @@ const { page, pageCount, filteredRows, paginatedRows, sortBy, searchString } = u
 const truncateId = (item: string, length: number) => {
     return item.length > length ? item.slice(0, length) + '...' : item;
 };
+
+const selected = ref();
+
+const select = (item: any) => {
+    selected.value = item;
+    modalOpen.value = true;
+};
+
+const modalOpen = ref(false);
 </script>
 
 <template>
@@ -105,6 +118,73 @@ const truncateId = (item: string, length: number) => {
                 <UProgress animation="carousel" color="primary" />
             </div>
             <div v-else class="w-full mt-4">
+                <UModal v-model="modalOpen" :ui="{ width: 'w-full sm:max-w-xl' }" class="text-gray-600 relative">
+                    <UIcon
+                        name="material-symbols-light:close"
+                        class="w-6 h-6 absolute right-2 top-2 cursor-pointer"
+                        @click="modalOpen = false"
+                    />
+                    <div v-if="selected" class="w-full p-6 flex flex-col gap-4 text-sm">
+                        <div class="w-full flex items-center justify-between font-semibold">
+                            <span class="text-gray-500 text-lg">{{ $t('auditor.transactionDetails') }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.date') }}</span>
+                            <span>{{ selected.transactionDate }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
+                            <span>{{ selected.transactionId }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.assetId') }}</span>
+                            <span>{{ selected.assetId }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
+                            <span>{{ selected.assetTitle }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.link') }}</span>
+                            <a
+                                :href="selected.assetLink"
+                                class="text-primary visited:text-primary-800 focus:outline-none"
+                                >{{ selected.assetLink }}</a
+                            >
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.amount') }}</span>
+                            <span
+                                :class="[
+                                    'rounded-md px-4 py-1 font-medium',
+                                    selected.type === 'Incoming'
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-red-100 text-red-800',
+                                ]"
+                                >{{ selected.amount.toFixed(2) }} EUR ({{ selected.type }})
+                            </span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.seller') }}</span>
+                            <span>{{ selected.seller }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.buyer') }}</span>
+                            <span>{{ selected.buyer }}</span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
+                            <div class="max-h-44 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6">
+                                <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
+                                    {{ paragraph }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="w-full flex items-center justify-center text-gray-500">
+                        {{ $t('auditor.noTransactionSelected') }}
+                    </div>
+                </UModal>
                 <UCard>
                     <div class="w-ful flex items-center justify-end">
                         <UInput
@@ -126,6 +206,8 @@ const truncateId = (item: string, length: number) => {
                             icon: 'i-heroicons-circle-stack-20-solid',
                             label: $t('wallet.noTransactions'),
                         }"
+                        :single-select="true"
+                        @select="select"
                     >
                         <template #transactionDate-data="{ row }">
                             <span v-if="row.transactionDate" class="flex items-center justify-center">{{

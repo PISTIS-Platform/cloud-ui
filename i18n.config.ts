@@ -61,6 +61,10 @@ export default defineI18nConfig(() => ({
                 seller: 'Seller',
                 buyer: 'Buyer',
                 type: 'Type',
+                assetDetails: 'Asset Details',
+                transactionDetails: 'Transaction Details',
+                noTransactionSelected: 'No transaction selected',
+                link: 'Asset Link (Marketplace)',
             },
             dashboard: {
                 dashboard: 'Dashboard',
