@@ -14,32 +14,26 @@ const columns: TableColumn[] = [
         class: 'text-center',
     },
     {
-        key: 'type',
-        label: t('auditor.type'),
-        sortable: true,
-        class: 'text-center',
-    },
-    {
         key: 'amount',
         label: t('auditor.amount'),
         sortable: true,
         class: 'text-center',
     },
     {
-        key: 'assetId',
-        label: t('auditor.assetId'),
+        key: 'assetTitle',
+        label: t('auditor.assetTitle'),
         sortable: false,
         class: 'text-center',
     },
     {
-        key: 'seller',
-        label: t('auditor.seller'),
+        key: 'provider',
+        label: t('auditor.provider'),
         sortable: true,
         class: 'text-center',
     },
     {
-        key: 'buyer',
-        label: t('auditor.buyer'),
+        key: 'consumer',
+        label: t('auditor.consumer'),
         sortable: true,
         class: 'text-center',
     },
@@ -56,9 +50,8 @@ const incomingTransactions = computed(() => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
-        seller: item.payload.Basic.recipient_address,
-        buyer: item.payload.Basic.sender_address,
-        type: 'Incoming',
+        provider: item.payload.Basic.recipient_address,
+        consumer: item.payload.Basic.sender_address,
         //FIXME: Dummy data until available
         assetId: uuid(),
         assetTitle: 'Sample Asset Title',
@@ -78,8 +71,8 @@ const outgoingTransactions = computed(() => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
-        seller: item.payload.Basic.recipient_address,
-        buyer: item.payload.Basic.sender_address,
+        provider: item.payload.Basic.recipient_address,
+        consumer: item.payload.Basic.sender_address,
         type: 'Outgoing',
         //FIXME: Dummy data until available
         assetId: uuid(),
@@ -108,6 +101,11 @@ const select = (item: any) => {
 };
 
 const modalOpen = ref(false);
+
+const expand = ref({
+    openedRows: [paginatedRows.value[0]],
+    row: {},
+});
 </script>
 
 <template>
@@ -165,12 +163,12 @@ const modalOpen = ref(false);
                             </span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.seller') }}</span>
-                            <span>{{ selected.seller }}</span>
+                            <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
+                            <span>{{ selected.provider }}</span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.buyer') }}</span>
-                            <span>{{ selected.buyer }}</span>
+                            <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
+                            <span>{{ selected.consumer }}</span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
@@ -199,6 +197,7 @@ const modalOpen = ref(false);
 
                     <UTable
                         v-model:sort="sortBy"
+                        v-model:expand="expand"
                         :columns="columns"
                         :rows="paginatedRows"
                         sort-mode="manual"
@@ -207,27 +206,19 @@ const modalOpen = ref(false);
                             label: $t('wallet.noTransactions'),
                         }"
                         :single-select="true"
+                        :multiple-expand="true"
                         @select="select"
                     >
+                        <template #expand="{ row }">
+                            <div class="p-4">
+                                <pre>{{ row }}</pre>
+                            </div>
+                        </template>
                         <template #transactionDate-data="{ row }">
                             <span v-if="row.transactionDate" class="flex items-center justify-center">{{
                                 $d(new Date(row.transactionDate), 'short')
                             }}</span>
                             <span v-else>&mdash;</span>
-                        </template>
-
-                        <template #type-data="{ row }">
-                            <div class="text-center">
-                                <span
-                                    :class="[
-                                        'rounded-md px-4 py-1 font-medium',
-                                        row.type === 'Incoming'
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800',
-                                    ]"
-                                    >{{ row.type }}
-                                </span>
-                            </div>
                         </template>
 
                         <template #amount-data="{ row }">
@@ -236,7 +227,7 @@ const modalOpen = ref(false);
                             </span>
                         </template>
 
-                        <template #assetId-data="{ row }">
+                        <template #assetTitle-data="{ row }">
                             <UTooltip
                                 :text="row.assetTitle"
                                 :ui="{ width: 'max-w-lg' }"
@@ -249,34 +240,34 @@ const modalOpen = ref(false);
                                         target="_blank"
                                         class="text-primary visited:text-primary-800"
                                     >
-                                        {{ row.assetId }}
+                                        {{ row.assetTitle }}
                                     </a>
                                 </span>
                             </UTooltip>
                         </template>
 
-                        <template #seller-data="{ row }">
+                        <template #provider-data="{ row }">
                             <UTooltip
-                                :text="row.seller"
+                                :text="row.provider"
                                 :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
                                 <span class="flex items-center justify-center">
-                                    {{ truncateId(row.seller, 10) }}
+                                    {{ truncateId(row.provider, 10) }}
                                 </span>
                             </UTooltip>
                         </template>
 
-                        <template #buyer-data="{ row }">
+                        <template #consumer-data="{ row }">
                             <UTooltip
-                                :text="row.buyer"
+                                :text="row.consumer"
                                 :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
                                 <span class="flex items-center justify-center">
-                                    {{ truncateId(row.buyer, 10) }}
+                                    {{ truncateId(row.consumer, 10) }}
                                 </span>
                             </UTooltip>
                         </template>
