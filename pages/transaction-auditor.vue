@@ -9,6 +9,7 @@ import type { TransactionsType, WalletTransaction } from '~/interfaces/wallet-tr
 
 const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
+import jsPDF from 'jspdf';
 
 const columns: TableColumn[] = [
     {
@@ -114,6 +115,28 @@ const expand = ref({
     openedRows: [],
     row: null,
 });
+
+const pdfContent = ref<HTMLDivElement | null>(null);
+
+const generatePDF = () => {
+    if (!pdfContent.value) return;
+
+    pdfContent.value.classList.add('pdf-mode');
+
+    const doc = new jsPDF('p', 'pt', 'a4');
+
+    doc.html(pdfContent.value, {
+        callback: (doc: jsPDF) => {
+            doc.save('transaction_details.pdf');
+            // Remove the PDF-specific class after PDF generation.
+            pdfContent.value?.classList.remove('pdf-mode');
+        },
+        x: 10,
+        y: 10,
+        width: 500,
+        windowWidth: pdfContent.value.scrollWidth,
+    });
+};
 </script>
 
 <template>
@@ -130,10 +153,14 @@ const expand = ref({
                         class="w-6 h-6 absolute right-2 top-2 cursor-pointer"
                         @click="modalOpen = false"
                     />
-                    <div v-if="selected" class="w-full p-6 flex flex-col gap-4 text-sm">
+                    <div v-if="selected" ref="pdfContent" class="w-full p-6 flex flex-col gap-4 text-sm">
                         <div class="w-full flex items-center gap-4 font-semibold">
                             <span class="text-gray-500 text-lg">{{ $t('auditor.transactionDetails') }}</span>
-                            <UIcon name="fa6-solid:file-pdf" class="w-6 h-6 text-gray-500" />
+                            <UIcon
+                                name="fa6-solid:file-pdf"
+                                class="w-6 h-6 text-gray-500 cursor-pointer no-print"
+                                @click="generatePDF"
+                            />
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.date') }}</span>
@@ -145,13 +172,13 @@ const expand = ref({
                                 >{{ truncateId(selected.transactionId, 10) }}
                                 <UIcon
                                     name="mingcute:copy-line"
-                                    class="w-4 h-4 cursor-pointer"
+                                    class="w-4 h-4 cursor-pointer no-print"
                                     @click="copyTransaction(selected.transactionId)"
                                 />
                                 <UIcon
                                     v-show="copiedTransaction"
                                     name="ic:baseline-check"
-                                    class="w-4 h-4 text-green-500 transition-all duration-100"
+                                    class="w-4 h-4 text-green-500 transition-all duration-100 no-print"
                                 />
                             </span>
                         </div>
@@ -161,12 +188,12 @@ const expand = ref({
                                 >{{ truncateId(selected.assetId, 10) }}
                                 <UIcon
                                     name="mingcute:copy-line"
-                                    class="w-4 h-4 cursor-pointer"
+                                    class="w-4 h-4 cursor-pointer no-print"
                                     @click="copyAsset(selected.assetId)" />
                                 <UIcon
                                     v-show="copiedAsset"
                                     name="ic:baseline-check"
-                                    class="w-4 h-4 text-green-500 transition-all duration-100"
+                                    class="w-4 h-4 text-green-500 transition-all duration-100 no-print"
                             /></span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
@@ -199,7 +226,7 @@ const expand = ref({
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
-                            <div class="max-h-44 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6">
+                            <div class="max-h-44 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6 scrollable">
                                 <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
                                     {{ paragraph }}
                                 </p>
@@ -309,3 +336,21 @@ const expand = ref({
         </PageContainer>
     </div>
 </template>
+
+<style scoped>
+/* styles that only get activated during pdf generation with the .pdf-mode class */
+.pdf-mode .no-print {
+    display: none !important;
+}
+
+.pdf-mode .scrollable {
+    max-height: none !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+.pdf-mode .scrollable p {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+</style>
