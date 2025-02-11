@@ -1,10 +1,14 @@
 <script setup lang="ts">
 const { t } = useI18n();
+import { useClipboard } from '@vueuse/core';
 import { v4 as uuid } from 'uuid';
 
 import type TableColumn from '~/interfaces/table-column';
 import type { Transaction } from '~/interfaces/wallet-table';
 import type { TransactionsType, WalletTransaction } from '~/interfaces/wallet-transactions.js';
+
+const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
+const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
 
 const columns: TableColumn[] = [
     {
@@ -50,8 +54,8 @@ const incomingTransactions = computed(() => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
-        amountToProvider: ((item.payload.Basic.amount * 80) / 100).toFixed(2),
-        transactionFee: ((item.payload.Basic.amount * 20) / 100).toFixed(2),
+        amountToProvider: (item.payload.Basic.amount * 80) / 100,
+        transactionFee: (item.payload.Basic.amount * 20) / 100,
         provider: item.payload.Basic.recipient_address,
         consumer: item.payload.Basic.sender_address,
         //FIXME: Dummy data until available
@@ -73,8 +77,8 @@ const outgoingTransactions = computed(() => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
-        amountToProvider: ((item.payload.Basic.amount * 80) / 100).toFixed(2),
-        transactionFee: ((item.payload.Basic.amount * 20) / 100).toFixed(2),
+        amountToProvider: (item.payload.Basic.amount * 80) / 100,
+        transactionFee: (item.payload.Basic.amount * 20) / 100,
         provider: item.payload.Basic.recipient_address,
         consumer: item.payload.Basic.sender_address,
         type: 'Outgoing',
@@ -127,8 +131,9 @@ const expand = ref({
                         @click="modalOpen = false"
                     />
                     <div v-if="selected" class="w-full p-6 flex flex-col gap-4 text-sm">
-                        <div class="w-full flex items-center justify-between font-semibold">
+                        <div class="w-full flex items-center gap-4 font-semibold">
                             <span class="text-gray-500 text-lg">{{ $t('auditor.transactionDetails') }}</span>
+                            <UIcon name="fa6-solid:file-pdf" class="w-6 h-6 text-gray-500" />
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.date') }}</span>
@@ -136,35 +141,53 @@ const expand = ref({
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
-                            <span>{{ selected.transactionId }}</span>
+                            <span
+                                >{{ truncateId(selected.transactionId, 10) }}
+                                <UIcon
+                                    name="mingcute:copy-line"
+                                    class="w-4 h-4 cursor-pointer"
+                                    @click="copyTransaction(selected.transactionId)"
+                                />
+                                <UIcon
+                                    v-show="copiedTransaction"
+                                    name="ic:baseline-check"
+                                    class="w-4 h-4 text-green-500 transition-all duration-100"
+                                />
+                            </span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.assetId') }}</span>
-                            <span>{{ selected.assetId }}</span>
+                            <span
+                                >{{ truncateId(selected.assetId, 10) }}
+                                <UIcon
+                                    name="mingcute:copy-line"
+                                    class="w-4 h-4 cursor-pointer"
+                                    @click="copyAsset(selected.assetId)" />
+                                <UIcon
+                                    v-show="copiedAsset"
+                                    name="ic:baseline-check"
+                                    class="w-4 h-4 text-green-500 transition-all duration-100"
+                            /></span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
-                            <span>{{ selected.assetTitle }}</span>
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.link') }}</span>
                             <a
                                 :href="selected.assetLink"
                                 class="text-primary visited:text-primary-800 focus:outline-none"
-                                >{{ selected.assetLink }}</a
+                                >{{ selected.assetTitle }}</a
                             >
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.amount') }}</span>
-                            <span
-                                :class="[
-                                    'rounded-md px-4 py-1 font-medium',
-                                    selected.type === 'Incoming'
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800',
-                                ]"
-                                >{{ selected.amount.toFixed(2) }} EUR ({{ selected.type }})
-                            </span>
+                            <span>{{ selected.amount.toFixed(2) }} EUR </span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.amountToProvider') }}</span>
+                            <span>{{ selected.amountToProvider.toFixed(2) }} EUR </span>
+                        </div>
+                        <div class="flex flex-col items-start gap-1">
+                            <span class="text-gray-400">{{ $t('auditor.transactionFee') }}</span>
+                            <span>{{ selected.transactionFee.toFixed(2) }} EUR </span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
@@ -217,12 +240,12 @@ const expand = ref({
                             <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center">
                                 <span>
                                     <span>{{ $t('auditor.amountToProvider') }}: </span>
-                                    <span class="font-bold">{{ row.amountToProvider }} EUR</span>
+                                    <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
                                 </span>
                                 <hr />
                                 <span>
                                     <span class="mt-2">{{ $t('auditor.transactionFee') }}: </span>
-                                    <span class="font-bold">{{ row.transactionFee }} EUR</span>
+                                    <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
                                 </span>
                             </div>
                         </template>
