@@ -57,6 +57,8 @@ export default defineI18nConfig(() => ({
                 assetId: 'Asset ID',
                 assetTitle: 'Asset Title',
                 amount: 'Amount',
+                amountToProvider: 'Amount to Data Provider',
+                transactionFee: 'Transaction Fee',
                 terms: 'Terms and Conditions',
                 provider: 'Provider',
                 consumer: 'Consumer',

@@ -50,6 +50,8 @@ const incomingTransactions = computed(() => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
+        amountToProvider: ((item.payload.Basic.amount * 80) / 100).toFixed(2),
+        transactionFee: ((item.payload.Basic.amount * 20) / 100).toFixed(2),
         provider: item.payload.Basic.recipient_address,
         consumer: item.payload.Basic.sender_address,
         //FIXME: Dummy data until available
@@ -71,6 +73,8 @@ const outgoingTransactions = computed(() => {
         transactionDate: item.included_at,
         transactionId: item.transaction_id,
         amount: item.payload.Basic.amount,
+        amountToProvider: ((item.payload.Basic.amount * 80) / 100).toFixed(2),
+        transactionFee: ((item.payload.Basic.amount * 20) / 100).toFixed(2),
         provider: item.payload.Basic.recipient_address,
         consumer: item.payload.Basic.sender_address,
         type: 'Outgoing',
@@ -103,8 +107,8 @@ const select = (item: any) => {
 const modalOpen = ref(false);
 
 const expand = ref({
-    openedRows: [paginatedRows.value[0]],
-    row: {},
+    openedRows: [],
+    row: null,
 });
 </script>
 
@@ -210,8 +214,16 @@ const expand = ref({
                         @select="select"
                     >
                         <template #expand="{ row }">
-                            <div class="p-4">
-                                <pre>{{ row }}</pre>
+                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center">
+                                <span>
+                                    <span>{{ $t('auditor.amountToProvider') }}: </span>
+                                    <span class="font-bold">{{ row.amountToProvider }} EUR</span>
+                                </span>
+                                <hr />
+                                <span>
+                                    <span class="mt-2">{{ $t('auditor.transactionFee') }}: </span>
+                                    <span class="font-bold">{{ row.transactionFee }} EUR</span>
+                                </span>
                             </div>
                         </template>
                         <template #transactionDate-data="{ row }">
@@ -228,22 +240,11 @@ const expand = ref({
                         </template>
 
                         <template #assetTitle-data="{ row }">
-                            <UTooltip
-                                :text="row.assetTitle"
-                                :ui="{ width: 'max-w-lg' }"
-                                :popper="{ placement: 'top' }"
-                                class="flex items-center justify-center"
-                            >
-                                <span class="flex items-center justify-center">
-                                    <a
-                                        :href="row.assetLink"
-                                        target="_blank"
-                                        class="text-primary visited:text-primary-800"
-                                    >
-                                        {{ row.assetTitle }}
-                                    </a>
-                                </span>
-                            </UTooltip>
+                            <span class="flex items-center justify-center">
+                                <a :href="row.assetLink" target="_blank" class="text-primary visited:text-primary-800">
+                                    {{ row.assetTitle }}
+                                </a>
+                            </span>
                         </template>
 
                         <template #provider-data="{ row }">

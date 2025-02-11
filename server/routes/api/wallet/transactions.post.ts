@@ -21,8 +21,5 @@ export default defineEventHandler(async (event) => {
         },
     });
 
-    console.log(transactions.incoming[0]);
-    console.log(transactions.outgoing[0]);
-
     return transactions;
 });
