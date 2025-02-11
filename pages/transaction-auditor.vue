@@ -118,8 +118,12 @@ const expand = ref({
 
 const pdfContent = ref<HTMLDivElement | null>(null);
 
+const printing = ref(false);
+
 const generatePDF = () => {
     if (!pdfContent.value) return;
+
+    printing.value = true;
 
     pdfContent.value.classList.add('pdf-mode');
 
@@ -136,6 +140,8 @@ const generatePDF = () => {
         width: 500,
         windowWidth: pdfContent.value.scrollWidth,
     });
+
+    printing.value = false;
 };
 </script>
 
@@ -168,33 +174,35 @@ const generatePDF = () => {
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
-                            <span
+                            <span class="no-print"
                                 >{{ truncateId(selected.transactionId, 10) }}
                                 <UIcon
                                     name="mingcute:copy-line"
-                                    class="w-4 h-4 cursor-pointer no-print"
+                                    class="w-4 h-4 cursor-pointer"
                                     @click="copyTransaction(selected.transactionId)"
                                 />
                                 <UIcon
                                     v-show="copiedTransaction"
                                     name="ic:baseline-check"
-                                    class="w-4 h-4 text-green-500 transition-all duration-100 no-print"
+                                    class="w-4 h-4 text-green-500 transition-all duration-100"
                                 />
                             </span>
+                            <span class="print-this hidden">{{ selected.transactionId }}</span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.assetId') }}</span>
-                            <span
+                            <span class="no-print"
                                 >{{ truncateId(selected.assetId, 10) }}
                                 <UIcon
                                     name="mingcute:copy-line"
-                                    class="w-4 h-4 cursor-pointer no-print"
+                                    class="w-4 h-4 cursor-pointer"
                                     @click="copyAsset(selected.assetId)" />
                                 <UIcon
                                     v-show="copiedAsset"
                                     name="ic:baseline-check"
-                                    class="w-4 h-4 text-green-500 transition-all duration-100 no-print"
+                                    class="w-4 h-4 text-green-500 transition-all duration-100"
                             /></span>
+                            <span class="print-this hidden">{{ selected.assetId }}</span>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
@@ -341,6 +349,10 @@ const generatePDF = () => {
 /* styles that only get activated during pdf generation with the .pdf-mode class */
 .pdf-mode .no-print {
     display: none !important;
+}
+
+.pdf-mode .print-this {
+    display: block !important;
 }
 
 .pdf-mode .scrollable {
