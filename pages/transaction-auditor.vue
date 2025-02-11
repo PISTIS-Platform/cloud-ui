@@ -118,12 +118,8 @@ const expand = ref({
 
 const pdfContent = ref<HTMLDivElement | null>(null);
 
-const printing = ref(false);
-
 const generatePDF = () => {
     if (!pdfContent.value) return;
-
-    printing.value = true;
 
     pdfContent.value.classList.add('pdf-mode');
 
@@ -140,8 +136,6 @@ const generatePDF = () => {
         width: 500,
         windowWidth: pdfContent.value.scrollWidth,
     });
-
-    printing.value = false;
 };
 </script>
 
