@@ -9,6 +9,8 @@ import type { TransactionsType, WalletTransaction } from '~/interfaces/wallet-tr
 
 const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
+const { copy: copyProvider, copied: copiedProvider } = useClipboard({});
+const { copy: copyConsumer, copied: copiedConsumer } = useClipboard({});
 import jsPDF from 'jspdf';
 
 const columns: TableColumn[] = [
@@ -156,77 +158,112 @@ const generatePDF = () => {
                     <div v-if="selected" ref="pdfContent" class="w-full p-6 flex flex-col gap-4 text-sm">
                         <div class="w-full flex items-center gap-4 font-semibold">
                             <span class="text-primary-500 text-lg">{{ $t('auditor.transactionDetails') }}</span>
-                            <UButton size="xs" icon="fa6-solid:file-pdf" class="no-print" @click="generatePDF">{{
-                                $t('auditor.downloadPDF')
-                            }}</UButton>
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.date') }}</span>
-                            <span>{{ selected.transactionDate }}</span>
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
-                            <span class="no-print"
-                                >{{ truncateId(selected.transactionId, 10) }}
-                                <UIcon
-                                    name="mingcute:copy-line"
-                                    class="w-4 h-4 cursor-pointer"
-                                    @click="copyTransaction(selected.transactionId)"
-                                />
-                                <UIcon
-                                    v-show="copiedTransaction"
-                                    name="ic:baseline-check"
-                                    class="w-4 h-4 text-green-500 transition-all duration-100"
-                                />
-                            </span>
-                            <span class="print-this hidden">{{ selected.transactionId }}</span>
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.assetId') }}</span>
-                            <span class="no-print"
-                                >{{ truncateId(selected.assetId, 10) }}
-                                <UIcon
-                                    name="mingcute:copy-line"
-                                    class="w-4 h-4 cursor-pointer"
-                                    @click="copyAsset(selected.assetId)" />
-                                <UIcon
-                                    v-show="copiedAsset"
-                                    name="ic:baseline-check"
-                                    class="w-4 h-4 text-green-500 transition-all duration-100"
-                            /></span>
-                            <span class="print-this hidden">{{ selected.assetId }}</span>
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
-                            <a
-                                :href="selected.assetLink"
-                                class="text-primary visited:text-primary-800 focus:outline-none"
-                                >{{ selected.assetTitle }}</a
+                            <UButton
+                                size="xs"
+                                icon="fa6-solid:file-pdf"
+                                class="no-print focus:outline-none"
+                                @click="generatePDF"
+                                >{{ $t('auditor.downloadPDF') }}</UButton
                             >
                         </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.amount') }}</span>
-                            <span>{{ selected.amount.toFixed(2) }} EUR </span>
+                        <div class="flex justify-between flex-wrap w-full">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
+                                <span class="text-gray-400">{{ $t('auditor.date') }}</span>
+                                <span>{{ selected.transactionDate }}</span>
+                            </div>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
+                                <span class="no-print"
+                                    >{{ truncateId(selected.transactionId, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyTransaction(selected.transactionId)"
+                                    />
+                                    <UIcon
+                                        v-show="copiedTransaction"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                    />
+                                </span>
+                                <span class="print-this hidden">{{ selected.transactionId }}</span>
+                            </div>
                         </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.amountToProvider') }}</span>
-                            <span>{{ selected.amountToProvider.toFixed(2) }} EUR </span>
+                        <div class="flex justify-between flex-wrap w-full">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
+                                <span class="text-gray-400">{{ $t('auditor.assetId') }}</span>
+                                <span class="no-print"
+                                    >{{ truncateId(selected.assetId, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyAsset(selected.assetId)" />
+                                    <UIcon
+                                        v-show="copiedAsset"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                                <span class="print-this hidden">{{ selected.assetId }}</span>
+                            </div>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
+                                <a
+                                    :href="selected.assetLink"
+                                    class="text-primary visited:text-primary-800 focus:outline-none"
+                                    >{{ selected.assetTitle }}</a
+                                >
+                            </div>
                         </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.transactionFee') }}</span>
-                            <span>{{ selected.transactionFee.toFixed(2) }} EUR </span>
+                        <div class="flex justify-between w-full flex-wrap">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
+                                <span class="text-gray-400">{{ $t('auditor.amount') }}</span>
+                                <span>{{ selected.amount.toFixed(2) }} EUR </span>
+                            </div>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
+                                <span class="text-gray-400"
+                                    >{{ $t('auditor.amountToProvider') }} / {{ $t('auditor.transactionFee') }}</span
+                                >
+                                <span
+                                    >{{ selected.amountToProvider.toFixed(2) }} EUR /
+                                    {{ selected.transactionFee.toFixed(2) }} EUR</span
+                                >
+                            </div>
                         </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
-                            <span>{{ selected.provider }}</span>
-                        </div>
-                        <div class="flex flex-col items-start gap-1">
-                            <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
-                            <span>{{ selected.consumer }}</span>
+                        <div class="w-full flex justify-between flex-wrap">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
+                                <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
+                                <span class="no-print"
+                                    >{{ truncateId(selected.provider, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyProvider(selected.provider)" />
+                                    <UIcon
+                                        v-show="copiedProvider"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                                <span class="print-this hidden">{{ selected.provider }}</span>
+                            </div>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
+                                <span class="no-print"
+                                    >{{ truncateId(selected.consumer, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyConsumer(selected.consumer)" />
+                                    <UIcon
+                                        v-show="copiedConsumer"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                                <span class="print-this hidden">{{ selected.consumer }}</span>
+                            </div>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
-                            <div class="max-h-44 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6 scrollable">
+                            <div class="max-h-96 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6 scrollable">
                                 <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
                                     {{ paragraph }}
                                 </p>
