@@ -24,7 +24,7 @@ const columns: TableColumn[] = [
         key: 'amount',
         label: t('auditor.amount'),
         sortable: true,
-        class: 'text-center w-12',
+        class: 'text-center w-12 text-nowrap',
     },
     {
         key: 'assetTitle',
