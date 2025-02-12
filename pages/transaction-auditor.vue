@@ -16,13 +16,13 @@ const columns: TableColumn[] = [
         key: 'transactionDate',
         label: t('auditor.date'),
         sortable: true,
-        class: 'text-center',
+        class: 'text-center w-12',
     },
     {
         key: 'amount',
         label: t('auditor.amount'),
         sortable: true,
-        class: 'text-center',
+        class: 'text-center w-12',
     },
     {
         key: 'assetTitle',
@@ -34,13 +34,13 @@ const columns: TableColumn[] = [
         key: 'provider',
         label: t('auditor.provider'),
         sortable: true,
-        class: 'text-center',
+        class: 'text-center w-12',
     },
     {
         key: 'consumer',
         label: t('auditor.consumer'),
         sortable: true,
-        class: 'text-center',
+        class: 'text-center w-12',
     },
 ];
 
@@ -358,5 +358,10 @@ const generatePDF = () => {
 .pdf-mode .scrollable p {
     page-break-inside: avoid;
     break-inside: avoid;
+}
+
+/* Use ::v-deep to target internal elements of UTable */
+::v-deep tr td:first-child {
+    width: 50px !important;
 }
 </style>
