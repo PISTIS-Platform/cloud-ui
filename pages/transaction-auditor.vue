@@ -198,7 +198,7 @@ const generatePDF = () => {
                             <UButton
                                 size="xs"
                                 icon="fa6-solid:file-pdf"
-                                class="no-print focus:outline-none"
+                                class="focus:outline-none"
                                 @click="generatePDF"
                                 >{{ $t('auditor.downloadPDF') }}</UButton
                             >
@@ -210,7 +210,7 @@ const generatePDF = () => {
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
-                                <span class="no-print"
+                                <span
                                     >{{ truncateId(selected.transactionId, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
@@ -223,13 +223,12 @@ const generatePDF = () => {
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                     />
                                 </span>
-                                <span class="print-this hidden">{{ selected.transactionId }}</span>
                             </div>
                         </div>
                         <div class="flex justify-between flex-wrap w-full">
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.assetId') }}</span>
-                                <span class="no-print"
+                                <span
                                     >{{ truncateId(selected.assetId, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
@@ -240,7 +239,6 @@ const generatePDF = () => {
                                         name="ic:baseline-check"
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
-                                <span class="print-this hidden">{{ selected.assetId }}</span>
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
@@ -269,7 +267,7 @@ const generatePDF = () => {
                         <div class="w-full flex justify-between flex-wrap">
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
-                                <span class="no-print"
+                                <span
                                     >{{ truncateId(selected.provider, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
@@ -280,11 +278,10 @@ const generatePDF = () => {
                                         name="ic:baseline-check"
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
-                                <span class="print-this hidden">{{ selected.provider }}</span>
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
-                                <span class="no-print"
+                                <span
                                     >{{ truncateId(selected.consumer, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
@@ -295,12 +292,11 @@ const generatePDF = () => {
                                         name="ic:baseline-check"
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
-                                <span class="print-this hidden">{{ selected.consumer }}</span>
                             </div>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
-                            <div class="max-h-96 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6 scrollable">
+                            <div class="max-h-96 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6">
                                 <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
                                     {{ paragraph }}
                                 </p>
@@ -410,30 +406,3 @@ const generatePDF = () => {
         </PageContainer>
     </div>
 </template>
-
-<style scoped>
-/* styles that only get activated during pdf generation with the .pdf-mode class */
-.pdf-mode .no-print {
-    display: none !important;
-}
-
-.pdf-mode .print-this {
-    display: block !important;
-}
-
-.pdf-mode .scrollable {
-    max-height: none !important;
-    height: auto !important;
-    overflow: visible !important;
-}
-
-.pdf-mode .scrollable p {
-    page-break-inside: avoid;
-    break-inside: avoid;
-}
-
-/* Use ::v-deep to target internal elements of UTable */
-::v-deep tr td:first-child {
-    width: 50px !important;
-}
-</style>
