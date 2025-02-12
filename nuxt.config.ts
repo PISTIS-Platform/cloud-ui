@@ -60,6 +60,7 @@ export default defineNuxtConfig({
         '@vueuse/nuxt',
         '@nuxt/ui',
         '@sidebase/nuxt-auth',
+        'nuxt-pdfmake',
     ],
 
     // Modules Configuration

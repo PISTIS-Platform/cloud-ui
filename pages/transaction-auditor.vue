@@ -11,7 +11,8 @@ const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
 const { copy: copyProvider, copied: copiedProvider } = useClipboard({});
 const { copy: copyConsumer, copied: copiedConsumer } = useClipboard({});
-import jsPDF from 'jspdf';
+
+const { $pdfMake } = useNuxtApp();
 
 const columns: TableColumn[] = [
     {
@@ -118,26 +119,62 @@ const expand = ref({
     row: null,
 });
 
-const pdfContent = ref<HTMLDivElement | null>(null);
-
 const generatePDF = () => {
-    if (!pdfContent.value) return;
+    if (!selected.value) return;
 
-    pdfContent.value.classList.add('pdf-mode');
-
-    const doc = new jsPDF('p', 'pt', 'a4');
-
-    doc.html(pdfContent.value, {
-        callback: (doc: jsPDF) => {
-            doc.save('transaction_details.pdf');
-            // Remove the PDF-specific class after PDF generation.
-            pdfContent.value?.classList.remove('pdf-mode');
+    const docDefinition = {
+        content: [
+            { text: 'PISTIS - ' + t('auditor.transactionDetails'), style: 'heading' },
+            { text: t('auditor.date'), style: 'subheading' },
+            { text: selected.value.transactionDate },
+            { text: t('auditor.transactionId'), style: 'subheading' },
+            { text: selected.value.transactionId },
+            { text: t('auditor.assetId'), style: 'subheading' },
+            { text: selected.value.assetId },
+            { text: t('auditor.assetTitle'), style: 'subheading' },
+            { text: selected.value.assetTitle, link: selected.value.assetLink, style: 'link' },
+            { text: t('auditor.amount'), style: 'subheading' },
+            { text: selected.value.amount + ' EUR' },
+            { text: t('auditor.amountToProvider'), style: 'subheading' },
+            { text: selected.value.amountToProvider + ' EUR' },
+            { text: t('auditor.transactionFee'), style: 'subheading' },
+            { text: selected.value.transactionFee + ' EUR' },
+            { text: t('auditor.provider'), style: 'subheading' },
+            { text: selected.value.provider },
+            { text: t('auditor.consumer'), style: 'subheading' },
+            { text: selected.value.consumer },
+            { text: t('auditor.terms'), style: 'subheading' },
+            {
+                text: selected.value.terms,
+                style: 'body',
+            },
+        ],
+        styles: {
+            heading: {
+                fontSize: 18,
+                bold: true,
+                margin: [0, 0, 0, 10],
+                color: '#705df7',
+            },
+            subheading: {
+                fontSize: 13,
+                bold: true,
+                margin: [0, 15, 0, 5],
+            },
+            body: {
+                fontSize: 12,
+                lineHeight: 1.2,
+            },
+            link: {
+                color: '#705df7',
+            },
         },
-        x: 10,
-        y: 10,
-        width: 500,
-        windowWidth: pdfContent.value.scrollWidth,
-    });
+        // Optional: Adjust page margins, orientation, etc.
+        pageMargins: [40, 60, 40, 60],
+    };
+
+    // Create and download the PDF
+    $pdfMake.createPdf(docDefinition).download(`transaction_details_${selected.value.transactionId}.pdf`);
 };
 </script>
 
