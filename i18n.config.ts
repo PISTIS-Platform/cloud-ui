@@ -67,6 +67,7 @@ export default defineI18nConfig(() => ({
                 transactionDetails: 'Transaction Details',
                 noTransactionSelected: 'No transaction selected',
                 link: 'Asset Link (Marketplace)',
+                downloadPDF: 'Download as PDF',
             },
             dashboard: {
                 dashboard: 'Dashboard',

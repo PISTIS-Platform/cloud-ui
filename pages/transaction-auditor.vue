@@ -147,7 +147,7 @@ const generatePDF = () => {
                 <UProgress animation="carousel" color="primary" />
             </div>
             <div v-else class="w-full mt-4">
-                <UModal v-model="modalOpen" :ui="{ width: 'w-full sm:max-w-xl' }" class="text-gray-600 relative">
+                <UModal v-model="modalOpen" :ui="{ width: 'w-full sm:max-w-[1000px]' }" class="text-gray-600 relative">
                     <UIcon
                         name="material-symbols-light:close"
                         class="w-6 h-6 absolute right-2 top-2 cursor-pointer"
@@ -155,12 +155,10 @@ const generatePDF = () => {
                     />
                     <div v-if="selected" ref="pdfContent" class="w-full p-6 flex flex-col gap-4 text-sm">
                         <div class="w-full flex items-center gap-4 font-semibold">
-                            <span class="text-gray-500 text-lg">{{ $t('auditor.transactionDetails') }}</span>
-                            <UIcon
-                                name="fa6-solid:file-pdf"
-                                class="w-6 h-6 text-gray-500 cursor-pointer no-print"
-                                @click="generatePDF"
-                            />
+                            <span class="text-primary-500 text-lg">{{ $t('auditor.transactionDetails') }}</span>
+                            <UButton size="xs" icon="fa6-solid:file-pdf" class="no-print" @click="generatePDF">{{
+                                $t('auditor.downloadPDF')
+                            }}</UButton>
                         </div>
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.date') }}</span>
