@@ -31,19 +31,19 @@ const columns: TableColumn[] = [
         key: 'assetTitle',
         label: t('auditor.assetTitle'),
         sortable: false,
-        class: 'text-center',
+        class: 'text-left',
     },
     {
         key: 'provider',
         label: t('auditor.provider'),
         sortable: true,
-        class: 'text-center w-12',
+        class: 'text-left w-12',
     },
     {
         key: 'consumer',
         label: t('auditor.consumer'),
         sortable: true,
-        class: 'text-center w-12',
+        class: 'text-left w-12',
     },
 ];
 
@@ -360,7 +360,7 @@ const generatePDF = () => {
                         </template>
 
                         <template #assetTitle-data="{ row }">
-                            <span class="flex items-center justify-center">
+                            <span class="flex items-center justify-start">
                                 <a :href="row.assetLink" target="_blank" class="text-primary visited:text-primary-800">
                                     {{ row.assetTitle }}
                                 </a>
@@ -374,7 +374,7 @@ const generatePDF = () => {
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
-                                <span class="flex items-center justify-center">
+                                <span class="flex items-center justify-start">
                                     {{ truncateId(row.provider, 10) }}
                                 </span>
                             </UTooltip>
@@ -387,7 +387,7 @@ const generatePDF = () => {
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
-                                <span class="flex items-center justify-center">
+                                <span class="flex items-center justify-start">
                                     {{ truncateId(row.consumer, 10) }}
                                 </span>
                             </UTooltip>
@@ -406,3 +406,9 @@ const generatePDF = () => {
         </PageContainer>
     </div>
 </template>
+
+<style scoped>
+::v-deep tr td:first-child {
+    width: 50px !important;
+}
+</style>
