@@ -171,6 +171,17 @@ export default defineI18nConfig(() => ({
                     healthcare: 'Healthcare',
                     consumerFinance: 'Consumer Finance',
                 },
+                countries: {
+                    GR: 'Greece',
+                    ES: 'Spain',
+                    DE: 'Germany',
+                    UK: 'United Kingdom',
+                },
+                sizes: {
+                    small: 'Small',
+                    medium: 'Medium',
+                    large: 'Large',
+                },
                 createFactory: 'Create Factory',
                 registry: 'Factory Registry',
                 type: 'Type',

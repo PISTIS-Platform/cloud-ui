@@ -113,6 +113,40 @@ const domainOptions = [
     },
 ];
 
+const countryOptions = [
+    {
+        label: t('registry.countries.GR'),
+        value: 'GR',
+    },
+    {
+        label: t('registry.countries.ES'),
+        value: 'ES',
+    },
+    {
+        label: t('registry.countries.DE'),
+        value: 'DE',
+    },
+    {
+        label: t('registry.countries.UK'),
+        value: 'UK',
+    },
+];
+
+const sizeOptions = [
+    {
+        label: t('registry.sizes.small'),
+        value: 'SMALL',
+    },
+    {
+        label: t('registry.sizes.medium'),
+        value: 'MEDIUM',
+    },
+    {
+        label: t('registry.sizes.large'),
+        value: 'LARGE',
+    },
+];
+
 const onSubmit = async () => {
     try {
         await $fetch(`/api/factories-registry/create-factory`, {
@@ -179,6 +213,39 @@ const onSubmit = async () => {
                                         v-model="state.domain"
                                         :options="domainOptions"
                                         :placeholder="t('registry.select') + ' ' + t('registry.domain')"
+                                        value-attribute="value"
+                                        option-attribute="label"
+                                    />
+                                </UFormGroup>
+                            </div>
+
+                            <div class="flex items-start gap-4 w-full">
+                                <UFormGroup
+                                    :label="$t('registry.country')"
+                                    required
+                                    name="country"
+                                    class="w-full"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <USelectMenu
+                                        v-model="state.country"
+                                        :options="countryOptions"
+                                        :placeholder="t('registry.select') + ' ' + t('registry.country')"
+                                        value-attribute="value"
+                                        option-attribute="label"
+                                    />
+                                </UFormGroup>
+                                <UFormGroup
+                                    :label="$t('registry.size')"
+                                    required
+                                    name="size"
+                                    class="w-full"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <USelectMenu
+                                        v-model="state.size"
+                                        :options="sizeOptions"
+                                        :placeholder="t('registry.select') + ' ' + t('registry.size')"
                                         value-attribute="value"
                                         option-attribute="label"
                                     />
