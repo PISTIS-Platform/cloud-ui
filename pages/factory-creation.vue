@@ -185,7 +185,6 @@ const onSubmit = async () => {
 </script>
 
 <template>
-    {{ isValid }}
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <UCard :ui="{ base: 'w-full text-gray-700' }">
