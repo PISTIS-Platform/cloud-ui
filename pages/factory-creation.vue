@@ -170,9 +170,14 @@ const onSubmit = async () => {
                     <SubHeading :title="t('registry.createFactory')" />
                 </template>
                 <div class="flex w-full gap-4 divide-x h-full">
-                    <UForm :schema="schema" :state="state" class="w-full flex gap-12" @submit="onSubmit">
+                    <UForm
+                        :schema="schema"
+                        :state="state"
+                        class="w-full flex gap-12 flex-wrap lg:flex-nowrap"
+                        @submit="onSubmit"
+                    >
                         <!-- Left side-->
-                        <div class="flex flex-col gap-4 w-1/2">
+                        <div class="flex flex-col gap-4 w-full lg:w-1/2">
                             <UFormGroup
                                 :label="t('registry.organizationName')"
                                 name="organizationName"
@@ -290,7 +295,7 @@ const onSubmit = async () => {
                         </div>
 
                         <!-- Right side-->
-                        <div class="flex flex-col gap-4 w-1/2">
+                        <div class="flex flex-col gap-4 w-full lg:w-1/2">
                             <UFormGroup
                                 :label="t('registry.factoryPrefix')"
                                 name="factoryPrefix"
@@ -344,7 +349,7 @@ const onSubmit = async () => {
                         </div>
                     </UForm>
                 </div>
-                <div class="flex gap-2 w-full justify-end">
+                <div class="flex gap-2 w-full justify-end mt-6">
                     <UButton color="white" :to="'factory-registry'">{{ t('goBack') }}</UButton>
                     <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
                         t('registry.createFactory')
