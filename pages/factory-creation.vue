@@ -67,6 +67,52 @@ const state = reactive({
     ip: undefined,
 });
 
+const typeOptions = [
+    {
+        label: t('registry.types.sme'),
+        value: 'SME',
+    },
+    {
+        label: t('registry.types.academic'),
+        value: 'ACADEMIC',
+    },
+    {
+        label: t('registry.types.publicBody'),
+        value: 'PUBLIC_BODY',
+    },
+];
+
+const domainOptions = [
+    {
+        label: t('registry.domains.education'),
+        value: 'EDUCATION',
+    },
+    {
+        label: t('registry.domains.transportation'),
+        value: 'TRANSPORTATION',
+    },
+    {
+        label: t('registry.domains.consumerGoods'),
+        value: 'CONSUMER_GOODS',
+    },
+    {
+        label: t('registry.domains.electricity'),
+        value: 'ELECTRICITY',
+    },
+    {
+        label: t('registry.domains.oilAndGas'),
+        value: 'OIL_AND_GAS',
+    },
+    {
+        label: t('registry.domains.healthcare'),
+        value: 'HEALTHCARE',
+    },
+    {
+        label: t('registry.domains.consumerFinance'),
+        value: 'CONSUMER_FINANCE',
+    },
+];
+
 const onSubmit = async () => {
     try {
         await $fetch(`/api/factories-registry/create-factory`, {
@@ -105,36 +151,74 @@ const onSubmit = async () => {
                                     :placeholder="t('registry.organizationNamePlaceholder')"
                                 />
                             </UFormGroup>
-                            <!--TODO: Will the ID be uuid v4?-->
-                            <UFormGroup
-                                :label="t('registry.organizationId')"
-                                name="organizationId"
-                                required
-                                class="w-full pb-2"
-                                :ui="{ error: 'absolute -bottom-6' }"
-                            >
-                                <UInput
-                                    v-model="state.organizationId"
-                                    :placeholder="t('registry.organizationIdPlaceholder')"
-                                />
-                            </UFormGroup>
-                            <div class="flex w-full items-center gap-4 pb-2">
+
+                            <div class="flex items-start gap-4 w-full">
                                 <UFormGroup
-                                    :label="t('registry.country')"
-                                    :ui="{ error: 'absolute -bottom-6' }"
-                                    name="country"
+                                    :label="$t('registry.type')"
                                     required
-                                    class="w-full max-w-20"
+                                    name="type"
+                                    class="w-full"
+                                    :ui="{ error: 'absolute -bottom-6' }"
                                 >
-                                    <UInput v-model="state.country" :placeholder="t('registry.countryPlaceholder')" />
+                                    <USelectMenu
+                                        v-model="state.type"
+                                        :options="typeOptions"
+                                        :placeholder="t('registry.select') + ' ' + t('registry.type')"
+                                        value-attribute="value"
+                                        option-attribute="label"
+                                    />
+                                </UFormGroup>
+                                <UFormGroup
+                                    :label="$t('registry.domain')"
+                                    required
+                                    name="domain"
+                                    class="w-full"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <USelectMenu
+                                        v-model="state.domain"
+                                        :options="domainOptions"
+                                        :placeholder="t('registry.select') + ' ' + t('registry.domain')"
+                                        value-attribute="value"
+                                        option-attribute="label"
+                                    />
                                 </UFormGroup>
                             </div>
 
-                            <div class="flex gap-2">
-                                <UButton color="white" :to="'factory-registry'">{{ t('goBack') }}</UButton>
-                                <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
-                                    t('registry.createFactory')
-                                }}</UButton>
+                            <div class="flex flex-col gap-4 mt-8">
+                                <UFormGroup
+                                    :label="t('registry.organizationAdmin')"
+                                    name="organizationName"
+                                    required
+                                    class="w-full pb-2"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <div class="flex w-full gap-4">
+                                        <UInput
+                                            v-model="state.adminFirstName"
+                                            class="w-full"
+                                            :placeholder="t('firstName')"
+                                        />
+                                        <UInput
+                                            v-model="state.adminLastName"
+                                            class="w-full"
+                                            :placeholder="t('lastName')"
+                                        />
+                                    </div>
+                                </UFormGroup>
+                                <UFormGroup
+                                    :label="t('email')"
+                                    name="organizationName"
+                                    required
+                                    class="w-full pb-2"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <UInput
+                                        v-model="state.adminEmail"
+                                        class="w-full"
+                                        :placeholder="t('emailOfAdmin')"
+                                    />
+                                </UFormGroup>
                             </div>
                         </div>
 
@@ -192,6 +276,12 @@ const onSubmit = async () => {
                             </div>
                         </div>
                     </UForm>
+                </div>
+                <div class="flex gap-2 w-full justify-end">
+                    <UButton color="white" :to="'factory-registry'">{{ t('goBack') }}</UButton>
+                    <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
+                        t('registry.createFactory')
+                    }}</UButton>
                 </div>
             </UCard>
         </PageContainer>
