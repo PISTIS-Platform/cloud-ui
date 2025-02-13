@@ -12,16 +12,36 @@ const schema = z.object({
         required_error: t('required'),
         invalid_type_error: t('string'),
     }),
-    organizationId: z
-        .string({
-            required_error: t('required'),
-            invalid_type_error: t('string'),
-        })
-        .uuid({ message: t('invalidUUID') }),
+    type: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
+    domain: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
     country: z.string({
         required_error: t('required'),
         invalid_type_error: t('string'),
     }),
+    size: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
+    adminFirstName: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
+    adminLastName: z.string({
+        required_error: t('required'),
+        invalid_type_error: t('string'),
+    }),
+    adminEmail: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .email(),
     factoryPrefix: z.string({
         required_error: t('required'),
         invalid_type_error: t('string'),
@@ -35,8 +55,13 @@ const schema = z.object({
 
 const state = reactive({
     organizationName: undefined,
-    organizationId: undefined,
+    type: undefined,
+    domain: undefined,
     country: undefined,
+    size: undefined,
+    adminFirstName: undefined,
+    adminLastName: undefined,
+    adminEmail: undefined,
     factoryPrefix: undefined,
     isAccepted: false,
     ip: undefined,
@@ -64,43 +89,57 @@ const onSubmit = async () => {
                 <template #header>
                     <SubHeading :title="t('registry.createFactory')" />
                 </template>
-                <div class="flex w-full gap-4 divide-x">
-                    <UForm :schema="schema" :state="state" class="space-y-4 w-2/3 flex flex-col" @submit="onSubmit">
-                        <UFormGroup
-                            :label="t('registry.organizationName')"
-                            name="organizationName"
-                            required
-                            class="w-full pb-2"
-                            :ui="{ error: 'absolute -bottom-6' }"
-                        >
-                            <UInput
-                                v-model="state.organizationName"
-                                :placeholder="t('registry.organizationNamePlaceholder')"
-                            />
-                        </UFormGroup>
-                        <!--TODO: Will the ID be uuid v4?-->
-                        <UFormGroup
-                            :label="t('registry.organizationId')"
-                            name="organizationId"
-                            required
-                            class="w-full pb-2"
-                            :ui="{ error: 'absolute -bottom-6' }"
-                        >
-                            <UInput
-                                v-model="state.organizationId"
-                                :placeholder="t('registry.organizationIdPlaceholder')"
-                            />
-                        </UFormGroup>
-                        <div class="flex w-full items-center gap-4 pb-2">
+                <div class="flex w-full gap-4 divide-x h-full">
+                    <UForm :schema="schema" :state="state" class="w-full flex gap-12" @submit="onSubmit">
+                        <!-- Left side-->
+                        <div class="flex flex-col gap-4 w-1/2">
                             <UFormGroup
-                                :label="t('registry.country')"
-                                :ui="{ error: 'absolute -bottom-6' }"
-                                name="country"
+                                :label="t('registry.organizationName')"
+                                name="organizationName"
                                 required
-                                class="w-full max-w-20"
+                                class="w-full pb-2"
+                                :ui="{ error: 'absolute -bottom-6' }"
                             >
-                                <UInput v-model="state.country" :placeholder="t('registry.countryPlaceholder')" />
+                                <UInput
+                                    v-model="state.organizationName"
+                                    :placeholder="t('registry.organizationNamePlaceholder')"
+                                />
                             </UFormGroup>
+                            <!--TODO: Will the ID be uuid v4?-->
+                            <UFormGroup
+                                :label="t('registry.organizationId')"
+                                name="organizationId"
+                                required
+                                class="w-full pb-2"
+                                :ui="{ error: 'absolute -bottom-6' }"
+                            >
+                                <UInput
+                                    v-model="state.organizationId"
+                                    :placeholder="t('registry.organizationIdPlaceholder')"
+                                />
+                            </UFormGroup>
+                            <div class="flex w-full items-center gap-4 pb-2">
+                                <UFormGroup
+                                    :label="t('registry.country')"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                    name="country"
+                                    required
+                                    class="w-full max-w-20"
+                                >
+                                    <UInput v-model="state.country" :placeholder="t('registry.countryPlaceholder')" />
+                                </UFormGroup>
+                            </div>
+
+                            <div class="flex gap-2">
+                                <UButton color="white" :to="'factory-registry'">{{ t('goBack') }}</UButton>
+                                <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
+                                    t('registry.createFactory')
+                                }}</UButton>
+                            </div>
+                        </div>
+
+                        <!-- Right side-->
+                        <div class="flex flex-col gap-4 w-1/2">
                             <UFormGroup
                                 :label="t('registry.factoryPrefix')"
                                 name="factoryPrefix"
@@ -131,45 +170,28 @@ const onSubmit = async () => {
                                     >
                                 </div>
                             </UFormGroup>
-                        </div>
-                        <div class="w-full items-center flex gap-4 pb-2">
-                            <UFormGroup
-                                :label="t('registry.ip')"
-                                name="ip"
-                                class="w-full"
-                                :ui="{ error: 'absolute -bottom-6' }"
-                            >
-                                <UInput v-model="state.ip" :placeholder="t('registry.ipPlaceholder')" />
-                            </UFormGroup>
-                            <UFormGroup
-                                :label="t('registry.factoryAccepted')"
-                                name="isAccepted"
-                                class="w-44"
-                                :ui="{ error: 'absolute -bottom-6' }"
-                            >
-                                <div class="w-full items-center justify-center flex h-full">
-                                    <UToggle v-model="state.isAccepted" class="-ml-3" />
-                                </div>
-                            </UFormGroup>
-                        </div>
-
-                        <div class="flex gap-2">
-                            <UButton color="white" :to="'factory-registry'">{{ t('goBack') }}</UButton>
-                            <UButton type="submit" :disabled="!schema.safeParse(state).success" class="w-[120px]">{{
-                                t('registry.createFactory')
-                            }}</UButton>
+                            <div class="w-full items-center flex gap-4 mt-2">
+                                <UFormGroup
+                                    :label="t('registry.ip')"
+                                    name="ip"
+                                    class="w-full"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <UInput v-model="state.ip" :placeholder="t('registry.ipPlaceholder')" />
+                                </UFormGroup>
+                                <UFormGroup
+                                    :label="t('registry.factoryAccepted')"
+                                    name="isAccepted"
+                                    class="w-44"
+                                    :ui="{ error: 'absolute -bottom-6' }"
+                                >
+                                    <div class="w-full items-center justify-center flex h-full">
+                                        <UToggle v-model="state.isAccepted" class="-ml-3" />
+                                    </div>
+                                </UFormGroup>
+                            </div>
                         </div>
                     </UForm>
-                    <div class="h-full flex items-center justify-center p-4 w-1/3">
-                        <p>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil impedit perferendis aperiam
-                            corrupti sit aliquam repellat veritatis enim asperiores accusamus ullam laudantium
-                            architecto, nostrum nisi nam a eligendi quisquam officiis. Veritatis, totam itaque placeat
-                            eos deleniti voluptatum obcaecati voluptatibus? Delectus temporibus impedit in perferendis
-                            magni facere quos, illum ipsam debitis aspernatur facilis sunt accusamus dolores accusantium
-                            ipsa optio a soluta.
-                        </p>
-                    </div>
                 </div>
             </UCard>
         </PageContainer>
