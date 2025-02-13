@@ -334,15 +334,14 @@ const generatePDF = () => {
                         @select="select"
                     >
                         <template #expand="{ row }">
-                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center">
-                                <span>
-                                    <span>{{ $t('auditor.amountToProvider') }}: </span>
+                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center ml-[200px]">
+                                <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
+                                    <span>{{ $t('auditor.amountToProvider') }}</span>
                                 </span>
-                                <hr />
-                                <span>
-                                    <span class="mt-2">{{ $t('auditor.transactionFee') }}: </span>
+                                <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
+                                    <span>{{ $t('auditor.transactionFee') }}</span>
                                 </span>
                             </div>
                         </template>
