@@ -8,44 +8,60 @@ import { z } from 'zod';
 const router = useRouter();
 
 const schema = z.object({
-    organizationName: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
-    type: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
-    domain: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
-    country: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
-    size: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
-    adminFirstName: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
-    adminLastName: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
+    organizationName: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
+    type: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
+    domain: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
+    country: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
+    size: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
+    adminFirstName: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
+    adminLastName: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
     adminEmail: z
         .string({
             required_error: t('required'),
             invalid_type_error: t('string'),
         })
         .email(),
-    factoryPrefix: z.string({
-        required_error: t('required'),
-        invalid_type_error: t('string'),
-    }),
+    factoryPrefix: z
+        .string({
+            required_error: t('required'),
+            invalid_type_error: t('string'),
+        })
+        .min(1, { message: t('required') }),
     isAccepted: z.boolean(),
     ip: z
         .string()
@@ -54,15 +70,15 @@ const schema = z.object({
 });
 
 const state = reactive({
-    organizationName: undefined,
-    type: undefined,
-    domain: undefined,
-    country: undefined,
-    size: undefined,
-    adminFirstName: undefined,
-    adminLastName: undefined,
-    adminEmail: undefined,
-    factoryPrefix: undefined,
+    organizationName: '',
+    type: '',
+    domain: '',
+    country: '',
+    size: '',
+    adminFirstName: '',
+    adminLastName: '',
+    adminEmail: '',
+    factoryPrefix: '',
     isAccepted: false,
     ip: undefined,
 });
@@ -147,7 +163,13 @@ const sizeOptions = [
     },
 ];
 
+const isValid = computed(() => schema.safeParse(state).success);
+
 const onSubmit = async () => {
+    if (!isValid.value) {
+        showErrorMessage(t('registry.pleaseCheckForm'));
+        return;
+    }
     try {
         await $fetch(`/api/factories-registry/create-factory`, {
             method: 'post',
@@ -163,6 +185,7 @@ const onSubmit = async () => {
 </script>
 
 <template>
+    {{ isValid }}
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <UCard :ui="{ base: 'w-full text-gray-700' }">
@@ -258,29 +281,37 @@ const onSubmit = async () => {
                             </div>
 
                             <div class="flex flex-col gap-4 mt-8">
-                                <UFormGroup
-                                    :label="t('registry.organizationAdmin')"
-                                    name="organizationName"
-                                    required
-                                    class="w-full pb-2"
-                                    :ui="{ error: 'absolute -bottom-6' }"
-                                >
-                                    <div class="flex w-full gap-4">
+                                <div class="flex items-start gap-4">
+                                    <UFormGroup
+                                        :label="t('registry.organizationAdmin')"
+                                        name="adminFirstName"
+                                        required
+                                        class="w-full pb-2"
+                                        :ui="{ error: 'absolute -bottom-6' }"
+                                    >
                                         <UInput
                                             v-model="state.adminFirstName"
                                             class="w-full"
                                             :placeholder="t('firstName')"
                                         />
+                                    </UFormGroup>
+                                    <UFormGroup
+                                        label=""
+                                        name="adminLastName"
+                                        required
+                                        class="w-full pb-2 mt-6"
+                                        :ui="{ error: 'absolute -bottom-6' }"
+                                    >
                                         <UInput
                                             v-model="state.adminLastName"
                                             class="w-full"
                                             :placeholder="t('lastName')"
                                         />
-                                    </div>
-                                </UFormGroup>
+                                    </UFormGroup>
+                                </div>
                                 <UFormGroup
                                     :label="t('email')"
-                                    name="organizationName"
+                                    name="adminEmail"
                                     required
                                     class="w-full pb-2"
                                     :ui="{ error: 'absolute -bottom-6' }"

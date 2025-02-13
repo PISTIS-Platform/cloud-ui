@@ -182,6 +182,7 @@ export default defineI18nConfig(() => ({
                     medium: 'Medium',
                     large: 'Large',
                 },
+                pleaseCheckForm: 'Please check and input all necessary fields of the form',
                 createFactory: 'Create Factory',
                 registry: 'Factory Registry',
                 type: 'Type',
