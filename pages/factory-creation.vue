@@ -71,15 +71,15 @@ const schema = z.object({
 });
 
 const state = reactive({
-    organizationName: '',
-    type: '',
-    domain: '',
-    country: '',
-    size: '',
-    adminFirstName: '',
-    adminLastName: '',
-    adminEmail: '',
-    factoryPrefix: '',
+    organizationName: undefined,
+    type: undefined,
+    domain: undefined,
+    country: undefined,
+    size: undefined,
+    adminFirstName: undefined,
+    adminLastName: undefined,
+    adminEmail: undefined,
+    factoryPrefix: undefined,
     isAccepted: false,
     ip: undefined,
 });
