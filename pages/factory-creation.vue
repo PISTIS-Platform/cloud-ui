@@ -233,7 +233,7 @@ const onSubmit = async () => {
                                 </UFormGroup>
                             </div>
 
-                            <div class="flex items-start gap-4 w-full">
+                            <div class="flex items-start gap-4 w-full mt-2">
                                 <UFormGroup
                                     :label="$t('registry.country')"
                                     required
