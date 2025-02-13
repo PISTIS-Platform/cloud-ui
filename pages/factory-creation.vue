@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+import { countriesInEnglish } from '~/constants/countries';
 
 const { t } = useI18n();
 
@@ -129,24 +130,10 @@ const domainOptions = [
     },
 ];
 
-const countryOptions = [
-    {
-        label: t('registry.countries.GR'),
-        value: 'GR',
-    },
-    {
-        label: t('registry.countries.ES'),
-        value: 'ES',
-    },
-    {
-        label: t('registry.countries.DE'),
-        value: 'DE',
-    },
-    {
-        label: t('registry.countries.UK'),
-        value: 'UK',
-    },
-];
+const countryOptions = Object.keys(countriesInEnglish).map((countryCode: string) => ({
+    label: t('registry.countries.' + countryCode),
+    value: countryCode,
+}));
 
 const sizeOptions = [
     {
@@ -256,6 +243,8 @@ const onSubmit = async () => {
                                 >
                                     <USelectMenu
                                         v-model="state.country"
+                                        searchable
+                                        :searchable-placeholder="$t('registry.searchForACountry')"
                                         :options="countryOptions"
                                         :placeholder="t('registry.select') + ' ' + t('registry.country')"
                                         value-attribute="value"
