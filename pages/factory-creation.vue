@@ -183,6 +183,9 @@ const onSubmit = async () => {
                         <div class="w-full flex gap-12 flex-wrap lg:flex-nowrap">
                             <!-- Left side-->
                             <div class="flex flex-col gap-4 w-full lg:w-1/2">
+                                <span class="font-semibold text-gray-500">{{
+                                    $t('registry.organizationDetails')
+                                }}</span>
                                 <UFormGroup
                                     :label="t('registry.organizationName')"
                                     name="organizationName"
@@ -262,9 +265,12 @@ const onSubmit = async () => {
                                     </UFormGroup>
                                 </div>
                                 <div class="flex flex-col gap-4 mt-8">
+                                    <span class="font-semibold text-gray-500">{{
+                                        $t('registry.organizationAdmin')
+                                    }}</span>
                                     <div class="flex items-start gap-4">
                                         <UFormGroup
-                                            :label="t('registry.organizationAdmin')"
+                                            :label="t('registry.organizationsAdmin')"
                                             name="adminFirstName"
                                             required
                                             class="w-full pb-2"
@@ -307,6 +313,7 @@ const onSubmit = async () => {
                             </div>
                             <!-- Right side-->
                             <div class="flex flex-col gap-4 w-full lg:w-1/2">
+                                <span class="font-semibold text-gray-500">{{ $t('registry.factoryDetails') }}</span>
                                 <UFormGroup
                                     :label="t('registry.factoryPrefix')"
                                     name="factoryPrefix"
