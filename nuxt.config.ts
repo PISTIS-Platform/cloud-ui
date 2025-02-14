@@ -13,12 +13,12 @@ export default defineNuxtConfig({
         typeCheck: false, // Enabling this makes development slower, but performs proper type checking
     },
 
-    nitro: {
-        preset: 'node-server',
-        experimental: {
-            websocket: true,
-        },
-    },
+    // nitro: {
+    //     preset: 'node-server',
+    //     experimental: {
+    //         websocket: true,
+    //     },
+    // },
 
     app: {
         head: {
