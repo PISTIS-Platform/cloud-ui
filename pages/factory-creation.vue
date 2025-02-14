@@ -153,7 +153,6 @@ const sizeOptions = [
 const isValid = computed(() => schema.safeParse(state).success);
 
 const onSubmit = async () => {
-    console.log('Started');
     if (!isValid.value) {
         showErrorMessage(t('registry.pleaseCheckForm'));
         return;
