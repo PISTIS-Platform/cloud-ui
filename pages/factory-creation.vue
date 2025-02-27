@@ -183,8 +183,11 @@ const onSubmit = async () => {
                         <div class="w-full flex gap-12 flex-wrap lg:flex-nowrap">
                             <!-- Left side-->
                             <div class="flex flex-col gap-4 w-full lg:w-1/2">
-                                <span class="font-semibold text-gray-500">{{
+                                <span class="font-semibold text-gray-600">{{
                                     $t('registry.organizationDetails')
+                                }}</span>
+                                <span class="text-xs text-gray-400 -mt-3 mb-2">{{
+                                    $t('registry.organizationDetailsDescription')
                                 }}</span>
                                 <UFormGroup
                                     :label="t('registry.organizationName')"
@@ -265,12 +268,15 @@ const onSubmit = async () => {
                                     </UFormGroup>
                                 </div>
                                 <div class="flex flex-col gap-4 mt-8">
-                                    <span class="font-semibold text-gray-500">{{
+                                    <span class="font-semibold text-gray-600">{{
                                         $t('registry.organizationAdmin')
+                                    }}</span>
+                                    <span class="text-xs text-gray-400 -mt-3 mb-2">{{
+                                        $t('registry.organizationAdminDescription')
                                     }}</span>
                                     <div class="flex items-start gap-4">
                                         <UFormGroup
-                                            :label="t('registry.organizationsAdmin')"
+                                            :label="t('registry.fullName')"
                                             name="adminFirstName"
                                             required
                                             class="w-full pb-2"
@@ -313,7 +319,10 @@ const onSubmit = async () => {
                             </div>
                             <!-- Right side-->
                             <div class="flex flex-col gap-4 w-full lg:w-1/2">
-                                <span class="font-semibold text-gray-500">{{ $t('registry.factoryDetails') }}</span>
+                                <span class="font-semibold text-gray-600">{{ $t('registry.factoryDetails') }}</span>
+                                <span class="text-xs text-gray-400 -mt-3 mb-2">{{
+                                    $t('registry.factoryDetailsDescription')
+                                }}</span>
                                 <UFormGroup
                                     :label="t('registry.factoryPrefix')"
                                     name="factoryPrefix"
@@ -356,11 +365,10 @@ const onSubmit = async () => {
                                     <UFormGroup
                                         :label="t('registry.factoryAccepted')"
                                         name="isAccepted"
-                                        class="w-44"
                                         :ui="{ error: 'absolute -bottom-6' }"
                                     >
                                         <div class="w-full items-center justify-center flex h-full">
-                                            <UToggle v-model="state.isAccepted" class="-ml-3" />
+                                            <UToggle v-model="state.isAccepted" />
                                         </div>
                                     </UFormGroup>
                                 </div>
