@@ -198,6 +198,8 @@ export default defineI18nConfig(() => {
                     noIp: 'No IP provided yet',
                     title: 'Factory Registry Manager',
                     fullName: 'Full Name',
+                    firstName: 'First Name',
+                    lastName: 'Last Name',
                     factoryDetails: 'Factory Details',
                     factoryDetailsDescription: 'Details about the factory that will be created',
                     organizationName: 'Name',

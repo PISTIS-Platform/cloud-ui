@@ -276,7 +276,7 @@ const onSubmit = async () => {
                                     }}</span>
                                     <div class="flex items-start gap-4">
                                         <UFormGroup
-                                            :label="t('registry.fullName')"
+                                            :label="t('registry.firstName')"
                                             name="adminFirstName"
                                             required
                                             class="w-full pb-2"
@@ -289,10 +289,10 @@ const onSubmit = async () => {
                                             />
                                         </UFormGroup>
                                         <UFormGroup
-                                            label=""
+                                            :label="t('registry.lastName')"
                                             name="adminLastName"
                                             required
-                                            class="w-full pb-2 mt-6"
+                                            class="w-full pb-2"
                                             :ui="{ error: 'absolute -bottom-6' }"
                                         >
                                             <UInput
