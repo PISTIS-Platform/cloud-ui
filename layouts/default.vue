@@ -23,7 +23,12 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
     { name: 'dashboard.dashboard', to: 'dashboard', icon: '', roles: [] },
-    { name: 'marketplace', to: config.public.marketplaceUrl, icon: '', roles: [] },
+    {
+        name: 'marketplace',
+        to: config.public.marketplaceUrl + '/srv/catalog/datasets?locale=en&catalog=pistis&page=1',
+        icon: 'heroicons:arrow-top-right-on-square-16-solid',
+        roles: [],
+    },
     { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
 ];
 
@@ -83,8 +88,9 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                                     :target="item.to === 'dashboard' ? '' : '_blank'"
                                     class="text-white hover:bg-primary-600 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
                                     active-class="bg-primary-800"
-                                    >{{ $t(item.name) }}</NuxtLink
-                                >
+                                    >{{ $t(item.name) }}
+                                    <UIcon v-if="item.icon" :name="item.icon" class="w-4 h-4 text-white-500" />
+                                </NuxtLink>
                             </div>
                         </div>
                     </div>
