@@ -102,6 +102,18 @@ const select = (row: any, actionGiven: string) => {
     selectedRow = row;
     return (switchModalOpen.value = true);
 };
+
+const download = async (id: string | number) => {
+    try {
+        await $fetch(`/api/factories-registry/download/${id}`, {
+            method: 'get',
+        });
+        showSuccessMessage(t('registry.clientsDownloadSuccess'));
+        refresh();
+    } catch {
+        showErrorMessage(t('registry.clientsDownloadError'));
+    }
+};
 </script>
 
 <template>
@@ -175,6 +187,11 @@ const select = (row: any, actionGiven: string) => {
                         <div class="flex-col justify-end">
                             <UButton variant="outline" @click="select(row, 'recreate')"
                                 >{{ t('registry.recreate') }}
+                            </UButton>
+                        </div>
+                        <div class="ml-2 flex-col justify-end">
+                            <UButton variant="outline" @click="download(row.organizationId)"
+                                >{{ t('registry.clients') }}
                             </UButton>
                         </div>
                     </div>
