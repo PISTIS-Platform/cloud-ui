@@ -103,11 +103,12 @@ const select = (row: any, actionGiven: string) => {
     return (switchModalOpen.value = true);
 };
 
-const download = async (id: string | number) => {
+const download = async (row: any) => {
     try {
-        await $fetch(`/api/factories-registry/download/${id}`, {
-            method: 'get',
-        });
+        await useDownloadFile(
+            `/api/factories-registry/download/${row.organizationId}`,
+            `.env.${row.factoryPrefix}.factory`,
+        );
         showSuccessMessage(t('registry.clientsDownloadSuccess'));
         refresh();
     } catch {
@@ -190,9 +191,7 @@ const download = async (id: string | number) => {
                             </UButton>
                         </div>
                         <div class="ml-2 flex-col justify-end">
-                            <UButton variant="outline" @click="download(row.organizationId)"
-                                >{{ t('registry.clients') }}
-                            </UButton>
+                            <UButton variant="outline" @click="download(row)">{{ t('registry.clients') }} </UButton>
                         </div>
                     </div>
                 </template>
