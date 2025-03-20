@@ -25,7 +25,7 @@
         "dompurify": "^3.1.7",
         "jwt-decode": "^4.0.0",
         "next-auth": "4.21.1",
-        "nuxt": "^3.13.0",
+        "nuxt": "^3.16.0",
         "pinia": "^2.1.7",
         "prometheus-query": "^3.4.0",
         "ramda": "^0.29.1",
