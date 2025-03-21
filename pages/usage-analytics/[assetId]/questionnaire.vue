@@ -12,7 +12,6 @@ import type {
 const { t } = useI18n();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 const route = useRoute();
-const router = useRouter();
 
 const answers = ref<QuestionAnswer[]>([]);
 const errorMsg = ref('');
@@ -107,8 +106,10 @@ const saveAnswers = async () => {
         });
 
         showSuccessMessage(t('usage-analytics.answersSubmitted'));
-        setTimeout(() => {
-            router.push({ name: 'usage-analytics' });
+        setTimeout(async () => {
+            await navigateTo(`https://pistis-market.eu/srv/catalog/datasets/${route.params.assetId}`, {
+                external: true,
+            });
         }, 3000);
     } catch (error) {
         showErrorMessage(t('usage-analytics.errorInSubmitAnswers'));
