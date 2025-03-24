@@ -51,6 +51,7 @@ export default defineNuxtConfig({
         intentionAnalyticsServerUrl: '',
         modelsRepositoryUrl: '',
         prometheusUrl: '',
+        identityManagementUrl: '',
         walletAlias: '',
     },
 

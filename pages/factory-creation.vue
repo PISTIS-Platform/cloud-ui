@@ -1,6 +1,5 @@
 <script setup lang="ts">
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
-import { countriesInEnglish } from '~/constants/countries';
 
 const { t } = useI18n();
 
@@ -84,71 +83,27 @@ const state = reactive({
     ip: undefined,
 });
 
-const typeOptions = [
-    {
-        label: t('registry.types.sme'),
-        value: 'SME',
-    },
-    {
-        label: t('registry.types.academic'),
-        value: 'ACADEMIC',
-    },
-    {
-        label: t('registry.types.publicBody'),
-        value: 'PUBLIC_BODY',
-    },
-];
+const typeOptions = ref();
 
-const domainOptions = [
-    {
-        label: t('registry.domains.education'),
-        value: 'EDUCATION',
-    },
-    {
-        label: t('registry.domains.transportation'),
-        value: 'TRANSPORTATION',
-    },
-    {
-        label: t('registry.domains.consumerGoods'),
-        value: 'CONSUMER_GOODS',
-    },
-    {
-        label: t('registry.domains.electricity'),
-        value: 'ELECTRICITY',
-    },
-    {
-        label: t('registry.domains.oilAndGas'),
-        value: 'OIL_AND_GAS',
-    },
-    {
-        label: t('registry.domains.healthcare'),
-        value: 'HEALTHCARE',
-    },
-    {
-        label: t('registry.domains.consumerFinance'),
-        value: 'CONSUMER_FINANCE',
-    },
-];
+const domainOptions = ref();
 
-const countryOptions = Object.keys(countriesInEnglish).map((countryCode: string) => ({
-    label: t('registry.countries.' + countryCode),
-    value: countryCode,
-}));
+// const countryOptions = Object.keys(countriesInEnglish).map((countryCode: string) => ({
+//     label: t('registry.countries.' + countryCode),
+//     value: countryCode,
+// }));
 
-const sizeOptions = [
-    {
-        label: t('registry.sizes.small'),
-        value: 'SMALL',
+const countryOptions = ref([]);
+
+const sizeOptions = ref();
+
+useLazyFetch(`/api/factories-registry/get-lists`, {
+    onResponse({ response }) {
+        typeOptions.value = response._data.types;
+        domainOptions.value = response._data.domains;
+        sizeOptions.value = response._data.sizes;
+        countryOptions.value = response._data.countries;
     },
-    {
-        label: t('registry.sizes.medium'),
-        value: 'MEDIUM',
-    },
-    {
-        label: t('registry.sizes.large'),
-        value: 'LARGE',
-    },
-];
+});
 
 const isValid = computed(() => schema.safeParse(state).success);
 
@@ -213,8 +168,8 @@ const onSubmit = async () => {
                                             v-model="state.type"
                                             :options="typeOptions"
                                             :placeholder="t('registry.select') + ' ' + t('registry.type')"
-                                            value-attribute="value"
-                                            option-attribute="label"
+                                            value-attribute="code"
+                                            option-attribute="title"
                                         />
                                     </UFormGroup>
                                     <UFormGroup
@@ -228,8 +183,8 @@ const onSubmit = async () => {
                                             v-model="state.domain"
                                             :options="domainOptions"
                                             :placeholder="t('registry.select') + ' ' + t('registry.domain')"
-                                            value-attribute="value"
-                                            option-attribute="label"
+                                            value-attribute="code"
+                                            option-attribute="title"
                                         />
                                     </UFormGroup>
                                 </div>
@@ -247,8 +202,8 @@ const onSubmit = async () => {
                                             :searchable-placeholder="$t('registry.searchForACountry')"
                                             :options="countryOptions"
                                             :placeholder="t('registry.select') + ' ' + t('registry.country')"
-                                            value-attribute="value"
-                                            option-attribute="label"
+                                            value-attribute="code"
+                                            option-attribute="title"
                                         />
                                     </UFormGroup>
                                     <UFormGroup
@@ -262,8 +217,8 @@ const onSubmit = async () => {
                                             v-model="state.size"
                                             :options="sizeOptions"
                                             :placeholder="t('registry.select') + ' ' + t('registry.size')"
-                                            value-attribute="value"
-                                            option-attribute="label"
+                                            value-attribute="code"
+                                            option-attribute="title"
                                         />
                                     </UFormGroup>
                                 </div>
