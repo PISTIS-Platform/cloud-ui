@@ -160,6 +160,8 @@ export default defineI18nConfig(() => {
                         errorInUpdate: 'An error occurred while updating the service mapping',
                         invalidServiceUrl: 'Service URL can only contain alphanumeric characters, "/" and "-"',
                         sar: 'Service account role',
+                        clientAuthentication: 'Client Authentication',
+                        booleanError: 'Cannot have SAR without Client Authentication',
                     },
                     types: {
                         sme: 'Small Medium Enterprise',
