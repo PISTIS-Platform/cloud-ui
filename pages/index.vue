@@ -11,7 +11,7 @@ const config = useRuntimeConfig();
 
 const { status, signIn, signOut, data: session } = useAuth();
 
-const navigation: { name: string; to: string; roles: string[] }[] = [
+const navigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
     { name: 'dashboard.dashboard', to: '/dashboard', roles: [] },
     { name: 'registry.registry', to: '/factory-registry', roles: ['PISTIS_ADMIN'] },
     { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['PISTIS_ADMIN'] },
@@ -20,7 +20,12 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
     { name: 'home', to: 'dashboard', icon: '', roles: [] },
-    { name: 'marketplace', to: config.public.marketplaceUrl, icon: '', roles: [] },
+    {
+        name: 'marketplace',
+        to: config.public.marketplaceUrl + '/srv/catalog/datasets?locale=en&catalog=pistis&page=1',
+        icon: 'heroicons:arrow-top-right-on-square-16-solid',
+        roles: [],
+    },
     { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
 ];
 
@@ -90,8 +95,9 @@ const isModalOpen = ref(false);
                             :key="page.to"
                             :to="page.to"
                             class="flex-shrink-0 rounded-md text-white text-lg hover:bg-primary-600 py-2 px-4 transition-all"
-                            >{{ $t(page.name) }}</NuxtLink
-                        >
+                            >{{ $t(page.name) }}
+                            <UIcon v-if="page.icon" :name="page.icon" class="w-4 h-4 text-white-500" />
+                        </NuxtLink>
                     </div>
                 </div>
                 <!-- Sign In button -->
