@@ -19,10 +19,14 @@ const props = defineProps({
         default: false,
     },
 });
+
+const formRef = ref();
+
 const emit = defineEmits(['submitForm']);
 
-const body = ref<RegisteredService>({
+const body = reactive<RegisteredService>({
     ...props.registeredService,
+    clientAuthentication: props.registeredService.clientAuthentication ?? true,
 });
 
 const schema = z.object({
@@ -36,10 +40,20 @@ const schema = z.object({
         .min(1, { message: t('required') })
         .regex(new RegExp(/^[a-zA-Z0-9-/]+$/), { message: t('registry.servicesRegistry.invalidServiceUrl') }),
     sar: z.boolean().default(false),
+    clientAuthentication: z
+        .boolean()
+        .default(true)
+        .superRefine((val, ctx) => {
+            if (!val && body.sar) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: t('registry.servicesRegistry.booleanError'),
+                });
+            }
+        }),
 });
-
 const isFormValid = computed(() => {
-    return schema.safeParse(body.value).success;
+    return schema.safeParse(body).success;
 });
 
 const navigateToMainPage = async () => {
@@ -51,15 +65,30 @@ const navigateToMainPage = async () => {
 const submitForm = async () => {
     if (!isFormValid.value) return;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, ...bodyInfo } = body.value;
+    const { id, ...bodyInfo } = body;
     emit('submitForm', bodyInfo);
 };
+
+watch(
+    body,
+    () => {
+        if (!body.sar && !body.clientAuthentication) {
+            formRef.value.clear('clientAuthentication');
+        }
+    },
+    { deep: true },
+);
 </script>
 
 <template>
     <UCard class="w-full mt-6">
         <div>
-            <UForm class="flex flex-col justify-start items-start space-y-8 w-full" :state="body" :schema="schema">
+            <UForm
+                ref="formRef"
+                class="flex flex-col justify-start items-start space-y-8 w-full"
+                :state="body"
+                :schema="schema"
+            >
                 <div class="flex flex-col justify-start items-start space-y-4 w-full">
                     <UFormGroup
                         :label="$t('registry.servicesRegistry.serviceName')"
@@ -91,32 +120,35 @@ const submitForm = async () => {
                     <UFormGroup :label="$t('registry.servicesRegistry.sar')" name="sarCheckbox" class="w-full">
                         <UCheckbox v-model="body.sar" name="sar" />
                     </UFormGroup>
+                    <UFormGroup
+                        :label="$t('registry.servicesRegistry.clientAuthentication')"
+                        name="clientAuthentication"
+                        class="w-full"
+                    >
+                        <UCheckbox v-model="body.clientAuthentication" name="clientAuthentication" />
+                    </UFormGroup>
                 </div>
                 <div class="flex gap-4 justify-between items-center mt-8">
                     <div class="flex gap-4">
-                        <UTooltip :text="$t('cancel')">
-                            <UButton
-                                size="lg"
-                                color="gray"
-                                variant="solid"
-                                :label="$t('cancel')"
-                                :trailing="false"
-                                @click="navigateToMainPage"
-                            />
-                        </UTooltip>
-                    </div>
-
-                    <UTooltip :text="$t('save')">
                         <UButton
                             size="lg"
-                            :label="$t('save')"
-                            color="primary"
+                            color="gray"
                             variant="solid"
-                            type="submit"
-                            :loading="shouldDisableButton"
-                            @click="submitForm"
+                            :label="$t('cancel')"
+                            :trailing="false"
+                            @click="navigateToMainPage"
                         />
-                    </UTooltip>
+                    </div>
+
+                    <UButton
+                        size="lg"
+                        :label="$t('save')"
+                        color="primary"
+                        variant="solid"
+                        type="submit"
+                        :loading="shouldDisableButton"
+                        @click="submitForm"
+                    />
                 </div>
             </UForm>
         </div>

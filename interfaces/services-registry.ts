@@ -3,4 +3,5 @@ export interface RegisteredService {
     serviceName: string;
     serviceUrl: string;
     sar: boolean;
+    clientAuthentication: boolean;
 }
