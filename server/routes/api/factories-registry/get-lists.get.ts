@@ -2,8 +2,6 @@ import { getToken } from '#auth';
 
 const config = useRuntimeConfig();
 
-console.log(config);
-
 export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const countries = await $fetch(
