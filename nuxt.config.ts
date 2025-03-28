@@ -52,7 +52,7 @@ export default defineNuxtConfig({
         modelsRepositoryUrl: '',
         prometheusUrl: '',
         identityManagementUrl: '',
-        walletAlias: '',
+        adminWalletAlias: '',
     },
 
     modules: [

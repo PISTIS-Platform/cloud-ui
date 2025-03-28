@@ -32,6 +32,10 @@ const getUserOrgId = (profile: any) => {
     return profile.pistis?.group?.id || '';
 };
 
+const getUserOrgPrefix = (profile: any) => {
+    return profile.pistis?.group?.prefix || '';
+};
+
 async function refreshAccessToken(token: JWT) {
     try {
         if (!token.refresh_token) return token;
@@ -86,6 +90,7 @@ export const authOptions = {
                 token.refresh_token = account.refresh_token;
                 token.roles = getPistisRoles(jwtDecode(account.access_token));
                 token.orgId = getUserOrgId(jwtDecode(account.access_token));
+                token.prefix = getUserOrgPrefix(jwtDecode(account.access_token));
                 if (account.expires_at) {
                     token.expires_at = (account.expires_at - 15) * 1000;
                 }
