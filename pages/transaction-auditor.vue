@@ -25,7 +25,7 @@ const columns: TableColumn[] = [
         key: 'amount',
         label: t('auditor.amount'),
         sortable: true,
-        class: 'text-center w-12 text-nowrap',
+        class: 'text-left w-12 text-nowrap',
     },
     {
         key: 'assetTitle',
@@ -318,7 +318,6 @@ const generatePDF = () => {
                             placeholder="Search..."
                         />
                     </div>
-
                     <UTable
                         v-model:sort="sortBy"
                         v-model:expand="expand"
@@ -334,7 +333,11 @@ const generatePDF = () => {
                         @select="select"
                     >
                         <template #expand="{ row }">
-                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center ml-[200px]">
+                            <div
+                                :class="[
+                                    'w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center bg-gray-50 -mt-px pl-[199px]',
+                                ]"
+                            >
                                 <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
                                     <span>{{ $t('auditor.amountToProvider') }}</span>
@@ -353,7 +356,7 @@ const generatePDF = () => {
                         </template>
 
                         <template #amount-data="{ row }">
-                            <span class="flex items-center justify-center font-bold">
+                            <span class="flex items-center justify-start font-bold">
                                 {{ row.amount.toFixed(2) }} EUR
                             </span>
                         </template>
@@ -409,5 +412,20 @@ const generatePDF = () => {
 <style scoped>
 ::v-deep tr td:first-child {
     width: 50px !important;
+}
+
+/* Remove border from rows that contain expanded content (colspan="100%") - modern browsers */
+:deep(tbody tr:has(td[colspan='100%'])) {
+    border-top: none !important;
+}
+
+/* Fallback for older browsers - target the td directly */
+:deep(tbody td[colspan='100%']) {
+    border-top: none !important;
+}
+
+/* Additional fallback - target the parent tr through the td */
+:deep(tbody tr td[colspan='100%']) {
+    border-top: none !important;
 }
 </style>
