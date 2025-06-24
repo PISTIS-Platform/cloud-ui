@@ -47,10 +47,19 @@ const { data: componentStatusData, status: componentStatusStatus } = useLazyFetc
 
 //data for usage stats
 const {
+    execute: executeUsageStats,
     data: usageStatsData,
     status: usageStatsStatus,
     error: usageStatsError,
-} = useLazyFetch<UsageStatsData[]>('/api/dashboard/resource-usage');
+} = await useLazyFetch<UsageStatsData[]>('/api/dashboard/resource-usage', {
+    server: false,
+    immediate: false,
+    retry: false,
+});
+
+if (session.value?.roles?.includes('PISTIS_ADMIN')) {
+    executeUsageStats();
+}
 
 const computedResourcesUsageStats = computed(() => {
     const iconsMapping: Record<string, string> = {
@@ -207,14 +216,22 @@ const downloadingConfigurations = ref(false);
 const submittingIP = ref(false);
 
 const {
+    execute: executeUserFactory,
     data: userFactory,
     error: userFactoryError,
     status: userFactoryStatus,
 } = useLazyFetch<FactoryModelRepo>(`/api/factories-registry/user-factory`, {
+    server: false,
+    immediate: false,
+    retry: false,
     onResponse({ response }) {
         schemaState.publicIP = response._data.ip;
     },
 });
+
+if (!session.value?.roles?.includes('PISTIS_ADMIN')) {
+    executeUserFactory();
+}
 
 const downloadInstructions = async () => {
     downloadingInstructions.value = true;
