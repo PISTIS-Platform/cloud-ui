@@ -21,17 +21,17 @@ const sharesToPurchase = ref(0);
                             </div>
                         </template>
                         <div class="flex flex-col gap-4">
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{ $t('invest.assetTitle') }}</span>
                                 <span>Sample Dataset </span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{
                                     $t('invest.assetDescription')
                                 }}</span>
                                 <span>This dataset is a sample for investing</span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{
                                     $t('invest.assetDistribution')
                                 }}</span>
@@ -47,35 +47,35 @@ const sharesToPurchase = ref(0);
                             </div>
                         </template>
                         <div class="flex flex-col gap-4">
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{ $t('invest.validUntil') }}</span>
                                 <span><span class="font-bold text-lg">25 December 2027</span></span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{
                                     $t('invest.totalNumberOfShares')
                                 }}</span>
                                 <span><span class="font-bold text-lg">1000</span> shares</span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{
                                     $t('invest.availableShares')
                                 }}</span>
                                 <span><span class="font-bold text-lg">800</span> shares</span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{
                                     $t('invest.maxPerInvestor')
                                 }}</span>
                                 <span><span class="font-bold text-lg">100</span> shares</span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{
                                     $t('invest.sharePercentage')
                                 }}</span>
                                 <span><span class="font-bold text-lg">0.049%</span> per share</span>
                             </div>
-                            <div class="flex gap-2 flex-col">
+                            <div class="flex gap-1 flex-col">
                                 <span class="text-sm font-semibold text-gray-400">{{ $t('invest.sharePrice') }}</span>
                                 <span><span class="font-bold text-lg">20 EUR</span> per share</span>
                             </div>
