@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const sharesToPurchase = ref(0);
+const sharesToPurchase = ref(1);
 </script>
 
 <template>
@@ -20,22 +20,42 @@ const sharesToPurchase = ref(0);
                                 <span class="text-gray-500 font-semibold">{{ $t('invest.assetDetails') }}</span>
                             </div>
                         </template>
-                        <div class="flex flex-col gap-4">
-                            <div class="flex gap-1 flex-col">
-                                <span class="text-sm font-semibold text-gray-400">{{ $t('invest.assetTitle') }}</span>
-                                <span>Sample Dataset </span>
+                        <div class="flex gap-6">
+                            <div class="flex flex-col gap-4 w-full">
+                                <div class="flex gap-1 flex-col">
+                                    <span class="text-sm font-semibold text-gray-400">{{
+                                        $t('invest.assetTitle')
+                                    }}</span>
+                                    <!-- //TODO: Link to marketplace -->
+                                    <a href="#" class="text-primary-500">Sample Dataset </a>
+                                </div>
+                                <div class="flex gap-1 flex-col">
+                                    <span class="text-sm font-semibold text-gray-400">{{
+                                        $t('invest.assetDescription')
+                                    }}</span>
+                                    <span>This dataset is a sample for investing</span>
+                                </div>
                             </div>
-                            <div class="flex gap-1 flex-col">
-                                <span class="text-sm font-semibold text-gray-400">{{
-                                    $t('invest.assetDescription')
-                                }}</span>
-                                <span>This dataset is a sample for investing</span>
-                            </div>
-                            <div class="flex gap-1 flex-col">
-                                <span class="text-sm font-semibold text-gray-400">{{
-                                    $t('invest.assetDistribution')
-                                }}</span>
-                                <span>Distribution #239847</span>
+                            <div class="flex flex-col gap-4 w-full">
+                                <div class="flex gap-1 flex-col">
+                                    <span class="text-sm font-semibold text-gray-400">{{
+                                        $t('invest.termsAndConditions')
+                                    }}</span>
+                                    <div class="whitespace-pre-line max-h-[10lh] overflow-y-scroll">
+                                        Duis dolore consequat adipisicing laboris nulla ullamco deserunt amet anim ut
+                                        nostrud cupidatat velit occaecat. Labore aliqua ut in elit ut exercitation duis.
+                                        Pariatur sint proident sit sunt est minim voluptate est. Nostrud exercitation
+                                        eiusmod exercitation et ut ad nostrud culpa elit ut velit labore officia non do.
+                                        Culpa tempor veniam dolor tempor. Qui dolor consequat quis ex laborum aute
+                                        deserunt. Minim ea cupidatat magna enim aliquip elit nostrud. Amet deserunt
+                                        cillum ea anim dolore eiusmod nulla incididunt ut non amet. Laborum laboris ut
+                                        elit voluptate non eu incididunt nulla quis excepteur in. Ut dolore laboris amet
+                                        velit adipisicing commodo laborum velit sit. Dolore eu mollit culpa labore anim
+                                        irure id amet. Dolore pariatur sint non anim in excepteur officia officia ipsum
+                                        labore aute tempor dolore elit sint. Anim dolor esse duis minim et adipisicing
+                                        proident et aliqua. Dolore ut id id dolore in labore qui esse.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </UCard>
@@ -52,47 +72,31 @@ const sharesToPurchase = ref(0);
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.validUntil')
                                     }}</span>
-                                    <span><span class="font-bold text-lg">25 December 2027</span></span>
+                                    <span><span class="text-lg">25 December 2027</span></span>
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.availableShares')
                                     }}</span>
-                                    <span><span class="font-bold text-lg">800 / 1000</span> shares</span>
+                                    <span><span class="text-lg">800 / 1000</span> shares</span>
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.maxPerInvestor')
                                     }}</span>
-                                    <span><span class="font-bold text-lg">100</span> shares</span>
+                                    <span><span class="text-lg">100</span> shares</span>
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.sharePercentage')
                                     }}</span>
-                                    <span><span class="font-bold text-lg">0.049%</span> per share</span>
+                                    <span><span class="text-lg">0.049%</span> per share</span>
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.sharePrice')
                                     }}</span>
-                                    <span><span class="font-bold text-lg">20 EUR</span> per share</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-4 w-full">
-                                <div class="flex gap-1 flex-col">
-                                    <span class="text-sm font-semibold text-gray-400">{{
-                                        $t('invest.termsAndConditions')
-                                    }}</span>
-                                    <p class="whitespace-pre-line">
-                                        Duis dolore consequat adipisicing laboris nulla ullamco deserunt amet anim ut
-                                        nostrud cupidatat velit occaecat. Labore aliqua ut in elit ut exercitation duis.
-                                        Pariatur sint proident sit sunt est minim voluptate est. Nostrud exercitation
-                                        eiusmod exercitation et ut ad nostrud culpa elit ut velit labore officia non do.
-                                        Culpa tempor veniam dolor tempor. Qui dolor consequat quis ex laborum aute
-                                        deserunt. Minim ea cupidatat magna enim aliquip elit nostrud. Amet deserunt
-                                        cillum ea anim dolore eiusmod nulla incididunt ut non amet.
-                                    </p>
+                                    <span><span class="text-lg">20 EUR</span> per share</span>
                                 </div>
                             </div>
                         </div>
@@ -102,7 +106,6 @@ const sharesToPurchase = ref(0);
                     <UForm class="flex items-end gap-6">
                         <UFormGroup
                             :label="$t('invest.numberOfSharesToPurchase')"
-                            class="flex-1"
                             name="percentagePrice"
                             :ui="{ error: 'absolute -bottom-6' }"
                             required
@@ -113,23 +116,21 @@ const sharesToPurchase = ref(0);
                                 :placeholder="$t('data.investmentPlanner.sharePricePlaceholder')"
                                 type="number"
                                 size="xl"
-                                min="0"
+                                min="1"
+                                class="w-64"
                             >
                                 <template #trailing>
                                     <span class="text-gray-500 text-xs">shares</span>
                                 </template>
                             </UInput>
                         </UFormGroup>
-                        <span v-if="sharesToPurchase === 0" class="mb-2.5">Please select 1 share or more.</span>
-                        <span v-else class="mb-2.5"
-                            >You are purchasing
-                            <span class="font-bold"
-                                >{{ sharesToPurchase }} share{{ sharesToPurchase === 1 ? '' : 's' }}</span
-                            >
-                            at <span class="font-bold">20 EUR {{ sharesToPurchase === 1 ? '' : 'each' }}</span> for a
-                            total of <span class="font-bold">{{ sharesToPurchase * 20 }} EUR</span>.</span
-                        >
                         <UButton type="submit" size="xl" :disabled="sharesToPurchase === 0">Purchase</UButton>
+                        <span class="mb-2.5"
+                            >You are purchasing
+                            <span class="">{{ sharesToPurchase }} share{{ sharesToPurchase === 1 ? '' : 's' }}</span>
+                            at <span class="">20 EUR {{ sharesToPurchase === 1 ? '' : 'each' }}</span> for a total of
+                            <span class="">{{ sharesToPurchase * 20 }} EUR</span>.</span
+                        >
                     </UForm>
                 </div>
             </UCard>
