@@ -1,4 +1,4 @@
-FROM node:20-slim as builder
+FROM node:20-slim AS builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN pnpm run build
 FROM node:20-slim
 WORKDIR /app
 COPY --from=builder /app/.output /app
-ENV HOST 0.0.0.0
-ENV PORT 80
+ENV HOST=0.0.0.0
+ENV PORT=80
 EXPOSE 80
 ENTRYPOINT [ "node", "./server/index.mjs" ]

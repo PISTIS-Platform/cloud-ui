@@ -19,6 +19,7 @@
         "@headlessui/vue": "^1.7.23",
         "@iconify-json/heroicons": "^1.2.2",
         "@nuxt/ui": "^2.21.0",
+        "@nuxtjs/tailwindcss": "^6.13.1",
         "@pinia/nuxt": "^0.5.5",
         "chart.js": "^4.4.7",
         "dayjs": "^1.11.13",
