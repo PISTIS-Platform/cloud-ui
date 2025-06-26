@@ -72,6 +72,7 @@ export default defineI18nConfig(() => {
                     sharePrice: 'Share Price',
                     validUntil: 'Valid Until Date',
                     numberOfSharesToPurchase: 'Number of Shares to Purchase',
+                    termsAndConditions: 'Terms and conditions',
                 },
                 auditor: {
                     title: 'Transaction Auditor',
