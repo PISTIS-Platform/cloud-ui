@@ -250,6 +250,12 @@ const generatePDF = () => {
             { text: selected.value.assetTitle, link: selected.value.assetLink, style: 'link' },
             { text: t('auditor.amount'), style: 'subheading' },
             { text: selected.value.amount + ' EUR' },
+            ...selected.value.recipients.map((recipient: { recipient: string; amount: number; percentage: number }) => {
+                return [
+                    { text: recipient.recipient, style: 'subheading' },
+                    { text: `${recipient.amount} (${recipient.percentage}%)` },
+                ];
+            }),
             // { text: t('auditor.amountToProvider'), style: 'subheading' },
             // { text: selected.value.amountToProvider + ' EUR' },
             // { text: t('auditor.transactionFee'), style: 'subheading' },
@@ -389,15 +395,13 @@ const innerColumns: TableColumn[] = [
                                 <span class="text-gray-400">{{ $t('auditor.amount') }}</span>
                                 <span>{{ selected.amount.toFixed(2) }} EUR </span>
                             </div>
-                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
-                                <span class="text-gray-400"
-                                    >{{ $t('auditor.amountToProvider') }} / {{ $t('auditor.transactionFee') }}</span
-                                >
-                                //FIXME: Put fields for recipients here
-                                <!-- <span
-                                    >{{ selected.amountToProvider.toFixed(2) }} EUR /
-                                    {{ selected.transactionFee.toFixed(2) }} EUR</span
-                                > -->
+                            <div
+                                v-for="recipient in selected.recipients"
+                                :key="recipient.recipient"
+                                class="flex flex-col items-start gap-1 w-full mt-4"
+                            >
+                                <span class="text-gray-400">{{ recipient.recipient }}</span>
+                                <span>{{ `${recipient.amount} (${recipient.percentage}%)` }}</span>
                             </div>
                         </div>
                         <div class="w-full flex justify-between flex-wrap">
@@ -472,15 +476,6 @@ const innerColumns: TableColumn[] = [
                     >
                         <template #expand="{ row }">
                             <div class="w-full p-4 flex text-sm text-gray-500 gap-2 justify-start bg-gray-50">
-                                <!-- <span class="flex items-center gap-4">
-                                    <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
-                                    <span>{{ $t('auditor.amountToProvider') }}</span>
-                                </span>
-                                <span class="flex items-center gap-4">
-                                    <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
-                                    <span>{{ $t('auditor.transactionFee') }}</span>
-                                </span> -->
-
                                 <UCard :ui="{ base: 'ml-[180px] flex flex-shrink w-auto p-2', body: 'p-4' }">
                                     <UTable :columns="innerColumns" :rows="row.recipients">
                                         <template #amount-data="{ row }">
