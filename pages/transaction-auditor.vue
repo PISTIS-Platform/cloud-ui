@@ -531,22 +531,32 @@ const generatePDF = () => {
     width: 50px !important;
 }
 
-:deep(tr) {
-    border-top: 1px solid #e4e4e7 !important;
-}
-
 :deep(tr[aria-expanded='true']) {
     border-bottom: none !important;
 }
 
 :deep(tr:has(td[colspan='100%'])) {
-    /* background-color: red !important; */
-    border: none !important;
-    margin-top: -2px !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important; /* Ensure no unwanted padding on the row itself */
+    padding-bottom: 0 !important;
 }
 
-:deep(td[colspan='100%']) {
+:deep(tr:has(td[colspan='100%']) > td) {
     border: none !important;
-    margin-top: -20px !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+:deep(tr[colspan='100%'] > td > div) {
+    border-top: none !important;
+}
+
+:deep(tbody > tr:not([aria-expanded='true']):not(:has(td[colspan='100%']))) {
+    border-top: 1px solid theme('colors.gray.200') !important; /* Light mode */
 }
 </style>
