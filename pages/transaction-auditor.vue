@@ -540,7 +540,7 @@ const generatePDF = () => {
     border-bottom: none !important;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
-    padding-top: 0 !important; /* Ensure no unwanted padding on the row itself */
+    padding-top: 0 !important;
     padding-bottom: 0 !important;
 }
 
@@ -557,6 +557,6 @@ const generatePDF = () => {
 }
 
 :deep(tbody > tr:not([aria-expanded='true']):not(:has(td[colspan='100%']))) {
-    border-top: 1px solid theme('colors.gray.200') !important; /* Light mode */
+    border-top: 1px solid theme('colors.gray.200') !important;
 }
 </style>
