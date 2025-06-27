@@ -250,10 +250,10 @@ const generatePDF = () => {
             { text: selected.value.assetTitle, link: selected.value.assetLink, style: 'link' },
             { text: t('auditor.amount'), style: 'subheading' },
             { text: selected.value.amount + ' EUR' },
-            { text: t('auditor.amountToProvider'), style: 'subheading' },
-            { text: selected.value.amountToProvider + ' EUR' },
-            { text: t('auditor.transactionFee'), style: 'subheading' },
-            { text: selected.value.transactionFee + ' EUR' },
+            // { text: t('auditor.amountToProvider'), style: 'subheading' },
+            // { text: selected.value.amountToProvider + ' EUR' },
+            // { text: t('auditor.transactionFee'), style: 'subheading' },
+            // { text: selected.value.transactionFee + ' EUR' },
             { text: t('auditor.provider'), style: 'subheading' },
             { text: selected.value.provider },
             { text: t('auditor.consumer'), style: 'subheading' },
@@ -375,10 +375,11 @@ const generatePDF = () => {
                                 <span class="text-gray-400"
                                     >{{ $t('auditor.amountToProvider') }} / {{ $t('auditor.transactionFee') }}</span
                                 >
-                                <span
+                                //FIXME: Put fields for recipients here
+                                <!-- <span
                                     >{{ selected.amountToProvider.toFixed(2) }} EUR /
                                     {{ selected.transactionFee.toFixed(2) }} EUR</span
-                                >
+                                > -->
                             </div>
                         </div>
                         <div class="w-full flex justify-between flex-wrap">
@@ -448,10 +449,11 @@ const generatePDF = () => {
                         }"
                         :single-select="true"
                         :multiple-expand="true"
+                        :ui="{ tbody: 'divide-none', tr: { base: 'border-t' } }"
                         @select="select"
                     >
                         <template #expand="{ row }">
-                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center ml-[200px]">
+                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center bg-gray-50">
                                 <!-- <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
                                     <span>{{ $t('auditor.amountToProvider') }}</span>
@@ -525,7 +527,11 @@ const generatePDF = () => {
 </template>
 
 <style scoped>
-::v-deep tr td:first-child {
+:deep(tr > td:first-child) {
     width: 50px !important;
+}
+
+:deep(td[colspan='100%'] > div) {
+    border-top: none !important;
 }
 </style>
