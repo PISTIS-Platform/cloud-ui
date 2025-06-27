@@ -531,7 +531,21 @@ const generatePDF = () => {
     width: 50px !important;
 }
 
-:deep(td[colspan='100%'] > div) {
-    border-top: none !important;
+/* :deep(tr:first-child) {
+  border: none !important;
+} */
+
+:deep(tr) {
+    border-top: 1px solid #e4e4e7 !important;
+}
+
+:deep(tr:has(td[colspan='100%'])) {
+    /* background-color: red !important; */
+    border: none !important;
+}
+
+:deep(td[colspan='100%']) {
+    border: none !important;
+    margin-top: -2px !important;
 }
 </style>
