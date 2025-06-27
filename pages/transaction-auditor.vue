@@ -481,7 +481,7 @@ const innerColumns: TableColumn[] = [
                                     <span>{{ $t('auditor.transactionFee') }}</span>
                                 </span> -->
 
-                                <UCard :ui="{ base: 'ml-[160px] flex flex-shrink w-auto' }">
+                                <UCard :ui="{ base: 'ml-[163px] flex flex-shrink w-auto' }">
                                     <UTable :columns="innerColumns" :rows="row.recipients">
                                         <template #amount-data="{ row }">
                                             <div class="flex justify-end font-bold">
