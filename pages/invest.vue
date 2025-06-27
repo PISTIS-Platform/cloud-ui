@@ -36,27 +36,6 @@ const sharesToPurchase = ref(1);
                                     <span>This dataset is a sample for investing</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-4 w-full">
-                                <div class="flex gap-1 flex-col">
-                                    <span class="text-sm font-semibold text-gray-400">{{
-                                        $t('invest.termsAndConditions')
-                                    }}</span>
-                                    <div class="whitespace-pre-line max-h-[10lh] overflow-y-scroll">
-                                        Duis dolore consequat adipisicing laboris nulla ullamco deserunt amet anim ut
-                                        nostrud cupidatat velit occaecat. Labore aliqua ut in elit ut exercitation duis.
-                                        Pariatur sint proident sit sunt est minim voluptate est. Nostrud exercitation
-                                        eiusmod exercitation et ut ad nostrud culpa elit ut velit labore officia non do.
-                                        Culpa tempor veniam dolor tempor. Qui dolor consequat quis ex laborum aute
-                                        deserunt. Minim ea cupidatat magna enim aliquip elit nostrud. Amet deserunt
-                                        cillum ea anim dolore eiusmod nulla incididunt ut non amet. Laborum laboris ut
-                                        elit voluptate non eu incididunt nulla quis excepteur in. Ut dolore laboris amet
-                                        velit adipisicing commodo laborum velit sit. Dolore eu mollit culpa labore anim
-                                        irure id amet. Dolore pariatur sint non anim in excepteur officia officia ipsum
-                                        labore aute tempor dolore elit sint. Anim dolor esse duis minim et adipisicing
-                                        proident et aliqua. Dolore ut id id dolore in labore qui esse.
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </UCard>
                     <UCard class="bg-gray-50 w-full">
@@ -80,6 +59,8 @@ const sharesToPurchase = ref(1);
                                     }}</span>
                                     <span><span class="text-lg">800 / 1000</span> shares</span>
                                 </div>
+                            </div>
+                            <div class="flex flex-col gap-4 w-full">
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.maxPerInvestor')
@@ -92,11 +73,39 @@ const sharesToPurchase = ref(1);
                                     }}</span>
                                     <span><span class="text-lg">0.049%</span> per share</span>
                                 </div>
+                            </div>
+                            <div class="flex flex-col gap-4 w-full">
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.sharePrice')
                                     }}</span>
                                     <span><span class="text-lg">20 EUR</span> per share</span>
+                                </div>
+                            </div>
+                        </div>
+                    </UCard>
+                    <UCard class="bg-gray-50 w-full">
+                        <template #header>
+                            <div class="flex items-center gap-3">
+                                <UIcon name="dashicons:money-alt" class="h-6 w-6 text-gray-500" />
+                                <span class="text-gray-500 font-semibold">{{ $t('invest.termsAndConditions') }}</span>
+                            </div>
+                        </template>
+                        <div class="flex flex-col gap-4 w-full">
+                            <div class="flex gap-1 flex-col">
+                                <div class="whitespace-pre-line max-h-[10lh] overflow-y-scroll">
+                                    Duis dolore consequat adipisicing laboris nulla ullamco deserunt amet anim ut
+                                    nostrud cupidatat velit occaecat. Labore aliqua ut in elit ut exercitation duis.
+                                    Pariatur sint proident sit sunt est minim voluptate est. Nostrud exercitation
+                                    eiusmod exercitation et ut ad nostrud culpa elit ut velit labore officia non do.
+                                    Culpa tempor veniam dolor tempor. Qui dolor consequat quis ex laborum aute deserunt.
+                                    Minim ea cupidatat magna enim aliquip elit nostrud. Amet deserunt cillum ea anim
+                                    dolore eiusmod nulla incididunt ut non amet. Laborum laboris ut elit voluptate non
+                                    eu incididunt nulla quis excepteur in. Ut dolore laboris amet velit adipisicing
+                                    commodo laborum velit sit. Dolore eu mollit culpa labore anim irure id amet. Dolore
+                                    pariatur sint non anim in excepteur officia officia ipsum labore aute tempor dolore
+                                    elit sint. Anim dolor esse duis minim et adipisicing proident et aliqua. Dolore ut
+                                    id id dolore in labore qui esse.
                                 </div>
                             </div>
                         </div>
@@ -124,12 +133,8 @@ const sharesToPurchase = ref(1);
                                 </template>
                             </UInput>
                         </UFormGroup>
-                        <UButton type="submit" size="xl" :disabled="sharesToPurchase === 0">Purchase</UButton>
-                        <span class="mb-2.5"
-                            >You are purchasing
-                            <span class="">{{ sharesToPurchase }} share{{ sharesToPurchase === 1 ? '' : 's' }}</span>
-                            at <span class="">20 EUR {{ sharesToPurchase === 1 ? '' : 'each' }}</span> for a total of
-                            <span class="">{{ sharesToPurchase * 20 }} EUR</span>.</span
+                        <UButton type="submit" size="xl" :disabled="sharesToPurchase === 0"
+                            >Pay ({{ sharesToPurchase * 20 }} EUR)</UButton
                         >
                     </UForm>
                 </div>
