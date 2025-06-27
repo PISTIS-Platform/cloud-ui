@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 import type TableColumn from '~/interfaces/table-column';
 import type { Transaction } from '~/interfaces/wallet-table';
-import type { TransactionsType, WalletTransaction } from '~/interfaces/wallet-transactions.js';
+import type { WalletTransaction } from '~/interfaces/wallet-transactions.js';
 
 const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
@@ -47,51 +47,166 @@ const columns: TableColumn[] = [
     },
 ];
 
-const { data: transactionsData, status: transactionsStatus } = useFetch<TransactionsType>(`/api/wallet/transactions`, {
-    method: 'POST',
+//FIXME: Re-enable API call when real data exists for details
+// const { data: transactionsData, status: transactionsStatus } = useFetch<TransactionsType>(`/api/wallet/transactions`, {
+//     method: 'POST',
+// });
+
+//FIXME: Remove dummy data
+const transactionsData = ref({
+    outgoing: [
+        {
+            included_at: '2024-06-25T10:00:00Z',
+            transaction_id: 'tx_out_001_abc',
+            payload: {
+                Basic: {
+                    amount: 1000,
+                    recipient_address: 'provider_address_123',
+                    sender_address: 'consumer_address_456',
+                },
+            },
+        },
+        {
+            included_at: '2024-06-24T14:30:00Z',
+            transaction_id: 'tx_out_002_def',
+            payload: {
+                Basic: {
+                    amount: 250,
+                    recipient_address: 'provider_address_789',
+                    sender_address: 'consumer_address_012',
+                },
+            },
+        },
+        {
+            included_at: '2024-06-23T09:15:00Z',
+            transaction_id: 'tx_out_003_ghi',
+            payload: {
+                Basic: {
+                    amount: 75.5,
+                    recipient_address: 'provider_address_321',
+                    sender_address: 'consumer_address_654',
+                },
+            },
+        },
+    ],
+    incoming: [
+        {
+            included_at: '2024-06-25T11:30:00Z',
+            transaction_id: 'tx_in_001_jkl',
+            payload: {
+                Basic: {
+                    amount: 500,
+                    recipient_address: 'consumer_address_456', // Your address as recipient
+                    sender_address: 'source_address_abc', // Sender of incoming transaction
+                },
+            },
+        },
+        {
+            included_at: '2024-06-24T16:00:00Z',
+            transaction_id: 'tx_in_002_mno',
+            payload: {
+                Basic: {
+                    amount: 150.25,
+                    recipient_address: 'consumer_address_012',
+                    sender_address: 'source_address_def',
+                },
+            },
+        },
+        {
+            included_at: '2024-06-23T10:45:00Z',
+            transaction_id: 'tx_in_003_pqr',
+            payload: {
+                Basic: {
+                    amount: 2000,
+                    recipient_address: 'consumer_address_654',
+                    sender_address: 'source_address_ghi',
+                },
+            },
+        },
+    ],
 });
 
 const incomingTransactions = computed(() => {
     if (!transactionsData.value) return [];
-    return transactionsData.value?.incoming.map((item: WalletTransaction) => ({
-        //Actual data from transaction
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
-        amountToProvider: (item.payload.Basic.amount * 80) / 100,
-        transactionFee: (item.payload.Basic.amount * 20) / 100,
-        provider: item.payload.Basic.recipient_address,
-        consumer: item.payload.Basic.sender_address,
-        //FIXME: Dummy data until available
-        assetId: uuid(),
-        assetTitle: 'Sample Asset Title',
-        assetLink: 'http://google.com',
-        terms: `Enim nisi exercitation nisi ad incididunt. Eiusmod culpa ea minim aute aute aliquip culpa nisi ad ea commodo. Anim labore culpa consequat. Cillum aute culpa ad ex. Elit consectetur et id in velit. Ullamco est in excepteur labore proident adipisicing minim sint id. Ullamco ea reprehenderit irure aliqua deserunt eiusmod tempor labore velit minim excepteur aliquip. Amet aute est in exercitation dolore aliqua nulla eiusmod.
+    return transactionsData.value?.incoming.map((item: WalletTransaction) => {
+        //FIXME: Dummy data code for different recipients
+        const totalAmount = item.payload.Basic.amount;
+        const numRecipients = Math.floor(Math.random() * 3) + 2;
+        const percentages = [];
+        let remaining = 100;
+        for (let i = 0; i < numRecipients - 1; i++) {
+            const maxAlloc = remaining - (numRecipients - i - 1); // ensure at least 1% left for others
+            const pct = Math.floor(Math.random() * (maxAlloc - 1)) + 1;
+            percentages.push(pct);
+            remaining -= pct;
+        }
+        percentages.push(remaining);
+        const recipients = percentages.map((percentage, index) => ({
+            recipient: `Recipient ${index + 1}`,
+            amount: parseFloat(((totalAmount * percentage) / 100).toFixed(2)),
+            percentage,
+        }));
+        return {
+            //Actual data from transaction
+            transactionDate: item.included_at,
+            transactionId: item.transaction_id,
+            amount: item.payload.Basic.amount,
+            // amountToProvider: (item.payload.Basic.amount * 80) / 100,
+            // transactionFee: (item.payload.Basic.amount * 20) / 100,
+            recipients,
+            provider: item.payload.Basic.recipient_address,
+            consumer: item.payload.Basic.sender_address,
+            //FIXME: Dummy data until available
+            assetId: uuid(),
+            assetTitle: 'Sample Asset Title',
+            assetLink: 'http://google.com',
+            terms: `Enim nisi exercitation nisi ad incididunt. Eiusmod culpa ea minim aute aute aliquip culpa nisi ad ea commodo. Anim labore culpa consequat. Cillum aute culpa ad ex. Elit consectetur et id in velit. Ullamco est in excepteur labore proident adipisicing minim sint id. Ullamco ea reprehenderit irure aliqua deserunt eiusmod tempor labore velit minim excepteur aliquip. Amet aute est in exercitation dolore aliqua nulla eiusmod.
 
 Proident dolor sit adipisicing. Ullamco culpa consequat quis. Velit cupidatat anim veniam amet. Commodo consectetur aute elit. Commodo cupidatat id deserunt magna velit est ex aliqua eu ad aute exercitation ea sit.
 
 Esse duis enim cillum ipsum qui magna sit adipisicing occaecat excepteur aliqua officia. Deserunt aliquip nulla irure est occaecat. Ipsum dolor culpa minim nulla in aliqua labore. Excepteur ea in dolor et minim laborum esse tempor dolor amet incididunt ea in minim nulla. Enim esse officia aliquip voluptate magna dolor consectetur. Fugiat incididunt aliquip fugiat velit qui officia excepteur do qui sunt ipsum cupidatat mollit do aliqua. Cillum cillum qui id voluptate sint dolore. Laborum non nostrud eu esse qui nisi aliquip.`,
-    }));
+        };
+    });
 });
 
 const outgoingTransactions = computed(() => {
     if (!transactionsData.value) return [];
-    return transactionsData.value?.outgoing.map((item: WalletTransaction) => ({
-        //Actual data from transaction
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
-        amountToProvider: (item.payload.Basic.amount * 80) / 100,
-        transactionFee: (item.payload.Basic.amount * 20) / 100,
-        provider: item.payload.Basic.recipient_address,
-        consumer: item.payload.Basic.sender_address,
-        type: 'Outgoing',
-        //FIXME: Dummy data until available
-        assetId: uuid(),
-        assetTitle: 'Sample Asset Title',
-        assetLink: 'http://google.com',
-        terms: 'Ullamco enim Lorem in fugiat labore non fugiat magna nostrud duis aliqua in sit. Aliqua do eiusmod et excepteur laboris magna incididunt. Adipisicing eu nulla aute irure. Nostrud non consequat pariatur aliquip dolor quis eu tempor anim esse aute est elit. Et ut eiusmod exercitation do esse et. Lorem ipsum esse esse est officia nulla sint consectetur. Sunt qui ea commodo esse ipsum laboris et cillum nostrud excepteur tempor elit.',
-    }));
+    return transactionsData.value?.outgoing.map((item: WalletTransaction) => {
+        //FIXME: Dummy data code for different recipients
+        const totalAmount = item.payload.Basic.amount;
+        const numRecipients = Math.floor(Math.random() * 3) + 2;
+        const percentages = [];
+        let remaining = 100;
+        for (let i = 0; i < numRecipients - 1; i++) {
+            const maxAlloc = remaining - (numRecipients - i - 1); // ensure at least 1% left for others
+            const pct = Math.floor(Math.random() * (maxAlloc - 1)) + 1;
+            percentages.push(pct);
+            remaining -= pct;
+        }
+        percentages.push(remaining);
+        const recipients = percentages.map((percentage, index) => ({
+            recipient: `Recipient ${index + 1}`,
+            amount: parseFloat(((totalAmount * percentage) / 100).toFixed(2)),
+            percentage,
+        }));
+        return {
+            //Actual data from transaction
+            transactionDate: item.included_at,
+            transactionId: item.transaction_id,
+            amount: item.payload.Basic.amount,
+            // amountToProvider: (item.payload.Basic.amount * 80) / 100,
+            // transactionFee: (item.payload.Basic.amount * 20) / 100,
+            recipients,
+            provider: item.payload.Basic.recipient_address,
+            consumer: item.payload.Basic.sender_address,
+            type: 'Outgoing',
+            //FIXME: Dummy data until available
+            assetId: uuid(),
+            assetTitle: 'Sample Asset Title',
+            assetLink: 'http://google.com',
+            terms: 'Ullamco enim Lorem in fugiat labore non fugiat magna nostrud duis aliqua in sit. Aliqua do eiusmod et excepteur laboris magna incididunt. Adipisicing eu nulla aute irure. Nostrud non consequat pariatur aliquip dolor quis eu tempor anim esse aute est elit. Et ut eiusmod exercitation do esse et. Lorem ipsum esse esse est officia nulla sint consectetur. Sunt qui ea commodo esse ipsum laboris et cillum nostrud excepteur tempor elit.',
+        };
+    });
 });
 
 const data = computed(() => [...incomingTransactions.value, ...outgoingTransactions.value]);
@@ -182,9 +297,11 @@ const generatePDF = () => {
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <span class="font-bold text-lg">{{ $t('auditor.title') }}</span>
-            <div v-if="transactionsStatus === 'pending'" class="flex flex-col w-full text-lg mt-4">
+            <!-- FIXME: Reenable when loading actual data -->
+            <!-- <div v-if="transactionsStatus === 'pending'" class="flex flex-col w-full text-lg mt-4">
                 <UProgress animation="carousel" color="primary" />
-            </div>
+            </div> -->
+            <div v-if="false"></div>
             <div v-else class="w-full mt-4">
                 <UModal v-model="modalOpen" :ui="{ width: 'w-full sm:max-w-[1000px]' }" class="text-gray-600 relative">
                     <UIcon
@@ -335,14 +452,15 @@ const generatePDF = () => {
                     >
                         <template #expand="{ row }">
                             <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center ml-[200px]">
-                                <span class="flex items-center gap-4">
+                                <!-- <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
                                     <span>{{ $t('auditor.amountToProvider') }}</span>
                                 </span>
                                 <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
                                     <span>{{ $t('auditor.transactionFee') }}</span>
-                                </span>
+                                </span> -->
+                                <div>{{ row }}</div>
                             </div>
                         </template>
                         <template #transactionDate-data="{ row }">
