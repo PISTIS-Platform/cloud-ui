@@ -75,6 +75,9 @@ export default defineI18nConfig(() => {
                     noTransactionSelected: 'No transaction selected',
                     link: 'Asset Link (Marketplace)',
                     downloadPDF: 'Download as PDF',
+                    innerAmount: 'Amount',
+                    recipient: 'Recipient',
+                    percentage: 'Percentage',
                 },
                 dashboard: {
                     dashboard: 'Dashboard',

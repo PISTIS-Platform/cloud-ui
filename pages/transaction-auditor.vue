@@ -291,6 +291,24 @@ const generatePDF = () => {
     // Create and download the PDF
     $pdfMake.createPdf(docDefinition).download(`transaction_details_${selected.value.transactionId}.pdf`);
 };
+
+const innerColumns: TableColumn[] = [
+    {
+        key: 'amount',
+        label: t('auditor.innerAmount'),
+        sortable: true,
+    },
+    {
+        key: 'recipient',
+        label: t('auditor.recipient'),
+        sortable: true,
+    },
+    {
+        key: 'percentage',
+        label: t('auditor.percentage'),
+        sortable: true,
+    },
+];
 </script>
 
 <template>
@@ -449,11 +467,11 @@ const generatePDF = () => {
                         }"
                         :single-select="true"
                         :multiple-expand="true"
-                        :ui="{ tbody: 'divide-y-0', tr: { base: 'border-t' } }"
+                        :ui="{ base: 'mt-6', tbody: 'divide-y-0', tr: { base: 'border-t' } }"
                         @select="select"
                     >
                         <template #expand="{ row }">
-                            <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center bg-gray-50">
+                            <div class="w-full p-4 flex text-sm text-gray-500 gap-2 justify-start bg-gray-50">
                                 <!-- <span class="flex items-center gap-4">
                                     <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
                                     <span>{{ $t('auditor.amountToProvider') }}</span>
@@ -462,7 +480,24 @@ const generatePDF = () => {
                                     <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
                                     <span>{{ $t('auditor.transactionFee') }}</span>
                                 </span> -->
-                                <div>{{ row }}</div>
+
+                                <UCard :ui="{ base: 'ml-[160px] flex flex-shrink w-auto' }">
+                                    <UTable :columns="innerColumns" :rows="row.recipients">
+                                        <template #amount-data="{ row }">
+                                            <div class="flex justify-end font-bold">
+                                                {{ row.amount.toFixed(2) }} EUR
+                                            </div></template
+                                        >
+                                        <template #recipient-data="{ row }">
+                                            <div class="flex justify-center">
+                                                {{ row.recipient }}
+                                            </div>
+                                        </template>
+                                        <template #percentage-data="{ row }">
+                                            <div class="flex justify-center">{{ row.percentage }}%</div>
+                                        </template>
+                                    </UTable>
+                                </UCard>
                             </div>
                         </template>
                         <template #transactionDate-data="{ row }">
@@ -473,7 +508,7 @@ const generatePDF = () => {
                         </template>
 
                         <template #amount-data="{ row }">
-                            <span class="flex items-center justify-center font-bold">
+                            <span class="flex items-center justify-end font-bold">
                                 {{ row.amount.toFixed(2) }} EUR
                             </span>
                         </template>
