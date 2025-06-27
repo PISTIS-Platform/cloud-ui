@@ -449,7 +449,7 @@ const generatePDF = () => {
                         }"
                         :single-select="true"
                         :multiple-expand="true"
-                        :ui="{ tbody: 'divide-none', tr: { base: 'border-t' } }"
+                        :ui="{ tbody: 'divide-y-0', tr: { base: 'border-t' } }"
                         @select="select"
                     >
                         <template #expand="{ row }">
@@ -531,21 +531,22 @@ const generatePDF = () => {
     width: 50px !important;
 }
 
-/* :deep(tr:first-child) {
-  border: none !important;
-} */
-
 :deep(tr) {
     border-top: 1px solid #e4e4e7 !important;
+}
+
+:deep(tr[aria-expanded='true']) {
+    border-bottom: none !important;
 }
 
 :deep(tr:has(td[colspan='100%'])) {
     /* background-color: red !important; */
     border: none !important;
+    margin-top: -2px !important;
 }
 
 :deep(td[colspan='100%']) {
     border: none !important;
-    margin-top: -2px !important;
+    margin-top: -20px !important;
 }
 </style>
