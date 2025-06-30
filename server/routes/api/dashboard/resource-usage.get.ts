@@ -27,15 +27,19 @@ const getPrometheusResult = async (q: string, percentageMultiplier = 100) => {
 };
 
 const getDiskUsageByVolume = async (volume: string, percentageMultiplier: number = 100) => {
-    const q = `max without(instance,node) (
-(
-  topk(1, kubelet_volume_stats_capacity_bytes{job="kubelet", metrics_path="/metrics", namespace="default", persistentvolumeclaim="${volume}"})
-  -
-  topk(1, kubelet_volume_stats_available_bytes{job="kubelet", metrics_path="/metrics", namespace="default", persistentvolumeclaim="${volume}"})
-)
-/
-topk(1, kubelet_volume_stats_capacity_bytes{job="kubelet", metrics_path="/metrics", namespace="default", persistentvolumeclaim="${volume}"})
-* 100)`;
+    const q = `max without (instance, node) (
+      (
+        (
+            topk(1, otel_k8s_volume_capacity{k8s_namespace_name="default",k8s_persistentvolumeclaim_name="${volume}"})
+          -
+            topk(1, otel_k8s_volume_available{k8s_namespace_name="default",k8s_persistentvolumeclaim_name="${volume}"})
+        )
+      )
+    /
+      topk(1, otel_k8s_volume_capacity{k8s_namespace_name="default",k8s_persistentvolumeclaim_name="${volume}"})
+  *
+    100
+)`;
 
     return getPrometheusResult(q, percentageMultiplier);
 };
@@ -57,15 +61,15 @@ export default defineEventHandler(async (event) => {
 
     //Disk Usage Stats
 
-    //Minio & Postgres
-    const minioUsagePercentage = await getDiskUsageByVolume('minio', 1);
-    const mongoDbUsagePercentage = await getDiskUsageByVolume('datadir-mongodb-0', 1);
-    const postgresUsagePercentage = await getDiskUsageByVolume('postgresql-1', 1);
-
     //Elasticsearch Instances
     const esInstance1Percentage = await getDiskUsageByVolume('elasticsearch-data-elasticsearch-es-default-0', 1);
     const esInstance2Percentage = await getDiskUsageByVolume('elasticsearch-data-elasticsearch-es-default-1', 1);
     const esInstance3Percentage = await getDiskUsageByVolume('elasticsearch-data-elasticsearch-es-default-2', 1);
+
+    //MongoDB, Minio & Postgres
+    const minioUsagePercentage = await getDiskUsageByVolume('minio', 1);
+    const mongoDbUsagePercentage = await getDiskUsageByVolume('datadir-mongodb-0', 1);
+    const postgresUsagePercentage = await getDiskUsageByVolume('postgresql-1', 1);
 
     //Elasticsearch average percentage
     const elasticSearchAvgPercentage = Number(
