@@ -48,14 +48,26 @@ export default defineEventHandler(async (event) => {
     const session = await getServerSession(event);
     if (!session?.roles?.includes('PISTIS_ADMIN')) return [];
     //CPU percentage
-    const cpuQuery =
-        'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace="default"}) / sum(kube_pod_container_resource_requests{job="kube-state-metrics", namespace="default", resource="cpu"})';
+    // const cpuQuery =
+    // 'sum(node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{namespace="default"}) / sum(kube_pod_container_resource_requests{job="kube-state-metrics", namespace="default", resource="cpu"})';
+
+    const cpuQuery = `(
+  sum(otel_k8s_node_cpu_utilization{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})
+  /
+  sum(kube_node_status_capacity{resource='cpu', node=~'.*agent.*'})
+)`;
 
     const cpuPercentage = await getPrometheusResult(cpuQuery);
 
-    //Memory utilisation percentage
-    const memoryUtilisationQuery =
-        'sum(container_memory_working_set_bytes{job="kubelet", metrics_path="/metrics/cadvisor", namespace="default",container!="", image!=""}) / sum(kube_pod_container_resource_requests{job="kube-state-metrics", namespace="default", resource="memory"})';
+    // //Memory utilisation percentage
+    // const memoryUtilisationQuery =
+    //     'sum(container_memory_working_set_bytes{job="kubelet", metrics_path="/metrics/cadvisor", namespace="default",container!="", image!=""}) / sum(kube_pod_container_resource_requests{job="kube-state-metrics", namespace="default", resource="memory"})';
+
+    const memoryUtilisationQuery = `(
+  sum(otel_k8s_node_memory_usage{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})
+  /
+  sum(kube_node_status_capacity{resource='memory', node=~'.*agent.*'})
+)`;
 
     const memoryUtilisationPercentage = await getPrometheusResult(memoryUtilisationQuery);
 
