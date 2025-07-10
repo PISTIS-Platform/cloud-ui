@@ -48,7 +48,7 @@ const purchaseShares = async () => {
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
             <ErrorCard v-if="retrieveError" :error-msg="$t('invest.retrieveError')"></ErrorCard>
-            <UCard v-else class="w-full">
+            <UCard v-else-if="investmentPlan" class="w-full">
                 <template #header>
                     <div class="flex items-center gap-4">
                         <UIcon name="streamline:investment-selection" class="w-10 h-10 text-gray-500" />
@@ -196,6 +196,7 @@ const purchaseShares = async () => {
                     </UForm>
                 </div>
             </UCard>
+            <ErrorCard v-else :error-msg="$t('invest.retrieveError')"></ErrorCard>
         </PageContainer>
     </div>
 </template>
