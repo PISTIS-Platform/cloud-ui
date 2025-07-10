@@ -1,11 +1,54 @@
 <script setup lang="ts">
+import dayjs from 'dayjs';
+
 const sharesToPurchase = ref(1);
+const route = useRoute();
+
+type InvestmentPlan = {
+    title?: string;
+    description?: string;
+    id: string;
+    cloudAssetId: string;
+    assetId: string;
+    dueDate: string;
+    percentageOffer: number;
+    totalShares: number;
+    remainingShares: number;
+    maxShares: number;
+    status: boolean;
+    price: number;
+    createdAt: string;
+    updatedAt: string;
+    terms?: string;
+};
+
+//id: 1764091d-9aa5-4f0f-b9a9-ecc18f45130e
+const {
+    data: investmentPlan,
+    status: retrieveStatus,
+    error: retrieveError,
+} = await useFetch<InvestmentPlan>(`/api/invest/retrieve-investment-plan`, {
+    method: 'GET',
+    query: { cloudAssetId: route.params.id },
+});
+
+const purchaseShares = async () => {
+    await $fetch(`/api/invest/invest`, {
+        method: 'PUT',
+        query: { investmentId: investmentPlan.value?.id },
+        body: {
+            numberOfShares: sharesToPurchase.value,
+        },
+    });
+};
 </script>
 
 <template>
+    <UProgress v-if="retrieveStatus === 'pending'" animation="carousel" color="primary" />
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <UCard class="w-full">
+            <ErrorCard v-if="retrieveError" :error-msg="$t('invest.retrieveError')"></ErrorCard>
+            <UCard v-else class="w-full">
                 <template #header>
                     <div class="flex items-center gap-4">
                         <UIcon name="streamline:investment-selection" class="w-10 h-10 text-gray-500" />
@@ -27,13 +70,13 @@ const sharesToPurchase = ref(1);
                                         $t('invest.assetTitle')
                                     }}</span>
                                     <!-- //TODO: Link to marketplace -->
-                                    <a href="#" class="text-primary-500">Sample Dataset </a>
+                                    <a href="#" class="text-primary-500">{{ investmentPlan.title }}</a>
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.assetDescription')
                                     }}</span>
-                                    <span>This dataset is a sample for investing</span>
+                                    <span>{{ investmentPlan.description }}</span>
                                 </div>
                             </div>
                         </div>
@@ -51,13 +94,23 @@ const sharesToPurchase = ref(1);
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.validUntil')
                                     }}</span>
-                                    <span><span class="text-lg">25 December 2027</span></span>
+                                    <span
+                                        ><span class="text-lg">{{
+                                            dayjs(investmentPlan.dueDate).format('DD MMM YYYY')
+                                        }}</span></span
+                                    >
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.availableShares')
                                     }}</span>
-                                    <span><span class="text-lg">800 / 1000</span> shares</span>
+                                    <span
+                                        ><span class="text-lg"
+                                            >{{ investmentPlan.remainingShares }} /
+                                            {{ investmentPlan.totalShares }}</span
+                                        >
+                                        shares</span
+                                    >
                                 </div>
                             </div>
                             <div class="flex flex-col gap-4 w-full">
@@ -65,13 +118,24 @@ const sharesToPurchase = ref(1);
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.maxPerInvestor')
                                     }}</span>
-                                    <span><span class="text-lg">100</span> shares</span>
+                                    <span
+                                        ><span class="text-lg">{{ investmentPlan.maxShares }}</span> shares</span
+                                    >
                                 </div>
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.sharePercentage')
                                     }}</span>
-                                    <span><span class="text-lg">0.049%</span> per share</span>
+                                    <span
+                                        ><span class="text-lg"
+                                            >{{
+                                                (investmentPlan.percentageOffer / investmentPlan.totalShares).toFixed(
+                                                    3,
+                                                )
+                                            }}%</span
+                                        >
+                                        per share</span
+                                    >
                                 </div>
                             </div>
                             <div class="flex flex-col gap-4 w-full">
@@ -79,7 +143,9 @@ const sharesToPurchase = ref(1);
                                     <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.sharePrice')
                                     }}</span>
-                                    <span><span class="text-lg">20 EUR</span> per share</span>
+                                    <span
+                                        ><span class="text-lg">{{ investmentPlan.price }} EUR</span> per share</span
+                                    >
                                 </div>
                             </div>
                         </div>
@@ -87,25 +153,14 @@ const sharesToPurchase = ref(1);
                     <UCard class="bg-gray-50 w-full">
                         <template #header>
                             <div class="flex items-center gap-3">
-                                <UIcon name="dashicons:money-alt" class="h-6 w-6 text-gray-500" />
+                                <UIcon name="clarity:contract-line" class="h-6 w-6 text-gray-500" />
                                 <span class="text-gray-500 font-semibold">{{ $t('invest.termsAndConditions') }}</span>
                             </div>
                         </template>
                         <div class="flex flex-col gap-4 w-full">
                             <div class="flex gap-1 flex-col">
                                 <div class="whitespace-pre-line max-h-[10lh] overflow-y-scroll">
-                                    Duis dolore consequat adipisicing laboris nulla ullamco deserunt amet anim ut
-                                    nostrud cupidatat velit occaecat. Labore aliqua ut in elit ut exercitation duis.
-                                    Pariatur sint proident sit sunt est minim voluptate est. Nostrud exercitation
-                                    eiusmod exercitation et ut ad nostrud culpa elit ut velit labore officia non do.
-                                    Culpa tempor veniam dolor tempor. Qui dolor consequat quis ex laborum aute deserunt.
-                                    Minim ea cupidatat magna enim aliquip elit nostrud. Amet deserunt cillum ea anim
-                                    dolore eiusmod nulla incididunt ut non amet. Laborum laboris ut elit voluptate non
-                                    eu incididunt nulla quis excepteur in. Ut dolore laboris amet velit adipisicing
-                                    commodo laborum velit sit. Dolore eu mollit culpa labore anim irure id amet. Dolore
-                                    pariatur sint non anim in excepteur officia officia ipsum labore aute tempor dolore
-                                    elit sint. Anim dolor esse duis minim et adipisicing proident et aliqua. Dolore ut
-                                    id id dolore in labore qui esse.
+                                    {{ investmentPlan.terms }}
                                 </div>
                             </div>
                         </div>
@@ -129,12 +184,14 @@ const sharesToPurchase = ref(1);
                                 class="w-64"
                             >
                                 <template #trailing>
-                                    <span class="text-gray-500 text-xs">shares</span>
+                                    <span class="text-gray-500 text-xs">{{
+                                        sharesToPurchase === 1 ? $t('invest.share') : $t('invest.shares')
+                                    }}</span>
                                 </template>
                             </UInput>
                         </UFormGroup>
-                        <UButton type="submit" size="xl" :disabled="sharesToPurchase === 0"
-                            >Pay ({{ sharesToPurchase * 20 }} EUR)</UButton
+                        <UButton type="submit" size="xl" :disabled="sharesToPurchase === 0" @click="purchaseShares"
+                            >Pay ({{ sharesToPurchase * investmentPlan.price }} EUR)</UButton
                         >
                     </UForm>
                 </div>

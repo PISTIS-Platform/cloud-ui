@@ -72,6 +72,9 @@ export default defineI18nConfig(() => {
                     validUntil: 'Valid Until Date',
                     numberOfSharesToPurchase: 'Number of Shares to Purchase',
                     termsAndConditions: 'Terms and conditions',
+                    share: 'share',
+                    shares: 'shares',
+                    retrieveError: 'Could not retrieve investment plan.',
                 },
                 auditor: {
                     title: 'Transaction Auditor',
