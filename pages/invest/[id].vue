@@ -3,6 +3,9 @@ import dayjs from 'dayjs';
 
 const sharesToPurchase = ref(1);
 const route = useRoute();
+const { showSuccessMessage, showErrorMessage } = useAlertMessage();
+const { t } = useI18n();
+const router = useRouter();
 
 type InvestmentPlan = {
     title?: string;
@@ -33,13 +36,19 @@ const {
 });
 
 const purchaseShares = async () => {
-    await $fetch(`/api/invest/invest`, {
-        method: 'PUT',
-        query: { investmentId: investmentPlan.value?.id },
-        body: {
-            numberOfShares: sharesToPurchase.value,
-        },
-    });
+    try {
+        await $fetch(`/api/invest/invest`, {
+            method: 'PUT',
+            query: { investmentId: investmentPlan.value?.id },
+            body: {
+                numberOfShares: sharesToPurchase.value,
+            },
+        });
+        showSuccessMessage(t('invest.purchaseSuccessful'));
+        router.push('/dashboard');
+    } catch {
+        showErrorMessage(t('invest.couldNotPurchaseShares'));
+    }
 };
 </script>
 
