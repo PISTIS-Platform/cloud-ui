@@ -77,6 +77,7 @@ export default defineI18nConfig(() => {
                     retrieveError: 'Could not retrieve investment plan.',
                     couldNotPurchaseShares: 'An error has occurred: could not purchase shares',
                     purchaseSuccessful: 'Purchase completed successfully',
+                    keywords: 'Keywords',
                 },
                 auditor: {
                     title: 'Transaction Auditor',

@@ -8,8 +8,8 @@ const { t } = useI18n();
 const router = useRouter();
 
 type InvestmentPlan = {
-    title?: string;
-    description?: string;
+    title: string;
+    description: string;
     id: string;
     cloudAssetId: string;
     assetId: string;
@@ -22,10 +22,10 @@ type InvestmentPlan = {
     price: number;
     createdAt: string;
     updatedAt: string;
-    terms?: string;
+    terms: string;
+    keywords: string[];
 };
 
-//id: 1764091d-9aa5-4f0f-b9a9-ecc18f45130e
 const {
     data: investmentPlan,
     status: retrieveStatus,
@@ -86,6 +86,17 @@ const purchaseShares = async () => {
                                         $t('invest.assetDescription')
                                     }}</span>
                                     <span>{{ investmentPlan.description }}</span>
+                                </div>
+                                <div class="flex gap-1 flex-col">
+                                    <span class="text-sm font-semibold text-gray-400">{{ $t('invest.keywords') }}</span>
+                                    <div class="flex items-center gap-3">
+                                        <span
+                                            v-for="keyword in investmentPlan.keywords"
+                                            :key="keyword"
+                                            class="text-xs bg-gray-200 rounded-lg p-1.5"
+                                            >{{ keyword }}</span
+                                        >
+                                    </div>
                                 </div>
                             </div>
                         </div>
