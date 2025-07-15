@@ -339,6 +339,7 @@ export default defineI18nConfig(() => {
                     answersSubmitted: 'Your answers have been submitted successfully',
                     errorInSubmitAnswers: 'Error occurred while submitting answers',
                     noQuestionsWereFound: 'No questions were found for this questionnaire',
+                    maxNumberOfOptions: 'You can only add up to %{max} options.',
                 },
                 models: {
                     models: 'Models Repository',
