@@ -72,15 +72,6 @@ const navigateToCreateEdit = async (row?: Questionnaire) => {
     });
 };
 
-const navigateToViewAnswers = async (row?: Questionnaire) => {
-    await navigateTo({
-        path: '/usage-analytics/responses',
-        query: {
-            questionnaireId: row?.id || null,
-        },
-    });
-};
-
 const deleteVersion = async () => {
     if (!versionForDeletion.value) {
         return;
@@ -117,11 +108,6 @@ const versionForDeletion = ref<Questionnaire | null>(null);
 
 const actions = (row: Questionnaire) => [
     [
-        {
-            label: t('usage-analytics.viewResponses'),
-            icon: 'carbon:view',
-            click: () => navigateToViewAnswers(row),
-        },
         {
             label: t('usage-analytics.createNewVersionFromExisting'),
             icon: 'i-heroicons-document-duplicate',
