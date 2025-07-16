@@ -156,7 +156,7 @@ const computedChartData = computed(() =>
                 >
                 <UCard v-for="answer in computedChartData" :key="answer" :ui="{ base: 'w-full' }">
                     <template #header>
-                        <span class="font-semibold text-lg">{{ answer.label }}</span>
+                        <span class="font-semibold text-lg">Question: {{ answer.label }}</span>
                     </template>
                     <div class="flex items-start flex-wrap gap-8 xl:flex-nowrap">
                         <!-- All time-->
