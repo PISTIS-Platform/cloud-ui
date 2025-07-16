@@ -144,24 +144,25 @@ const computedChartData = computed(() =>
                     <template #header>
                         <span class="font-semibold text-lg">{{ answer.label }}</span>
                     </template>
-                    <div class="w-full flex mb-4 font-semibold text-sm">
-                        <span class="flex justify-center w-full">Overall Responses</span>
-                        <span class="flex justify-center w-full">Timeline</span>
-                    </div>
-                    <div class="flex items-start gap-4">
+                    <div class="flex items-start flex-wrap gap-8 xl:flex-nowrap">
                         <!-- All time-->
-
-                        <div class="w-full">
-                            <div v-if="answer.allTime.chartType === 'pie'" class="flex flex-col items-center gap-4">
-                                <Pie class="w-ful h-full" :data="answer.allTime" :options="chartOptions" />
+                        <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
+                            <span class="flex justify-center w-full mb-4">Overall Responses</span>
+                            <div v-if="answer.allTime.chartType === 'pie'">
+                                <Pie :data="answer.allTime" :options="chartOptions" />
                             </div>
                             <div v-else>
                                 <Bar class="w-full h-full" :data="answer.allTime" :options="chartOptions" />
                             </div>
                         </div>
                         <!-- Timeline-->
-                        <div class="w-full">
-                            <Line class="w-full h-full" :data="answer.timeLine" :options="chartOptions" />
+                        <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
+                            <span class="flex justify-center w-full mb-4">Timeline</span>
+                            <Line
+                                class="w-full h-full"
+                                :data="answer.timeLine"
+                                :options="{ ...chartOptions, maintainAspectRatio: true }"
+                            />
                         </div>
                     </div>
                 </UCard>
