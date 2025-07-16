@@ -11,7 +11,6 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
-// import { Colors } from 'chart.js';
 import dayjs from 'dayjs';
 import * as R from 'ramda';
 import { Bar, Line, Pie } from 'vue-chartjs';
@@ -146,10 +145,6 @@ const computedChartData = computed(() =>
 <template>
     <div class="items-center justify-center w-full px-8 mx-auto max-w-7xl">
         <PageContainer>
-            <!-- <div>ID: {{ assetId }}</div> -->
-            <!-- <pre>{{ filteredData }}</pre> -->
-            <!-- <pre>{{ computedChartData }}</pre> -->
-
             <div class="w-full flex flex-col gap-4 text-gray-600">
                 <span class="font-bold text-xl">
                     Questionnaire Responses for asset <span class="font-mono">{{ assetId }}</span></span
