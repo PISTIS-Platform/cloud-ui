@@ -11,12 +11,15 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
-import { Colors } from 'chart.js';
+// import { Colors } from 'chart.js';
 import dayjs from 'dayjs';
 import * as R from 'ramda';
 import { Bar, Line, Pie } from 'vue-chartjs';
 
 import type { QuestionResponse } from '~/interfaces/usage-analytics';
+
+const colorPalette = ['c9684a', '2a8e8c', 'bf9a22', '285336', '432046'];
+const colorPaletteRadio = ['5bb86e', 'dfbd67', '989898', 'f57c25', 'fc3232'].reverse();
 
 const route = useRoute();
 const assetId = computed(() => route.query.assetId);
@@ -33,18 +36,7 @@ const chartOptions = {
     },
 };
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    PointElement,
-    LineElement,
-    ArcElement,
-    Colors,
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
 const { data } = useFetch<QuestionResponse[]>(`/api/questionnaire/get-answers`, {
     query: {
@@ -104,10 +96,16 @@ const computedChartData = computed(() =>
                   datasetsByLabel[label] = datasetData;
               });
 
-              const datasetsForTimeline = Object.keys(datasetsByLabel).map((label: string) => {
+              const datasetsForTimeline = Object.keys(datasetsByLabel).map((lineLabel: string, index: number) => {
+                  const color =
+                      chartType === 'bar'
+                          ? `#${colorPalette[index % colorPalette.length]}`
+                          : `#${colorPaletteRadio[index % colorPalette.length]}`;
                   return {
-                      label,
-                      data: datasetsByLabel[label],
+                      label: lineLabel,
+                      data: datasetsByLabel[lineLabel],
+                      backgroundColor: color,
+                      borderColor: color,
                   };
               });
 
@@ -119,8 +117,17 @@ const computedChartData = computed(() =>
                       labels,
                       datasets: [
                           {
-                              label: 'Overall Responses',
                               data: allTimeData,
+                              backgroundColor: allTimeData.map((_, index) =>
+                                  chartType === 'bar'
+                                      ? `#${colorPalette[index % colorPalette.length]}`
+                                      : `#${colorPaletteRadio[index % colorPalette.length]}`,
+                              ),
+                              borderColor: allTimeData.map((_, index) =>
+                                  chartType === 'bar'
+                                      ? `#${colorPalette[index % colorPalette.length]}`
+                                      : `#${colorPaletteRadio[index % colorPalette.length]}`,
+                              ),
                           },
                       ],
                   },
@@ -165,17 +172,27 @@ const computedChartData = computed(() =>
                                 />
                             </div>
                             <div v-else>
-                                <Bar class="w-full h-full" :data="answer.allTime" :options="chartOptions" />
+                                <Bar
+                                    class="w-full h-full"
+                                    :data="answer.allTime"
+                                    :options="{
+                                        ...chartOptions,
+                                        plugins: {
+                                            title: {
+                                                display: false,
+                                            },
+                                            legend: {
+                                                display: false,
+                                            },
+                                        },
+                                    }"
+                                />
                             </div>
                         </div>
                         <!-- Timeline-->
                         <div class="w-full xl:w-[calc(50%-1rem)] max-h-[300px]">
                             <span class="flex justify-center w-full mb-4">Timeline</span>
-                            <Line
-                                class="w-full"
-                                :data="answer.timeLine"
-                                :options="{ ...chartOptions, maintainAspectRatio: false }"
-                            />
+                            <Line class="w-full" :data="answer.timeLine" :options="chartOptions" />
                         </div>
                     </div>
                 </UCard>
