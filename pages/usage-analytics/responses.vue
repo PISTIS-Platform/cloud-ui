@@ -24,6 +24,13 @@ const assetId = computed(() => route.query.assetId);
 const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
+    scales: {
+        y: {
+            ticks: {
+                precision: 0,
+            },
+        },
+    },
 };
 
 ChartJS.register(
@@ -149,19 +156,25 @@ const computedChartData = computed(() =>
                         <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
                             <span class="flex justify-center w-full mb-4">Overall Responses</span>
                             <div v-if="answer.allTime.chartType === 'pie'">
-                                <Pie :data="answer.allTime" :options="chartOptions" />
+                                <Pie
+                                    :data="answer.allTime"
+                                    :options="{
+                                        ...chartOptions,
+                                        scales: { x: { display: false }, y: { display: false } },
+                                    }"
+                                />
                             </div>
                             <div v-else>
                                 <Bar class="w-full h-full" :data="answer.allTime" :options="chartOptions" />
                             </div>
                         </div>
                         <!-- Timeline-->
-                        <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
+                        <div class="w-full xl:w-[calc(50%-1rem)] max-h-[300px]">
                             <span class="flex justify-center w-full mb-4">Timeline</span>
                             <Line
-                                class="w-full h-full"
+                                class="w-full"
                                 :data="answer.timeLine"
-                                :options="{ ...chartOptions, maintainAspectRatio: true }"
+                                :options="{ ...chartOptions, maintainAspectRatio: false }"
                             />
                         </div>
                     </div>
