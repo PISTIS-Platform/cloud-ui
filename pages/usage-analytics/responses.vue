@@ -142,12 +142,17 @@ const computedChartData = computed(() =>
                 >
                 <UCard v-for="answer in computedChartData" :key="answer" :ui="{ base: 'w-full' }">
                     <template #header>
-                        <span class="font-semibold">{{ answer.label }}</span>
+                        <span class="font-semibold text-lg">{{ answer.label }}</span>
                     </template>
+                    <div class="w-full flex mb-4 font-semibold text-sm">
+                        <span class="flex justify-center w-full">Overall Responses</span>
+                        <span class="flex justify-center w-full">Timeline</span>
+                    </div>
                     <div class="flex items-start gap-4">
                         <!-- All time-->
+
                         <div class="w-full">
-                            <div v-if="answer.allTime.chartType === 'pie'">
+                            <div v-if="answer.allTime.chartType === 'pie'" class="flex flex-col items-center gap-4">
                                 <Pie class="w-ful h-full" :data="answer.allTime" :options="chartOptions" />
                             </div>
                             <div v-else>
