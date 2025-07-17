@@ -342,7 +342,7 @@ export default defineI18nConfig(() => {
                     maxNumberOfOptions: 'You can only add up to %{max} options.',
                     viewResponses: 'View Responses To Questionnaire',
                     responsesNotFound: 'Responses to this dataset questionnaire were not found.',
-                    questionnaireResponsesFor: 'Questionnaire Responses for asset',
+                    responsesFor: 'Responses for asset',
                     question: 'Question',
                     overallResponses: 'Overall Responses',
                     timeline: 'Timeline',

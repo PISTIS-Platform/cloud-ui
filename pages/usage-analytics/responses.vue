@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 import * as R from 'ramda';
 import { Bar, Line, Pie } from 'vue-chartjs';
 
-import type { QuestionResponse } from '~/interfaces/usage-analytics';
+import type { Questionnaire, QuestionResponse } from '~/interfaces/usage-analytics';
 
 const { t } = useI18n();
 
@@ -46,6 +46,14 @@ const { data: _datasetData, status: datasetStatus } = useFetch(`/api/datasets/ge
         id: assetId.value,
     },
 });
+
+const {
+    data: questionnaire,
+    status: questionnaireStatus,
+    error: questionnaireError,
+} = await useAsyncData<Questionnaire>(`fetchQuestionnaire-asset-${assetId.value}`, () =>
+    $fetch(`/api/questionnaire/${assetId.value}`),
+);
 
 const { data, status, error } = useFetch<QuestionResponse[]>(`/api/questionnaire/get-answers`, {
     query: {
@@ -156,19 +164,19 @@ const computedChartData = computed(() =>
     <div class="items-center justify-center w-full px-8 mx-auto max-w-7xl">
         <PageContainer>
             <UProgress
-                v-if="datasetStatus === 'pending' || status === 'pending'"
+                v-if="datasetStatus === 'pending' || status === 'pending' || questionnaireStatus === 'pending'"
                 animation="carousel"
                 color="primary"
             />
             <ErrorCard
-                v-else-if="error || !data || data.length === 0"
+                v-else-if="error || questionnaireError || !data || data.length === 0"
                 :error-msg="error?.statusMessage ?? t('usage-analytics.responsesNotFound')"
             />
             <div v-else class="w-full flex flex-col gap-4 text-gray-600">
-                <span class="font-bold text-xl">
-                    {{ $t('usage-analytics.questionnaireResponsesFor') }}
-                    <span class="font-mono">{{ assetId }}</span></span
-                >
+                <SubHeading
+                    :title="`${questionnaire?.title} : ${$t('usage-analytics.responsesFor')} ${assetId}` || ''"
+                    :info="questionnaire?.description || ''"
+                />
                 <UCard v-for="answer in computedChartData" :key="answer" :ui="{ base: 'w-full' }">
                     <template #header>
                         <span class="font-semibold text-lg"
@@ -196,6 +204,7 @@ const computedChartData = computed(() =>
                                     :data="answer.allTime"
                                     :options="{
                                         ...chartOptions,
+                                        maintainAspectRatio: true,
                                         plugins: {
                                             title: {
                                                 display: false,

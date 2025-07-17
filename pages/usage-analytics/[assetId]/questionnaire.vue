@@ -8,6 +8,7 @@ import type {
     QuestionOption,
     SelectedOption,
 } from '~/interfaces/usage-analytics';
+import { QuestionType } from '~/interfaces/usage-analytics';
 
 const { t } = useI18n();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
@@ -63,6 +64,72 @@ const isSubmitDisabled = computed(() => {
 
     return false;
 });
+
+function getRandomInt(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const _submitRandomValues = async () => {
+    for (let i = 0; i < 10; i++) {
+        const body: {
+            userId: string;
+            assetId: string;
+            responses: {
+                questionId: string;
+                questionTitle: string;
+                text?: string;
+                options?: string[];
+            }[];
+        } = {
+            userId: uuidv4(),
+            assetId: route.params.assetId as string,
+            responses: answers.value.map((answer) => {
+                const chosenOptions: string[] = [];
+                const from = 0;
+                const to = answer.availableOptions?.length || 0 - 1;
+
+                if (answer.questionType === QuestionType.CHECKBOX) {
+                    const times = getRandomInt(from + 1, to + 1);
+                    for (let j = 0; j < times; j++) {
+                        const randomOption = answer.availableOptions?.[getRandomInt(from, to)]?.value || '';
+                        while (!chosenOptions.includes(randomOption) && randomOption) {
+                            chosenOptions.push(randomOption);
+                        }
+                    }
+                } else if (answer.questionType === QuestionType.RADIO) {
+                    chosenOptions.push(answer.availableOptions?.[getRandomInt(from, to)]?.value || '');
+                }
+                return {
+                    questionId: answer.question?.id ?? '',
+                    questionTitle: answer.question?.title ?? '',
+                    text: answer?.text,
+                    options: chosenOptions,
+                };
+            }),
+        };
+
+        try {
+            await $fetch(`/api/questionnaire/submit-answers`, {
+                query: {
+                    id: questionnaire.value?.id,
+                    version: questionnaire.value?.version,
+                },
+                method: 'post',
+                body,
+            });
+
+            showSuccessMessage(t('usage-analytics.answersSubmitted'));
+        } catch (error) {
+            showErrorMessage(t('usage-analytics.errorInSubmitAnswers'));
+
+            submitPending.value = false;
+        }
+    }
+};
+
+// submitRandomValues();
 
 const saveAnswers = async () => {
     if (!questionnaire.value) {
