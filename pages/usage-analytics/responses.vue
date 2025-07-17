@@ -17,6 +17,8 @@ import { Bar, Line, Pie } from 'vue-chartjs';
 
 import type { QuestionResponse } from '~/interfaces/usage-analytics';
 
+const { t } = useI18n();
+
 // const colorPalette = ['c9684a', '2a8e8c', 'bf9a22', '285336', '432046'];
 const colorPalette = ['70d6ff', 'ff70a6', 'ff9770', 'ffd670', 'e9ff70'];
 const colorPaletteRadio = ['5bb86e', 'E9FF70', '989898', 'FF9770', 'fc3232'].reverse();
@@ -38,7 +40,14 @@ const chartOptions = {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
 
-const { data } = useFetch<QuestionResponse[]>(`/api/questionnaire/get-answers`, {
+const { data: _datasetData, status: datasetStatus } = useFetch(`/api/datasets/get-specific`, {
+    method: 'GET',
+    query: {
+        id: assetId.value,
+    },
+});
+
+const { data, status, error } = useFetch<QuestionResponse[]>(`/api/questionnaire/get-answers`, {
     query: {
         assetId: assetId.value,
     },
@@ -146,18 +155,32 @@ const computedChartData = computed(() =>
 <template>
     <div class="items-center justify-center w-full px-8 mx-auto max-w-7xl">
         <PageContainer>
-            <div class="w-full flex flex-col gap-4 text-gray-600">
+            <UProgress
+                v-if="datasetStatus === 'pending' || status === 'pending'"
+                animation="carousel"
+                color="primary"
+            />
+            <ErrorCard
+                v-else-if="error || !data || data.length === 0"
+                :error-msg="error?.statusMessage ?? t('usage-analytics.responsesNotFound')"
+            />
+            <div v-else class="w-full flex flex-col gap-4 text-gray-600">
                 <span class="font-bold text-xl">
-                    Questionnaire Responses for asset <span class="font-mono">{{ assetId }}</span></span
+                    {{ $t('usage-analytics.questionnaireResponsesFor') }}
+                    <span class="font-mono">{{ assetId }}</span></span
                 >
                 <UCard v-for="answer in computedChartData" :key="answer" :ui="{ base: 'w-full' }">
                     <template #header>
-                        <span class="font-semibold text-lg">Question: {{ answer.label }}</span>
+                        <span class="font-semibold text-lg"
+                            >{{ $t('usage-analytics.question') }}: {{ answer.label }}</span
+                        >
                     </template>
                     <div class="flex items-start flex-wrap gap-8 xl:flex-nowrap">
                         <!-- All time-->
                         <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
-                            <span class="flex justify-center w-full mb-4">Overall Responses</span>
+                            <span class="flex justify-center w-full mb-4">{{
+                                $t('usage-analytics.overallResponses')
+                            }}</span>
                             <div v-if="answer.allTime.chartType === 'pie'">
                                 <Pie
                                     :data="answer.allTime"
@@ -187,7 +210,7 @@ const computedChartData = computed(() =>
                         </div>
                         <!-- Timeline-->
                         <div class="w-full xl:w-[calc(50%-1rem)] max-h-[300px]">
-                            <span class="flex justify-center w-full mb-4">Timeline</span>
+                            <span class="flex justify-center w-full mb-4">{{ $t('usage-analytics.timeline') }}</span>
                             <Line class="w-full" :data="answer.timeLine" :options="chartOptions" />
                         </div>
                     </div>

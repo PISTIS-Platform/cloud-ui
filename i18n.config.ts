@@ -341,6 +341,11 @@ export default defineI18nConfig(() => {
                     noQuestionsWereFound: 'No questions were found for this questionnaire',
                     maxNumberOfOptions: 'You can only add up to %{max} options.',
                     viewResponses: 'View Responses To Questionnaire',
+                    responsesNotFound: 'Responses to this dataset questionnaire were not found.',
+                    questionnaireResponsesFor: 'Questionnaire Responses for asset',
+                    question: 'Question',
+                    overallResponses: 'Overall Responses',
+                    timeline: 'Timeline',
                 },
                 models: {
                     models: 'Models Repository',
