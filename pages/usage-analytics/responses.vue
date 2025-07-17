@@ -17,8 +17,9 @@ import { Bar, Line, Pie } from 'vue-chartjs';
 
 import type { QuestionResponse } from '~/interfaces/usage-analytics';
 
-const colorPalette = ['c9684a', '2a8e8c', 'bf9a22', '285336', '432046'];
-const colorPaletteRadio = ['5bb86e', 'dfbd67', '989898', 'f57c25', 'fc3232'].reverse();
+// const colorPalette = ['c9684a', '2a8e8c', 'bf9a22', '285336', '432046'];
+const colorPalette = ['70d6ff', 'ff70a6', 'ff9770', 'ffd670', 'e9ff70'];
+const colorPaletteRadio = ['5bb86e', 'E9FF70', '989898', 'FF9770', 'fc3232'].reverse();
 
 const route = useRoute();
 const assetId = computed(() => route.query.assetId);
