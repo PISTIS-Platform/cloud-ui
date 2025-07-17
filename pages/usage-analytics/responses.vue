@@ -204,12 +204,14 @@ const computedChartData = computed(() =>
                             >{{ $t('usage-analytics.question') }}: {{ answer.label }}</span
                         >
                     </template>
-                    <div class="flex items-start flex-wrap gap-8 md:flex-nowrap">
+                    <div class="flex items-start flex-wrap gap-2 xl:gap-8 xl:flex-nowrap">
                         <!-- All time-->
-                        <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
-                            <span class="flex justify-center w-full mb-4">{{
-                                $t('usage-analytics.overallResponses')
-                            }}</span>
+                        <div class="w-full xl:w-[calc(50%-1rem)] xl:h-[350px]">
+                            <span
+                                class="flex justify-center w-full"
+                                :class="answer.allTime.chartType === 'bar' ? 'mb-[32px]' : 'mb-[20px]'"
+                                >{{ $t('usage-analytics.overallResponses') }}</span
+                            >
                             <div v-if="answer.allTime.chartType === 'pie'">
                                 <Pie
                                     :data="answer.allTime"
@@ -225,7 +227,6 @@ const computedChartData = computed(() =>
                                     :data="answer.allTime"
                                     :options="{
                                         ...chartOptions,
-                                        maintainAspectRatio: true,
                                         plugins: {
                                             ...chartOptions.plugins,
                                             title: {
