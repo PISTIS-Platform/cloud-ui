@@ -339,6 +339,13 @@ export default defineI18nConfig(() => {
                     answersSubmitted: 'Your answers have been submitted successfully',
                     errorInSubmitAnswers: 'Error occurred while submitting answers',
                     noQuestionsWereFound: 'No questions were found for this questionnaire',
+                    maxNumberOfOptions: 'You can only add up to %{max} options.',
+                    viewResponses: 'View Responses To Questionnaire',
+                    responsesNotFound: 'Responses to this dataset questionnaire were not found.',
+                    questionnaireResponsesFor: 'Questionnaire Responses for asset',
+                    question: 'Question',
+                    overallResponses: 'Overall Responses',
+                    timeline: 'Timeline',
                 },
                 models: {
                     models: 'Models Repository',

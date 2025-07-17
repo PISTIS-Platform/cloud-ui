@@ -221,7 +221,7 @@ const actions = (row: Questionnaire) => [
                             <UButton
                                 color="white"
                                 class="w-20 flex justify-center"
-                                @click="(deleteConfirmationOpen = false), (versionForDeletion = null)"
+                                @click="((deleteConfirmationOpen = false), (versionForDeletion = null))"
                                 >{{ $t('cancel') }}</UButton
                             >
                             <UButton class="w-20 flex justify-center" @click="deleteVersion()">{{ $t('yes') }}</UButton>
