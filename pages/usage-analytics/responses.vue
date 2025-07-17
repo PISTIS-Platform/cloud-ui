@@ -206,7 +206,7 @@ const computedChartData = computed(() =>
                     </template>
                     <div class="flex items-start flex-wrap gap-2 xl:gap-8 xl:flex-nowrap">
                         <!-- All time-->
-                        <div class="w-full xl:w-[calc(50%-1rem)] xl:h-[350px]">
+                        <div class="w-full xl:w-[calc(50%-1rem)] h-[300px] xl:h-[350px]">
                             <span
                                 class="flex justify-center w-full"
                                 :class="answer.allTime.chartType === 'bar' ? 'mb-[32px]' : 'mb-[20px]'"
@@ -241,7 +241,7 @@ const computedChartData = computed(() =>
                             </div>
                         </div>
                         <!-- Timeline-->
-                        <div class="w-full xl:w-[calc(50%-1rem)] max-h-[300px]">
+                        <div class="w-full xl:w-[calc(50%-1rem)] h-[300px] pb-6 mt-12 xl:mt-0 xl:pb-0">
                             <span class="flex justify-center w-full mb-4">{{ $t('usage-analytics.timeline') }}</span>
                             <Line class="w-full" :data="answer.timeLine" :options="chartOptions" />
                         </div>
