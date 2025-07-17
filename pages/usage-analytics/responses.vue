@@ -36,6 +36,27 @@ const chartOptions = {
             },
         },
     },
+    interaction: {
+        mode: 'index',
+        intersect: false,
+        axis: 'x',
+    },
+    plugins: {
+        tooltip: {
+            callbacks: {
+                label: function (context: any) {
+                    let label = context.dataset.label || '';
+                    console.log({ context });
+
+                    if (label) {
+                        label += ': ';
+                    }
+                    label += context.formattedValue + ' responses';
+                    return label;
+                },
+            },
+        },
+    },
 };
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
@@ -183,7 +204,7 @@ const computedChartData = computed(() =>
                             >{{ $t('usage-analytics.question') }}: {{ answer.label }}</span
                         >
                     </template>
-                    <div class="flex items-start flex-wrap gap-8 xl:flex-nowrap">
+                    <div class="flex items-start flex-wrap gap-8 md:flex-nowrap">
                         <!-- All time-->
                         <div class="w-full xl:w-[calc(50%-1rem)] max-h-[500px]">
                             <span class="flex justify-center w-full mb-4">{{
@@ -206,6 +227,7 @@ const computedChartData = computed(() =>
                                         ...chartOptions,
                                         maintainAspectRatio: true,
                                         plugins: {
+                                            ...chartOptions.plugins,
                                             title: {
                                                 display: false,
                                             },
