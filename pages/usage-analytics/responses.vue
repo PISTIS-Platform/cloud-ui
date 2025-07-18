@@ -142,7 +142,7 @@ const computedChartData = computed(() =>
                   return {
                       label: lineLabel,
                       data: datasetsByLabel[lineLabel],
-                      backgroundColor: color,
+                      backgroundColor: hexToRgba(color, 0.7),
                       borderColor: color,
                   };
               });
@@ -156,10 +156,11 @@ const computedChartData = computed(() =>
                       datasets: [
                           {
                               data: allTimeData,
+                              borderWidth: 3,
                               backgroundColor: allTimeData.map((_, index) =>
                                   chartType === 'bar'
-                                      ? `#${colorPalette[index % colorPalette.length]}`
-                                      : `#${colorPaletteRadio[index % colorPalette.length]}`,
+                                      ? hexToRgba(colorPalette[index % colorPalette.length], 0.7)
+                                      : hexToRgba(colorPaletteRadio[index % colorPalette.length], 0.7),
                               ),
                               borderColor: allTimeData.map((_, index) =>
                                   chartType === 'bar'
