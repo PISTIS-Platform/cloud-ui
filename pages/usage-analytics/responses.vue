@@ -18,6 +18,7 @@ import { Bar, Line, Pie } from 'vue-chartjs';
 import type { Questionnaire, QuestionResponse } from '~/interfaces/usage-analytics';
 
 const { t } = useI18n();
+const TRANSPARENCY = 0.5;
 
 // const colorPalette = ['c9684a', '2a8e8c', 'bf9a22', '285336', '432046'];
 const colorPalette = ['70d6ff', 'ff70a6', 'ff9770', 'ffd670', 'e9ff70'];
@@ -142,7 +143,7 @@ const computedChartData = computed(() =>
                   return {
                       label: lineLabel,
                       data: datasetsByLabel[lineLabel],
-                      backgroundColor: hexToRgba(color, 0.7),
+                      backgroundColor: hexToRgba(color, TRANSPARENCY),
                       borderColor: color,
                   };
               });
@@ -159,8 +160,8 @@ const computedChartData = computed(() =>
                               borderWidth: 3,
                               backgroundColor: allTimeData.map((_, index) =>
                                   chartType === 'bar'
-                                      ? hexToRgba(colorPalette[index % colorPalette.length], 0.7)
-                                      : hexToRgba(colorPaletteRadio[index % colorPalette.length], 0.7),
+                                      ? hexToRgba(colorPalette[index % colorPalette.length], TRANSPARENCY)
+                                      : hexToRgba(colorPaletteRadio[index % colorPalette.length], TRANSPARENCY),
                               ),
                               borderColor: allTimeData.map((_, index) =>
                                   chartType === 'bar'
