@@ -11,6 +11,7 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
+import zoomPlugin from 'chartjs-plugin-zoom';
 import dayjs from 'dayjs';
 import * as R from 'ramda';
 import { Bar, Line, Pie } from 'vue-chartjs';
@@ -60,7 +61,48 @@ const chartOptions = {
     },
 };
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement, ArcElement);
+const lineChartRefs = ref<any[]>([]);
+
+const setLineChartRef = (el: any, index: number) => {
+    if (el) {
+        lineChartRefs.value[index] = el;
+    }
+};
+
+const zoomInLineChart = (index: number) => {
+    // Access the specific chart instance from the array of refs
+    const chartInstance = lineChartRefs.value[index]?.chart;
+    if (chartInstance) {
+        chartInstance.zoom(1.1); // Zoom in by 10%
+    }
+};
+
+const zoomOutLineChart = (index: number) => {
+    const chartInstance = lineChartRefs.value[index]?.chart;
+    if (chartInstance) {
+        chartInstance.zoom(0.9); // Zoom out by 10%
+    }
+};
+
+const resetLineChartZoom = (index: number) => {
+    const chartInstance = lineChartRefs.value[index]?.chart;
+    if (chartInstance) {
+        chartInstance.resetZoom();
+    }
+};
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    PointElement,
+    LineElement,
+    ArcElement,
+    zoomPlugin,
+);
 
 const { data: _datasetData, status: datasetStatus } = useFetch(`/api/datasets/get-specific`, {
     method: 'GET',
@@ -200,7 +242,7 @@ const computedChartData = computed(() =>
                     :title="`${questionnaire?.title} : ${$t('usage-analytics.responsesFor')} ${assetId}` || ''"
                     :info="questionnaire?.description || ''"
                 />
-                <UCard v-for="answer in computedChartData" :key="answer" :ui="{ base: 'w-full' }">
+                <UCard v-for="(answer, index) in computedChartData" :key="answer" :ui="{ base: 'w-full' }">
                     <template #header>
                         <span class="font-semibold text-lg"
                             >{{ $t('usage-analytics.question') }}: {{ answer.label }}</span
@@ -243,9 +285,57 @@ const computedChartData = computed(() =>
                             </div>
                         </div>
                         <!-- Timeline-->
-                        <div class="w-full xl:w-[calc(50%-1rem)] h-[300px] pb-6 mt-12 xl:mt-0 xl:pb-0">
+                        <div class="w-full xl:w-[calc(50%-1rem)] h-[300px] pb-6 mt-12 xl:mt-0 xl:pb-0 pr-10 relative">
                             <span class="flex justify-center w-full mb-4">{{ $t('usage-analytics.timeline') }}</span>
-                            <Line class="w-full" :data="answer.timeLine" :options="chartOptions" />
+                            <div class="flex gap-2 flex-col absolute top-[calc(50%-0.5rem)] right-0">
+                                <UButton
+                                    size="xs"
+                                    variant="soft"
+                                    icon="i-heroicons-magnifying-glass-plus"
+                                    @click="zoomInLineChart(index)"
+                                >
+                                </UButton>
+                                <UButton
+                                    size="xs"
+                                    variant="soft"
+                                    icon="i-heroicons-magnifying-glass-minus"
+                                    @click="zoomOutLineChart(index)"
+                                >
+                                </UButton>
+                                <UButton
+                                    size="xs"
+                                    variant="soft"
+                                    icon="i-heroicons-arrow-path"
+                                    @click="resetLineChartZoom(index)"
+                                >
+                                </UButton>
+                            </div>
+                            <Line
+                                :ref="(el) => setLineChartRef(el, index)"
+                                class="w-full"
+                                :data="answer.timeLine"
+                                :options="{
+                                    ...chartOptions,
+                                    plugins: {
+                                        ...chartOptions.plugins,
+                                        zoom: {
+                                            zoom: {
+                                                wheel: {
+                                                    enabled: true,
+                                                },
+                                                pinch: {
+                                                    enabled: true,
+                                                },
+                                                mode: 'x',
+                                            },
+                                            pan: {
+                                                enabled: true,
+                                                mode: 'x',
+                                            },
+                                        },
+                                    },
+                                }"
+                            />
                         </div>
                     </div>
                 </UCard>
