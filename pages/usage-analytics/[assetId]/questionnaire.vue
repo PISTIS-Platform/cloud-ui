@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { v4 as uuidv4 } from 'uuid';
+
+dayjs.extend(customParseFormat);
 
 import type {
     Question,
@@ -72,59 +76,65 @@ function getRandomInt(min: number, max: number) {
 }
 
 const _submitRandomValues = async () => {
-    for (let i = 0; i < 10; i++) {
-        const body: {
-            userId: string;
-            assetId: string;
-            responses: {
-                questionId: string;
-                questionTitle: string;
-                text?: string;
-                options?: string[];
-            }[];
-        } = {
-            userId: uuidv4(),
-            assetId: route.params.assetId as string,
-            responses: answers.value.map((answer) => {
-                const chosenOptions: string[] = [];
-                const from = 0;
-                const to = answer.availableOptions?.length || 0 - 1;
+    let date = dayjs('18/06/2025', 'DD/MM/YYYY').set('hour', 0).set('minute', 0).set('second', 0);
+    for (let d = 0; d < 30; d++) {
+        date = date.add(1, 'day');
+        for (let i = 0; i < 34; i++) {
+            const body: {
+                userId: string;
+                assetId: string;
+                createdAt: string;
+                responses: {
+                    questionId: string;
+                    questionTitle: string;
+                    text?: string;
+                    options?: string[];
+                }[];
+            } = {
+                userId: uuidv4(),
+                assetId: route.params.assetId as string,
+                createdAt: date.format(),
+                responses: answers.value.map((answer) => {
+                    const chosenOptions: string[] = [];
+                    const from = 0;
+                    const to = answer.availableOptions?.length || 0 - 1;
 
-                if (answer.questionType === QuestionType.CHECKBOX) {
-                    const times = getRandomInt(from + 1, to + 1);
-                    for (let j = 0; j < times; j++) {
-                        const randomOption = answer.availableOptions?.[getRandomInt(from, to)]?.value || '';
-                        while (!chosenOptions.includes(randomOption) && randomOption) {
-                            chosenOptions.push(randomOption);
+                    if (answer.questionType === QuestionType.CHECKBOX) {
+                        const times = getRandomInt(from + 1, to + 1);
+                        for (let j = 0; j < times; j++) {
+                            const randomOption = answer.availableOptions?.[getRandomInt(from, to)]?.value || '';
+                            while (!chosenOptions.includes(randomOption) && randomOption) {
+                                chosenOptions.push(randomOption);
+                            }
                         }
+                    } else if (answer.questionType === QuestionType.RADIO) {
+                        chosenOptions.push(answer.availableOptions?.[getRandomInt(from, to)]?.value || '');
                     }
-                } else if (answer.questionType === QuestionType.RADIO) {
-                    chosenOptions.push(answer.availableOptions?.[getRandomInt(from, to)]?.value || '');
-                }
-                return {
-                    questionId: answer.question?.id ?? '',
-                    questionTitle: answer.question?.title ?? '',
-                    text: answer?.text,
-                    options: chosenOptions,
-                };
-            }),
-        };
+                    return {
+                        questionId: answer.question?.id ?? '',
+                        questionTitle: answer.question?.title ?? '',
+                        text: answer?.text,
+                        options: chosenOptions,
+                    };
+                }),
+            };
 
-        try {
-            await $fetch(`/api/questionnaire/submit-answers`, {
-                query: {
-                    id: questionnaire.value?.id,
-                    version: questionnaire.value?.version,
-                },
-                method: 'post',
-                body,
-            });
+            try {
+                await $fetch(`/api/questionnaire/submit-answers`, {
+                    query: {
+                        id: questionnaire.value?.id,
+                        version: questionnaire.value?.version,
+                    },
+                    method: 'post',
+                    body,
+                });
 
-            showSuccessMessage(t('usage-analytics.answersSubmitted'));
-        } catch (error) {
-            showErrorMessage(t('usage-analytics.errorInSubmitAnswers'));
+                showSuccessMessage(t('usage-analytics.answersSubmitted'));
+            } catch (error) {
+                showErrorMessage(t('usage-analytics.errorInSubmitAnswers'));
 
-            submitPending.value = false;
+                submitPending.value = false;
+            }
         }
     }
 };
