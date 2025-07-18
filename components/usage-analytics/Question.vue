@@ -5,7 +5,7 @@ import { QuestionType } from '~/interfaces/usage-analytics';
 
 const { t } = useI18n();
 
-const MAX_OPTIONS_NUMBER = 5;
+const MAX_OPTIONS_NUMBER = computed(() => (props.question.type === QuestionType.CHECKBOX ? 10 : 5));
 
 const props = defineProps({
     question: {
@@ -212,6 +212,7 @@ const addPreConfiguredOptions = (configuredOptions: string[]) => {
                                 />
                             </UTooltip>
                             <UDropdown
+                                v-if="props.question.type === QuestionType.RADIO"
                                 :items="preparedOptions"
                                 mode="hover"
                                 :popper="{ placement: 'bottom-start' }"
