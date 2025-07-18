@@ -21,8 +21,19 @@ import type { Questionnaire, QuestionResponse } from '~/interfaces/usage-analyti
 const { t } = useI18n();
 const TRANSPARENCY = 0.5;
 
-// const colorPalette = ['c9684a', '2a8e8c', 'bf9a22', '285336', '432046'];
-const colorPalette = ['70d6ff', 'ff70a6', 'ff9770', 'ffd670', 'e9ff70'];
+// const colorPalette = ['70d6ff', 'ff70a6', 'ff9770', 'ffd670', 'e9ff70'];
+const colorPalette = [
+    '70d6ff',
+    'ff70a6',
+    'ff9770',
+    'ffd670',
+    'e9ff70',
+    'a8ed80',
+    '80edce',
+    '80bded',
+    'c280ed',
+    'ff9F9F',
+];
 const colorPaletteRadio = ['5bb86e', 'E9FF70', '989898', 'FF9770', 'fc3232'].reverse();
 
 const route = useRoute();
