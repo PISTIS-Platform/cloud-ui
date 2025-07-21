@@ -78,6 +78,8 @@ export default defineI18nConfig(() => {
                     couldNotPurchaseShares: 'An error has occurred: could not purchase shares',
                     purchaseSuccessful: 'Purchase completed successfully',
                     keywords: 'Keywords',
+                    pay: 'Pay',
+                    pleaseError: 'Please choose between %{min} and %{max} shares to purchase.',
                 },
                 auditor: {
                     title: 'Transaction Auditor',

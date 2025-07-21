@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
 
-const sharesToPurchase = ref(1);
 const route = useRoute();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 const { t } = useI18n();
 const router = useRouter();
+import { z } from 'zod';
 
 type InvestmentPlan = {
     title: string;
@@ -26,6 +26,21 @@ type InvestmentPlan = {
     keywords: string[];
 };
 
+const schema = computed(() =>
+    z.object({
+        sharesToPurchase: z
+            .number()
+            .min(1, { message: t('invest.pleaseError', { min: 1, max: investmentPlan.value?.maxShares }) })
+            .max(investmentPlan.value?.maxShares, {
+                message: t('invest.pleaseError', { min: 1, max: investmentPlan.value?.maxShares }),
+            }),
+    }),
+);
+
+const state = reactive({
+    sharesToPurchase: 1,
+});
+
 const {
     data: investmentPlan,
     status: retrieveStatus,
@@ -41,7 +56,7 @@ const purchaseShares = async () => {
             method: 'PUT',
             query: { investmentId: investmentPlan.value?.id },
             body: {
-                numberOfShares: sharesToPurchase.value,
+                numberOfShares: state.sharesToPurchase,
             },
         });
         showSuccessMessage(t('invest.purchaseSuccessful'));
@@ -50,6 +65,11 @@ const purchaseShares = async () => {
         showErrorMessage(t('invest.couldNotPurchaseShares'));
     }
 };
+
+const numberOfSharesError = computed(() => {
+    if (!investmentPlan.value) return false;
+    return state.sharesToPurchase < 1 || state.sharesToPurchase > investmentPlan.value.maxShares;
+});
 </script>
 
 <template>
@@ -186,32 +206,37 @@ const purchaseShares = async () => {
                         </div>
                     </UCard>
                 </div>
-                <div class="mt-6">
-                    <UForm class="flex items-end gap-6">
+                <div class="mt-6 mb-2">
+                    <UForm :state="state" :schema="schema" class="flex items-end gap-6 w-full relative">
                         <UFormGroup
                             :label="$t('invest.numberOfSharesToPurchase')"
-                            name="percentagePrice"
-                            :ui="{ error: 'absolute -bottom-6' }"
+                            name="sharesToPurchase"
+                            :ui="{ container: 'w-96', error: 'absolute -bottom-6 w-full' }"
                             required
                             eager-validation
                         >
                             <UInput
-                                v-model.number="sharesToPurchase"
-                                :placeholder="$t('data.investmentPlanner.sharePricePlaceholder')"
+                                v-model.number="state.sharesToPurchase"
                                 type="number"
                                 size="xl"
                                 min="1"
+                                :max="investmentPlan.maxShares"
                                 class="w-64"
                             >
                                 <template #trailing>
                                     <span class="text-gray-500 text-xs">{{
-                                        sharesToPurchase === 1 ? $t('invest.share') : $t('invest.shares')
+                                        state.sharesToPurchase === 1 ? $t('invest.share') : $t('invest.shares')
                                     }}</span>
                                 </template>
                             </UInput>
                         </UFormGroup>
-                        <UButton type="submit" size="xl" :disabled="sharesToPurchase === 0" @click="purchaseShares"
-                            >Pay ({{ sharesToPurchase * investmentPlan.price }} EUR)</UButton
+                        <UButton
+                            class="-ml-36"
+                            type="submit"
+                            size="xl"
+                            :disabled="numberOfSharesError"
+                            @click="purchaseShares"
+                            >{{ $t('invest.pay') }} ({{ state.sharesToPurchase * investmentPlan.price }} EUR)</UButton
                         >
                     </UForm>
                 </div>
