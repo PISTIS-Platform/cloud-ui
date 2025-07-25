@@ -23,7 +23,6 @@ const { data: session } = useAuth();
 const { t } = useI18n();
 const OPACITY_DECIMAL = 0.5;
 
-// const colorPalette = ['70d6ff', 'ff70a6', 'ff9770', 'ffd670', 'e9ff70'];
 const colorPalette = [
     '70d6ff',
     'ff70a6',
@@ -61,7 +60,6 @@ const chartOptions = {
             callbacks: {
                 label: function (context: any) {
                     let label = context.dataset.label || '';
-                    console.log({ context });
 
                     if (label) {
                         label += ': ';
@@ -176,10 +174,8 @@ const computedChartData = computed(() =>
                   const datasetData: number[] = [];
                   dates.forEach((date: string) => {
                       const responses = groupedByDate[date] as { response: string; date: string }[];
-                      console.log({ responses });
                       datasetData.push(
                           responses.reduce((acc: number, curr: { response: string; date: string }) => {
-                              console.log(`${curr.response}, ${label}`);
                               if (curr.response === label) {
                                   acc += 1;
                               }
