@@ -5,6 +5,8 @@ import { QuestionType } from '~/interfaces/usage-analytics';
 
 const { t } = useI18n();
 
+const MAX_OPTIONS_NUMBER = computed(() => (props.question.type === QuestionType.CHECKBOX ? 10 : 5));
+
 const props = defineProps({
     question: {
         type: Object as () => Question,
@@ -193,16 +195,24 @@ const addPreConfiguredOptions = (configuredOptions: string[]) => {
 
                         <div class="flex gap-4 justify-start items-center">
                             <!-- Button for adding new option -->
-                            <UTooltip :text="$t('usage-analytics.addCustomOption')">
+                            <UTooltip
+                                :text="
+                                    questionOptions.length < MAX_OPTIONS_NUMBER
+                                        ? $t('usage-analytics.addCustomOption')
+                                        : $t('usage-analytics.maxNumberOfOptions', { max: MAX_OPTIONS_NUMBER })
+                                "
+                            >
                                 <UButton
                                     icon="i-heroicons-plus-circle-20-solid"
                                     size="md"
                                     class="text-gray-500"
                                     variant="ghost"
+                                    :disabled="questionOptions.length >= MAX_OPTIONS_NUMBER"
                                     @click="addQuestionOption()"
                                 />
                             </UTooltip>
                             <UDropdown
+                                v-if="props.question.type === QuestionType.RADIO"
                                 :items="preparedOptions"
                                 mode="hover"
                                 :popper="{ placement: 'bottom-start' }"

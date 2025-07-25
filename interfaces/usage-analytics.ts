@@ -50,3 +50,11 @@ export interface QuestionAnswer {
     question?: Question;
     isValid?: boolean | undefined;
 }
+
+export interface QuestionResponse {
+    questionId: string;
+    questionTitle: string;
+    responses: { response: string; date: string }[];
+    questionType?: QuestionType | null;
+    options?: string[];
+}

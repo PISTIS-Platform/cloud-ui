@@ -72,6 +72,16 @@ const navigateToCreateEdit = async (row?: Questionnaire) => {
     });
 };
 
+const navigateToView = async (row?: Questionnaire) => {
+    await navigateTo({
+        path: '/usage-analytics/view',
+        query: {
+            version: row?.version || null,
+            id: row?.id || null,
+        },
+    });
+};
+
 const deleteVersion = async () => {
     if (!versionForDeletion.value) {
         return;
@@ -108,6 +118,7 @@ const versionForDeletion = ref<Questionnaire | null>(null);
 
 const actions = (row: Questionnaire) => [
     [
+        { label: t('usage-analytics.viewQuestionnaire'), icon: 'carbon:view', click: () => navigateToView(row) },
         {
             label: t('usage-analytics.createNewVersionFromExisting'),
             icon: 'i-heroicons-document-duplicate',
@@ -221,7 +232,7 @@ const actions = (row: Questionnaire) => [
                             <UButton
                                 color="white"
                                 class="w-20 flex justify-center"
-                                @click="(deleteConfirmationOpen = false), (versionForDeletion = null)"
+                                @click="((deleteConfirmationOpen = false), (versionForDeletion = null))"
                                 >{{ $t('cancel') }}</UButton
                             >
                             <UButton class="w-20 flex justify-center" @click="deleteVersion()">{{ $t('yes') }}</UButton>
