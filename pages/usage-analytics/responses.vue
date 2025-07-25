@@ -115,12 +115,12 @@ ChartJS.register(
     zoomPlugin,
 );
 
-const { data: _datasetData, status: datasetStatus } = useFetch(`/api/datasets/get-specific`, {
-    method: 'GET',
-    query: {
-        id: assetId.value,
-    },
-});
+// const { data: _datasetData, status: datasetStatus } = useFetch(`/api/datasets/get-specific`, {
+//     method: 'GET',
+//     query: {
+//         id: assetId.value,
+//     },
+// });
 
 const {
     data: questionnaire,
