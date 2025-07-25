@@ -351,6 +351,7 @@ export default defineI18nConfig(() => {
                     viewQuestionnaireDescription:
                         'View the questions of the questionnaire along with their possible answers',
                     text: 'Free text - user input',
+                    notAuthorized: "You are not authorized to see this questionnaire's responses.",
                 },
                 models: {
                     models: 'Models Repository',

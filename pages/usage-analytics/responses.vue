@@ -18,6 +18,8 @@ import { Bar, Line, Pie } from 'vue-chartjs';
 
 import type { Questionnaire, QuestionResponse } from '~/interfaces/usage-analytics';
 
+const { data: session } = useAuth();
+
 const { t } = useI18n();
 const OPACITY_DECIMAL = 0.5;
 
@@ -115,13 +117,6 @@ ChartJS.register(
     zoomPlugin,
 );
 
-// const { data: _datasetData, status: datasetStatus } = useFetch(`/api/datasets/get-specific`, {
-//     method: 'GET',
-//     query: {
-//         id: assetId.value,
-//     },
-// });
-
 const {
     data: questionnaire,
     status: questionnaireStatus,
@@ -129,6 +124,13 @@ const {
 } = await useAsyncData<Questionnaire>(`fetchQuestionnaire-asset-${assetId.value}`, () =>
     $fetch(`/api/questionnaire/${assetId.value}`),
 );
+
+const isAuthorized = computed(() => {
+    return (
+        session.value?.user?.roles?.includes('PISTIS_ADMIN') ||
+        session.value?.user?.sub === questionnaire.value?.creatorId
+    );
+});
 
 const { data, status, error } = useFetch<QuestionResponse[]>(`/api/questionnaire/get-answers`, {
     query: {
@@ -240,10 +242,11 @@ const computedChartData = computed(() =>
     <div class="items-center justify-center w-full px-8 mx-auto max-w-7xl">
         <PageContainer>
             <UProgress
-                v-if="datasetStatus === 'pending' || status === 'pending' || questionnaireStatus === 'pending'"
+                v-if="status === 'pending' || questionnaireStatus === 'pending'"
                 animation="carousel"
                 color="primary"
             />
+            <ErrorCard v-else-if="!isAuthorized" :error-msg="$t('usage-analytics.notAuthorized')" />
             <ErrorCard
                 v-else-if="error || questionnaireError || !data || data.length === 0"
                 :error-msg="error?.statusMessage ?? t('usage-analytics.responsesNotFound')"
