@@ -52,6 +52,7 @@ export default defineI18nConfig(() => {
                 reset: 'Reset',
                 delete: 'Delete',
                 goBack: 'Go Back',
+                back: 'Back',
                 title: 'Title',
                 firstName: 'First Name',
                 lastName: 'Last Name',
@@ -346,6 +347,10 @@ export default defineI18nConfig(() => {
                     question: 'Question',
                     overallResponses: 'Overall Responses',
                     timeline: 'Timeline',
+                    viewQuestionnaire: 'View Questionnaire',
+                    viewQuestionnaireDescription:
+                        'View the questions of the questionnaire along with their possible answers',
+                    text: 'Free text - user input',
                 },
                 models: {
                     models: 'Models Repository',
