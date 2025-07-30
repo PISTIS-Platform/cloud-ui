@@ -49,20 +49,16 @@ export default defineEventHandler(async (event) => {
     if (!session?.roles?.includes('PISTIS_ADMIN')) return [];
 
     //CPU percentage
-    const cpuQuery = `(
-  sum(otel_k8s_node_cpu_utilization{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})
+    const cpuQuery = `sum(otel_k8s_node_cpu_usage{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})
   /
-  sum(kube_node_status_capacity{resource='cpu', node=~'.*agent.*'})
-)`;
+sum(otel_k8s_node_allocatable_cpu{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})`;
 
     const cpuPercentage = await getPrometheusResult(cpuQuery);
 
     // //Memory utilisation percentage
-    const memoryUtilisationQuery = `(
-  sum(otel_k8s_node_memory_usage{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})
+    const memoryUtilisationQuery = `sum(otel_k8s_node_memory_usage{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})
   /
-  sum(kube_node_status_capacity{resource='memory', node=~'.*agent.*'})
-)`;
+sum(otel_k8s_node_allocatable_memory{k8s_cluster_name='cloud', k8s_node_name=~'.*agent.*'})`;
 
     const memoryUtilisationPercentage = await getPrometheusResult(memoryUtilisationQuery);
 
