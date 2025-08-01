@@ -17,7 +17,10 @@ const statuses = computed(() => ({
     suspended: t('registry.statuses.suspended'),
 }));
 
+const loadingState = reactive<Record<string, boolean>>({});
+
 const activate = async (id: string | number) => {
+    loadingState[`activate-${id}`] = true;
     switchModalOpen.value = false;
     try {
         await $fetch(`/api/factories-registry/${id}/activate`, {
@@ -27,10 +30,13 @@ const activate = async (id: string | number) => {
         refresh();
     } catch {
         showErrorMessage(t('registry.factoryActivationError'));
+    } finally {
+        loadingState[`activate-${id}`] = false;
     }
 };
 
 const suspend = async (id: string | number) => {
+    loadingState[`suspend-${id}`] = true;
     switchModalOpen.value = false;
     try {
         await $fetch(`/api/factories-registry/${id}/suspend`, {
@@ -40,9 +46,12 @@ const suspend = async (id: string | number) => {
         refresh();
     } catch {
         showErrorMessage(t('registry.factoryActivationError'));
+    } finally {
+        loadingState[`suspend-${id}`] = false;
     }
 };
 const recreate = async (id: string | number) => {
+    loadingState[`recreate-${id}`] = true;
     switchModalOpen.value = false;
     try {
         await $fetch(`/api/factories-registry/recreate/${id}`, {
@@ -52,6 +61,8 @@ const recreate = async (id: string | number) => {
         refresh();
     } catch {
         showErrorMessage(t('registry.factoryRecreateError'));
+    } finally {
+        loadingState[`recreate-${id}`] = false;
     }
 };
 
@@ -162,6 +173,7 @@ const download = async (row: any) => {
                                     variant="outline"
                                     :disabled="!row.ip"
                                     class="disabled:opacity-40"
+                                    :loading="loadingState[`activate-${row.id}`]"
                                     @click="select(row, 'activate')"
                                     >{{ t('registry.activate') }}</UButton
                                 >
@@ -170,6 +182,7 @@ const download = async (row: any) => {
                                 v-else-if="row.status === 'pending' || row.status === 'suspended'"
                                 variant="outline"
                                 :disabled="!row.ip"
+                                :loading="loadingState[`activate-${row.id}`]"
                                 @click="select(row, 'activate')"
                                 >{{ t('registry.activate') }}</UButton
                             >
@@ -177,6 +190,7 @@ const download = async (row: any) => {
                                 v-else-if="row.status !== 'suspended'"
                                 color="red"
                                 variant="outline"
+                                :loading="loadingState[`suspend-${row.id}`]"
                                 @click="select(row, 'suspend')"
                                 >{{ t('registry.suspend') }}
                             </UButton>
@@ -186,7 +200,10 @@ const download = async (row: any) => {
                 <template #actions-data="{ row }">
                     <div class="flex justify-center items-center">
                         <div class="flex-col justify-end">
-                            <UButton variant="outline" @click="select(row, 'recreate')"
+                            <UButton
+                                variant="outline"
+                                :loading="loadingState[`recreate-${row.organizationId}`]"
+                                @click="select(row, 'recreate')"
                                 >{{ t('registry.recreate') }}
                             </UButton>
                         </div>
