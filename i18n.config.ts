@@ -80,6 +80,11 @@ export default defineI18nConfig(() => {
                 dashboard: {
                     dashboard: 'Dashboard',
                     status: 'Status',
+                    authorized: 'Authorized',
+                    unauthorized: 'Not Authorized',
+                    factoryDetails: 'Factory Details',
+                    factoryUrl: 'Factory URL',
+                    organizationName: 'Organization Name',
                     resources: {
                         name: 'Resources',
                         title: 'Resources & Activities Monitor',
