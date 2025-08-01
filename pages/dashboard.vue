@@ -429,9 +429,45 @@ const submitIP = async () => {
                 />
                 <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                     <template #header>
-                        <SubHeading :title="`${t('registry.registration.title')}`" />
+                        <div class="flex justify-between items-center">
+                            <SubHeading
+                                :title="
+                                    userFactory?.isAccepted
+                                        ? `${$t('dashboard.factoryDetails')}`
+                                        : `${t('registry.registration.title')}`
+                                "
+                            />
+                            <div v-if="userFactory" class="flex gap-3 text-sm">
+                                <span>{{
+                                    userFactory.isAccepted ? $t('dashboard.authorized') : $t('dashboard.unauthorized')
+                                }}</span>
+                                <div
+                                    v-if="userFactory.isAccepted"
+                                    class="border w-3 h-3 rounded-full bg-green-300 border-green-500 mt-1"
+                                ></div>
+                                <div v-else class="border w-3 h-3 rounded-full bg-red-300 border-red-500 mt-1"></div>
+                            </div>
+                        </div>
                     </template>
-                    <div class="w-full flex flex-col gap-4">
+                    <div v-if="userFactory && userFactory.isAccepted" class="flex w-full flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <span class="font-semibold text-gray-500">{{ $t('dashboard.factoryUrl') }}</span>
+                            <div class="font-mono">
+                                <a
+                                    :href="`https://${userFactory?.factoryPrefix}.pistis-market.eu`"
+                                    target="_blank"
+                                    class="text-primary-500"
+                                >
+                                    {{ `https://${userFactory?.factoryPrefix}.pistis-market.eu` }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <span class="font-semibold text-gray-500">{{ $t('dashboard.organizationName') }}</span>
+                            <span>{{ userFactory.organizationName }}</span>
+                        </div>
+                    </div>
+                    <div v-else class="w-full flex flex-col gap-4">
                         <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
                         <div class="flex w-full justify-between items-center flex-wrap xl:flex-nowrap">
                             <span class="flex gap-4 whitespace-nowrap">
