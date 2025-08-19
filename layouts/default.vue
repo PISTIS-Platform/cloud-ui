@@ -22,7 +22,7 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 ];
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'dashboard.dashboard', to: 'dashboard', icon: '', roles: [] },
+    { name: 'dashboard.dashboard', to: '/dashboard', icon: '', roles: [] },
     {
         name: 'marketplace',
         to: config.public.marketplaceUrl + '/srv/catalog/datasets?locale=en&catalog=pistis&page=1',
@@ -85,7 +85,7 @@ const notificationsNumberText = computed(() => (notificationCount.value > 9 ? '9
                                     v-for="item in userNavigation"
                                     :key="item.name"
                                     :to="item.to"
-                                    :target="item.to === 'dashboard' ? '' : '_blank'"
+                                    :target="item.to === '/dashboard' ? '' : '_blank'"
                                     class="text-white hover:bg-primary-600 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
                                     active-class="bg-primary-800"
                                     >{{ $t(item.name) }}
