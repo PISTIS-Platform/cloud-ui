@@ -11,39 +11,76 @@ export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
 
     const services = {
-        'Data Quality Assessment': '/srv/data-quality-assessment',
-        'Distributed Query': '/srv/distributed-query',
-        Blockchain: '/srv/payments',
-        'Factories Registry': '/srv/factories-registry',
-        'Intention Analytics': '/srv/intention-analytics',
-        'Lineage Tracker': '/srv/lineage-tracker and /srv/lt-ui',
-        'Models Repository': '/srv/models-repository',
-        'Smart Contract Execution Engine': '/srv/smart-contract-execution-engine',
+        'Distributed Query': [],
+        Blockchain: [],
+        'Factories Registry': ['/srv/factories-registry/api/health'],
+        'Intention Analytics': ['/srv/intention-analytics/api/health'],
+        'Lineage Tracker': [],
+        'Models Repository': ['/srv/models-repository/api/health'],
+        'Smart Contract Execution Engine': ['/srv/smart-contract-execution-engine/ready'],
+        'DLT FIAT Wallet': [],
+        'Identity Access Management': [],
+        Notifications: ['/srv/notifications/api/health'],
+        'Factory Data Catalog': ['/srv/catalog'],
     };
 
     //TODO: See if all elements will have '/api/health' like ours or not
 
-    const componentStatusPromises = Object.keys(services).map(async (key: string) => {
-        let active = false;
-        const url = `${config.public.marketplaceUrl}${services[key]}/api/health`.replace('//', '/');
-        try {
-            const result = await $fetch(url, {
+    const componentStatusPromises = Object.entries(services).map(async ([key, value]: [string, string[]]) => {
+        let active = 'false';
+        const url = `${config.public.marketplaceUrl}${value}`;
+        if (value.length === 0) {
+            return {
+                title: key,
+                active: 'N/A',
+            };
+        }
+
+        if (key === 'Factory Data Catalog') {
+            const repo = await $fetch(`${config.public.marketplaceUrl}/srv/repo/health`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token?.access_token}`,
                 },
+                timeout: 5000,
+            });
+            const search = await $fetch(`${config.public.marketplaceUrl}/srv/search/health`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token?.access_token}`,
+                },
+                timeout: 5000,
             });
 
-            if (result?.status === 'ok') {
-                active = true;
+            if (repo?.status === 'UP' && search?.status === 'UP') {
+                active = 'true';
             }
-        } catch (error) {
-            console.error(`Error fetching health for ${key}:`, error);
-        } finally {
             return {
                 title: key,
                 active,
             };
+        } else {
+            try {
+                const result = await $fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        Authorization: `Bearer ${token?.access_token}`,
+                    },
+                    timeout: 5000,
+                });
+                if (result?.success) {
+                    active = 'true';
+                } else if (result?.status.toLowerCase() === 'ok') {
+                    active = 'true';
+                }
+            } catch (error) {
+                console.error(`Error fetching health for ${key}:`, error);
+            } finally {
+                return {
+                    title: key,
+                    active,
+                };
+            }
         }
     });
 
