@@ -161,29 +161,49 @@ const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
 const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
 
 //Weekly transactions bar chart
-const computedWeeklyTransactionsData = computed(() => ({
-    //TODO: Get weekdays automatically from i18n somehow
-    labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [
-        {
-            label: t('dashboard.resources.transactions'),
-            backgroundColor: '#f87979',
-            data: weeklyTransactionsData.value || [],
-        },
-    ],
-}));
+const computedWeeklyTransactionsData = computed(() => {
+    // Array to hold the labels for the last 7 days
+    const labels = [];
+
+    // Loop 7 times to get the last 7 days including today
+    for (let i = 6; i >= 0; i--) {
+        // Use dayjs to get the day 'i' days ago and format it
+        labels.push(dayjs().subtract(i, 'day').format('ddd'));
+    }
+
+    return {
+        labels: labels,
+        datasets: [
+            {
+                label: t('dashboard.resources.transactions'),
+                backgroundColor: '#f87979',
+                data: weeklyTransactionsData.value || [],
+            },
+        ],
+    };
+});
 //Weekly money bar chart
-const computedWeeklyMoneyData = computed(() => ({
-    //TODO: Get weekdays automatically from i18n somehow
-    labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [
-        {
-            label: 'EUR',
-            backgroundColor: '#f87979',
-            data: weeklyMoneyData.value || [],
-        },
-    ],
-}));
+const computedWeeklyMoneyData = computed(() => {
+    // Array to hold the labels for the last 7 days
+    const labels = [];
+
+    // Loop 7 times to get the last 7 days including today
+    for (let i = 6; i >= 0; i--) {
+        // Use dayjs to get the day 'i' days ago and format it
+        labels.push(dayjs().subtract(i, 'day').format('ddd'));
+    }
+
+    return {
+        labels: labels,
+        datasets: [
+            {
+                label: t('dashboard.resources.transactions'),
+                backgroundColor: '#f87979',
+                data: weeklyTransactionsData.value || [],
+            },
+        ],
+    };
+});
 
 //Top cards for simple user
 const cardInfoData = computed(() => [
@@ -290,7 +310,7 @@ const submitIP = async () => {
                         </template>
                         <div
                             v-if="componentStatusStatus !== 'pending'"
-                            class="flex w-full flex-col gap-4 overflow-y-scroll"
+                            class="flex w-full flex-col gap-4 overflow-y-auto"
                         >
                             <StatusCard
                                 v-for="item in componentStatusData"
@@ -502,8 +522,8 @@ const submitIP = async () => {
                                     size="lg"
                                     :disabled="downloadingConfigurations"
                                     @click="downloadConfigurations"
-                                    >{{ t('download') }}</UButton
-                                >
+                                    >{{ t('download') }}
+                                </UButton>
                             </UTooltip>
                         </div>
 
