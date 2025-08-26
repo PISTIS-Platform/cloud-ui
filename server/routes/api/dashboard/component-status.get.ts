@@ -12,16 +12,16 @@ export default defineEventHandler(async (event) => {
 
     const services = {
         'Distributed Query': [],
-        Blockchain: [],
+        Blockchain: ['/srv/smart-contract-execution-engine/ledger_ready'],
         'Factories Registry': ['/srv/factories-registry/api/health'],
         'Intention Analytics': ['/srv/intention-analytics/api/health'],
-        'Lineage Tracker': [],
+        'Lineage Tracker': ['/srv/lineage-tracker/api/health'],
         'Models Repository': ['/srv/models-repository/api/health'],
         'Smart Contract Execution Engine': ['/srv/smart-contract-execution-engine/ready'],
-        'DLT FIAT Wallet': [],
+        'DLT FIAT Wallet': ['/srv/payments/v0/dlt/health_checker'],
         'Identity Access Management': [],
-        Notifications: ['/srv/notifications/api/health'],
-        'Factory Data Catalog': ['/srv/catalog'],
+        'Notifications Engine': ['/srv/notifications/api/health'],
+        Marketplace: ['/srv/catalog'],
     };
 
     //TODO: See if all elements will have '/api/health' like ours or not
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
             };
         }
 
-        if (key === 'Factory Data Catalog') {
+        if (key === 'Marketplace') {
             const repo = await $fetch(`${config.public.marketplaceUrl}/srv/repo/health`, {
                 method: 'GET',
                 headers: {
@@ -68,9 +68,12 @@ export default defineEventHandler(async (event) => {
                     },
                     timeout: 5000,
                 });
-                if (result?.success) {
+
+                if (result === true) {
                     active = 'true';
-                } else if (result?.status.toLowerCase() === 'ok') {
+                } else if (result?.success) {
+                    active = 'true';
+                } else if (result?.status.toLowerCase() === 'ok' || result?.status.toLowerCase() === 'success') {
                     active = 'true';
                 }
             } catch (error) {

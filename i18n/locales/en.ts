@@ -64,6 +64,7 @@ export default {
             resourceUsage: 'Resource Usage',
             platformActivities: 'Platform Activities',
             sinceLastWeek: 'since last week',
+            inMarketplace: 'in Marketplace',
             sinceLastMonth: 'since last month',
             transactions: 'Transactions',
             weeklyTransactions: 'Weekly Transactions',
