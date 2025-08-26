@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
     const services = {
         'Distributed Query': [],
-        Blockchain: [],
+        Blockchain: ['/srv/smart-contract-execution-engine/ledger_ready'],
         'Factories Registry': ['/srv/factories-registry/api/health'],
         'Intention Analytics': ['/srv/intention-analytics/api/health'],
         'Lineage Tracker': ['/srv/lineage-tracker/api/health'],
