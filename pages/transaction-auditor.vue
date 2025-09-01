@@ -69,19 +69,22 @@ const columns: TableColumn[] = [
 //     method: 'POST',
 // });
 
-const desiredPage = ref(1);
+const page = ref(1);
+
+const totalPages = computed(() => transactionsData.value.meta.totalPages);
+const totalCount = computed(() => transactionsData.value.meta.totalItems);
 
 const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
     method: 'GET',
     query: {
-        page: desiredPage,
+        page,
     },
 });
 
 const data = computed(() => transactionsData.value.data);
 
 const { filteredRows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
-    column: 'transactionDate',
+    column: 'createdAt',
     direction: 'desc',
 });
 
@@ -435,11 +438,11 @@ const generatePDF = () => {
                             </UTooltip>
                         </template>
                     </UTable>
-                    <div v-if="filteredRows.length > pageCount" class="flex justify-end mt-2">
+                    <div class="flex justify-end mt-2">
                         <UPagination
                             v-model="page"
-                            :page-count="pageCount"
-                            :total="filteredRows.length"
+                            :page-count="totalPages"
+                            :total="totalCount"
                             :active-button="{ variant: 'outline' }"
                         />
                     </div>
