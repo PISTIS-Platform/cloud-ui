@@ -71,7 +71,6 @@ const columns: TableColumn[] = [
 
 const page = ref(1);
 
-const totalPages = computed(() => transactionsData.value.meta.totalPages);
 const totalCount = computed(() => transactionsData.value.meta.totalItems);
 
 const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
@@ -441,7 +440,7 @@ const generatePDF = () => {
                     <div class="flex justify-end mt-2">
                         <UPagination
                             v-model="page"
-                            :page-count="totalPages"
+                            :page-count="10"
                             :total="totalCount"
                             :active-button="{ variant: 'outline' }"
                         />
