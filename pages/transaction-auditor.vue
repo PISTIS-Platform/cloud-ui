@@ -1,11 +1,11 @@
 <script setup lang="ts">
 const { t } = useI18n();
 import { useClipboard } from '@vueuse/core';
-import { v4 as uuid } from 'uuid';
+import dayjs from 'dayjs';
+import * as R from 'ramda';
 
 import type TableColumn from '~/interfaces/table-column';
 import type { Transaction } from '~/interfaces/wallet-table';
-import type { TransactionsType, WalletTransaction } from '~/interfaces/wallet-transactions.js';
 
 const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
@@ -14,9 +14,25 @@ const { copy: copyConsumer, copied: copiedConsumer } = useClipboard({});
 
 const { $pdfMake } = useNuxtApp();
 
+//  {
+//     "id": "116b923b-6674-4e70-95ef-1ff21342c6e5",
+//     "transactionId": "0xbdf36d753dd95d81d981833a4a549e02377fea35",
+//     "transactionFee": null,
+//     "amount": 12.7,
+//     "factoryBuyerId": "df856a5e-06de-42a3-a637-c589935258b8",
+//     "factoryBuyerName": "PDT",
+//     "factorySellerId": "77cbb9b6-b710-4e5f-9ff1-79da11b1862c",
+//     "factorySellerName": "ACME",
+//     "assetId": "00c3e9a7-b8d8-444a-9d7b-5dacfb14c90d",
+//     "assetName": "Dataset-35",
+//     "terms": "consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+//     "createdAt": "2025-08-01T00:00:00.000Z",
+//     "updatedAt": "2025-06-24T00:00:00.000Z"
+//   },
+
 const columns: TableColumn[] = [
     {
-        key: 'transactionDate',
+        key: 'createdAt',
         label: t('auditor.date'),
         sortable: true,
         class: 'text-center w-12',
@@ -28,73 +44,34 @@ const columns: TableColumn[] = [
         class: 'text-center w-12 text-nowrap',
     },
     {
-        key: 'assetTitle',
+        key: 'assetName',
         label: t('auditor.assetTitle'),
         sortable: false,
         class: 'text-left',
     },
     {
-        key: 'provider',
+        key: 'factorySellerName',
         label: t('auditor.provider'),
         sortable: true,
         class: 'text-left w-12',
     },
     {
-        key: 'consumer',
+        key: 'factoryBuyerName',
         label: t('auditor.consumer'),
         sortable: true,
         class: 'text-left w-12',
     },
 ];
 
-const { data: transactionsData, status: transactionsStatus } = useFetch<TransactionsType>(`/api/wallet/transactions`, {
-    method: 'POST',
+// const { data: transactionsData, status: transactionsStatus } = useFetch<TransactionsType>(`/api/wallet/transactions`, {
+//     method: 'POST',
+// });
+
+const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
+    method: 'GET',
 });
 
-const incomingTransactions = computed(() => {
-    if (!transactionsData.value) return [];
-    return transactionsData.value?.incoming.map((item: WalletTransaction) => ({
-        //Actual data from transaction
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
-        amountToProvider: (item.payload.Basic.amount * 80) / 100,
-        transactionFee: (item.payload.Basic.amount * 20) / 100,
-        provider: item.payload.Basic.recipient_address,
-        consumer: item.payload.Basic.sender_address,
-        //FIXME: Dummy data until available
-        assetId: uuid(),
-        assetTitle: 'Sample Asset Title',
-        assetLink: 'http://google.com',
-        terms: `Enim nisi exercitation nisi ad incididunt. Eiusmod culpa ea minim aute aute aliquip culpa nisi ad ea commodo. Anim labore culpa consequat. Cillum aute culpa ad ex. Elit consectetur et id in velit. Ullamco est in excepteur labore proident adipisicing minim sint id. Ullamco ea reprehenderit irure aliqua deserunt eiusmod tempor labore velit minim excepteur aliquip. Amet aute est in exercitation dolore aliqua nulla eiusmod.
-
-Proident dolor sit adipisicing. Ullamco culpa consequat quis. Velit cupidatat anim veniam amet. Commodo consectetur aute elit. Commodo cupidatat id deserunt magna velit est ex aliqua eu ad aute exercitation ea sit.
-
-Esse duis enim cillum ipsum qui magna sit adipisicing occaecat excepteur aliqua officia. Deserunt aliquip nulla irure est occaecat. Ipsum dolor culpa minim nulla in aliqua labore. Excepteur ea in dolor et minim laborum esse tempor dolor amet incididunt ea in minim nulla. Enim esse officia aliquip voluptate magna dolor consectetur. Fugiat incididunt aliquip fugiat velit qui officia excepteur do qui sunt ipsum cupidatat mollit do aliqua. Cillum cillum qui id voluptate sint dolore. Laborum non nostrud eu esse qui nisi aliquip.`,
-    }));
-});
-
-const outgoingTransactions = computed(() => {
-    if (!transactionsData.value) return [];
-    return transactionsData.value?.outgoing.map((item: WalletTransaction) => ({
-        //Actual data from transaction
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
-        amountToProvider: (item.payload.Basic.amount * 80) / 100,
-        transactionFee: (item.payload.Basic.amount * 20) / 100,
-        provider: item.payload.Basic.recipient_address,
-        consumer: item.payload.Basic.sender_address,
-        type: 'Outgoing',
-        //FIXME: Dummy data until available
-        assetId: uuid(),
-        assetTitle: 'Sample Asset Title',
-        assetLink: 'http://google.com',
-        terms: 'Ullamco enim Lorem in fugiat labore non fugiat magna nostrud duis aliqua in sit. Aliqua do eiusmod et excepteur laboris magna incididunt. Adipisicing eu nulla aute irure. Nostrud non consequat pariatur aliquip dolor quis eu tempor anim esse aute est elit. Et ut eiusmod exercitation do esse et. Lorem ipsum esse esse est officia nulla sint consectetur. Sunt qui ea commodo esse ipsum laboris et cillum nostrud excepteur tempor elit.',
-    }));
-});
-
-const data = computed(() => [...incomingTransactions.value, ...outgoingTransactions.value]);
+const data = computed(() => transactionsData.value.data);
 
 const { page, pageCount, filteredRows, paginatedRows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
     column: 'transactionDate',
@@ -126,23 +103,32 @@ const generatePDF = () => {
         content: [
             { text: 'PISTIS - ' + t('auditor.transactionDetails'), style: 'heading' },
             { text: t('auditor.date'), style: 'subheading' },
-            { text: selected.value.transactionDate },
+            { text: dayjs(selected.value.createdAt).format('YYYY-MM-DD HH:mm:ss') },
             { text: t('auditor.transactionId'), style: 'subheading' },
             { text: selected.value.transactionId },
             { text: t('auditor.assetId'), style: 'subheading' },
             { text: selected.value.assetId },
             { text: t('auditor.assetTitle'), style: 'subheading' },
-            { text: selected.value.assetTitle, link: selected.value.assetLink, style: 'link' },
+            // { text: selected.value.assetName, link: selected.value.assetLink, style: 'link' },
+            { text: selected.value.assetName },
             { text: t('auditor.amount'), style: 'subheading' },
-            { text: selected.value.amount + ' EUR' },
+            { text: selected.value.amount.toFixed(2) + ' EUR' },
             { text: t('auditor.amountToProvider'), style: 'subheading' },
-            { text: selected.value.amountToProvider + ' EUR' },
+            {
+                text: R.isNil(selected.value.transactionFee)
+                    ? `${selected.value.amount.toFixed(2)} EUR`
+                    : `${(selected.value.amount - selected.value.transactionFee).toFixed(2)} EUR`,
+            },
             { text: t('auditor.transactionFee'), style: 'subheading' },
-            { text: selected.value.transactionFee + ' EUR' },
+            {
+                text: R.isNil(selected.value.transactionFee)
+                    ? 'None'
+                    : `${selected.value.transactionFee.toFixed(2)} EUR`,
+            },
             { text: t('auditor.provider'), style: 'subheading' },
-            { text: selected.value.provider },
+            { text: selected.value.factorySellerName },
             { text: t('auditor.consumer'), style: 'subheading' },
-            { text: selected.value.consumer },
+            { text: selected.value.factoryBuyerName },
             { text: t('auditor.terms'), style: 'subheading' },
             {
                 text: selected.value.terms,
@@ -206,7 +192,7 @@ const generatePDF = () => {
                         <div class="flex justify-between flex-wrap w-full">
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.date') }}</span>
-                                <span>{{ selected.transactionDate }}</span>
+                                <span>{{ dayjs(selected.createdAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
@@ -242,11 +228,10 @@ const generatePDF = () => {
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
-                                <a
-                                    :href="selected.assetLink"
-                                    class="text-primary visited:text-primary-800 focus:outline-none"
-                                    >{{ selected.assetTitle }}</a
-                                >
+                                <!-- TODO: Make asset link to marketplace-->
+                                <a href="#" class="text-primary visited:text-primary-800 focus:outline-none">{{
+                                    selected.assetName
+                                }}</a>
                             </div>
                         </div>
                         <div class="flex justify-between w-full flex-wrap">
@@ -258,21 +243,29 @@ const generatePDF = () => {
                                 <span class="text-gray-400"
                                     >{{ $t('auditor.amountToProvider') }} / {{ $t('auditor.transactionFee') }}</span
                                 >
-                                <span
+                                <!-- <span
                                     >{{ selected.amountToProvider.toFixed(2) }} EUR /
                                     {{ selected.transactionFee.toFixed(2) }} EUR</span
-                                >
+                                > -->
+                                <span>
+                                    {{
+                                        R.isNil(selected.transactionFee)
+                                            ? `${selected.amount}`
+                                            : `${(selected.amount - selected.transactionFee).toFixed(2)}`
+                                    }}
+                                    EUR / {{ selected.transactionFee ? selected.transactionFee.toFixed(2) : 0 }} EUR
+                                </span>
                             </div>
                         </div>
                         <div class="w-full flex justify-between flex-wrap">
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
                                 <span
-                                    >{{ truncateId(selected.provider, 20) }}
+                                    >{{ truncateId(selected.factorySellerName, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
                                         class="w-4 h-4 cursor-pointer"
-                                        @click="copyProvider(selected.provider)" />
+                                        @click="copyProvider(selected.factorySellerName)" />
                                     <UIcon
                                         v-show="copiedProvider"
                                         name="ic:baseline-check"
@@ -282,11 +275,11 @@ const generatePDF = () => {
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
                                 <span
-                                    >{{ truncateId(selected.consumer, 20) }}
+                                    >{{ truncateId(selected.factoryBuyerName, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
                                         class="w-4 h-4 cursor-pointer"
-                                        @click="copyConsumer(selected.consumer)" />
+                                        @click="copyConsumer(selected.factoryBuyerName)" />
                                     <UIcon
                                         v-show="copiedConsumer"
                                         name="ic:baseline-check"
@@ -345,9 +338,9 @@ const generatePDF = () => {
                                 </span>
                             </div>
                         </template>
-                        <template #transactionDate-data="{ row }">
-                            <span v-if="row.transactionDate" class="flex items-center justify-center">{{
-                                $d(new Date(row.transactionDate), 'short')
+                        <template #createdAt-data="{ row }">
+                            <span v-if="row.createdAt" class="flex items-center justify-center">{{
+                                $d(new Date(row.createdAt), 'short')
                             }}</span>
                             <span v-else>&mdash;</span>
                         </template>
@@ -358,36 +351,37 @@ const generatePDF = () => {
                             </span>
                         </template>
 
-                        <template #assetTitle-data="{ row }">
+                        <template #assetName-data="{ row }">
                             <span class="flex items-center justify-start">
-                                <a :href="row.assetLink" target="_blank" class="text-primary visited:text-primary-800">
-                                    {{ row.assetTitle }}
+                                <!--TODO: Create Asset Link to marketplace-->
+                                <a href="#" target="_blank" class="text-primary visited:text-primary-800">
+                                    {{ row.assetName }}
                                 </a>
                             </span>
                         </template>
 
-                        <template #provider-data="{ row }">
+                        <template #factorySellerName-data="{ row }">
                             <UTooltip
-                                :text="row.provider"
+                                :text="row.factorySellerName"
                                 :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
                                 <span class="flex items-center justify-start">
-                                    {{ truncateId(row.provider, 10) }}
+                                    {{ truncateId(row.factorySellerName, 10) }}
                                 </span>
                             </UTooltip>
                         </template>
 
-                        <template #consumer-data="{ row }">
+                        <template #factoryBuyerName-data="{ row }">
                             <UTooltip
-                                :text="row.consumer"
+                                :text="row.factoryBuyerName"
                                 :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
                                 <span class="flex items-center justify-start">
-                                    {{ truncateId(row.consumer, 10) }}
+                                    {{ truncateId(row.factoryBuyerName, 10) }}
                                 </span>
                             </UTooltip>
                         </template>
