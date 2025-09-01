@@ -11,6 +11,8 @@ const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
 const { copy: copyProvider, copied: copiedProvider } = useClipboard({});
 const { copy: copyConsumer, copied: copiedConsumer } = useClipboard({});
+const { copy: copyProviderId, copied: copiedProviderId } = useClipboard({});
+const { copy: copyConsumerId, copied: copiedConsumerId } = useClipboard({});
 
 const { $pdfMake } = useNuxtApp();
 
@@ -127,8 +129,12 @@ const generatePDF = () => {
             },
             { text: t('auditor.provider'), style: 'subheading' },
             { text: selected.value.factorySellerName },
+            { text: t('auditor.provider') + ' ID', style: 'subheading' },
+            { text: selected.value.factorySellerId },
             { text: t('auditor.consumer'), style: 'subheading' },
             { text: selected.value.factoryBuyerName },
+            { text: t('auditor.consumer') + ' ID', style: 'subheading' },
+            { text: selected.value.factoryBuyerId },
             { text: t('auditor.terms'), style: 'subheading' },
             {
                 text: selected.value.terms,
@@ -272,7 +278,23 @@ const generatePDF = () => {
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
                             </div>
-                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 sm:mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.provider') + ' ID' }}</span>
+                                <span
+                                    >{{ truncateId(selected.factorySellerId, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyProviderId(selected.factorySellerId)" />
+                                    <UIcon
+                                        v-show="copiedProviderId"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-between flex-wrap">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
                                 <span
                                     >{{ truncateId(selected.factoryBuyerName, 20) }}
@@ -282,6 +304,20 @@ const generatePDF = () => {
                                         @click="copyConsumer(selected.factoryBuyerName)" />
                                     <UIcon
                                         v-show="copiedConsumer"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                            </div>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 sm:mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.consumer') + ' ID' }}</span>
+                                <span
+                                    >{{ truncateId(selected.factoryBuyerId, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyConsumerId(selected.factoryBuyerId)" />
+                                    <UIcon
+                                        v-show="copiedConsumerId"
                                         name="ic:baseline-check"
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
