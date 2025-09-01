@@ -69,13 +69,18 @@ const columns: TableColumn[] = [
 //     method: 'POST',
 // });
 
+const desiredPage = ref(1);
+
 const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
     method: 'GET',
+    query: {
+        page: desiredPage,
+    },
 });
 
 const data = computed(() => transactionsData.value.data);
 
-const { page, pageCount, filteredRows, paginatedRows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
+const { filteredRows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
     column: 'transactionDate',
     direction: 'desc',
 });
@@ -352,7 +357,7 @@ const generatePDF = () => {
                         v-model:sort="sortBy"
                         v-model:expand="expand"
                         :columns="columns"
-                        :rows="paginatedRows"
+                        :rows="filteredRows"
                         sort-mode="manual"
                         :empty-state="{
                             icon: 'i-heroicons-circle-stack-20-solid',
@@ -364,12 +369,20 @@ const generatePDF = () => {
                     >
                         <template #expand="{ row }">
                             <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center ml-[200px]">
-                                <span class="flex items-center gap-4">
-                                    <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
+                                <span class="flex items-center gap-4 justify-between w-64">
+                                    <span class="font-bold">{{
+                                        R.isNil(row.transactionFee)
+                                            ? `${row.amount.toFixed(2)} EUR`
+                                            : `${(row.amount - row.transactionFee).toFixed(2)} EUR`
+                                    }}</span>
                                     <span>{{ $t('auditor.amountToProvider') }}</span>
                                 </span>
-                                <span class="flex items-center gap-4">
-                                    <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
+                                <span class="flex items-center gap-4 justify-between w-64">
+                                    <span class="font-bold">{{
+                                        R.isNil(row.transactionFee)
+                                            ? `${0} EUR`
+                                            : `${row.transactionFee?.toFixed(2)} EUR`
+                                    }}</span>
                                     <span>{{ $t('auditor.transactionFee') }}</span>
                                 </span>
                             </div>
