@@ -242,10 +242,6 @@ const generatePDF = () => {
                                 <span class="text-gray-400"
                                     >{{ $t('auditor.amountToProvider') }} / {{ $t('auditor.transactionFee') }}</span
                                 >
-                                <!-- <span
-                                    >{{ selected.amountToProvider.toFixed(2) }} EUR /
-                                    {{ selected.transactionFee.toFixed(2) }} EUR</span
-                                > -->
                                 <span>
                                     {{
                                         R.isNil(selected.transactionFee)
