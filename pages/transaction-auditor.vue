@@ -16,22 +16,6 @@ const { copy: copyConsumerId, copied: copiedConsumerId } = useClipboard({});
 
 const { $pdfMake } = useNuxtApp();
 
-//  {
-//     "id": "116b923b-6674-4e70-95ef-1ff21342c6e5",
-//     "transactionId": "0xbdf36d753dd95d81d981833a4a549e02377fea35",
-//     "transactionFee": null,
-//     "amount": 12.7,
-//     "factoryBuyerId": "df856a5e-06de-42a3-a637-c589935258b8",
-//     "factoryBuyerName": "PDT",
-//     "factorySellerId": "77cbb9b6-b710-4e5f-9ff1-79da11b1862c",
-//     "factorySellerName": "ACME",
-//     "assetId": "00c3e9a7-b8d8-444a-9d7b-5dacfb14c90d",
-//     "assetName": "Dataset-35",
-//     "terms": "consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-//     "createdAt": "2025-08-01T00:00:00.000Z",
-//     "updatedAt": "2025-06-24T00:00:00.000Z"
-//   },
-
 const columns: TableColumn[] = [
     {
         key: 'createdAt',
@@ -64,10 +48,6 @@ const columns: TableColumn[] = [
         class: 'text-left w-12',
     },
 ];
-
-// const { data: transactionsData, status: transactionsStatus } = useFetch<TransactionsType>(`/api/wallet/transactions`, {
-//     method: 'POST',
-// });
 
 const page = ref(1);
 
@@ -118,8 +98,11 @@ const generatePDF = () => {
             { text: t('auditor.assetId'), style: 'subheading' },
             { text: selected.value.assetId },
             { text: t('auditor.assetTitle'), style: 'subheading' },
-            // { text: selected.value.assetName, link: selected.value.assetLink, style: 'link' },
-            { text: selected.value.assetName },
+            {
+                text: selected.value.assetName,
+                link: `https://pistis-market.eu/srv/catalog/datasets/${selected.value.assetId}`,
+                style: 'link',
+            },
             { text: t('auditor.amount'), style: 'subheading' },
             { text: selected.value.amount.toFixed(2) + ' EUR' },
             { text: t('auditor.amountToProvider'), style: 'subheading' },
@@ -241,10 +224,13 @@ const generatePDF = () => {
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
-                                <!-- TODO: Make asset link to marketplace-->
-                                <a href="#" class="text-primary visited:text-primary-800 focus:outline-none">{{
-                                    selected.assetName
-                                }}</a>
+
+                                <a
+                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${selected.assetId}`"
+                                    target="_blank"
+                                    class="text-primary visited:text-primary-800 focus:outline-none"
+                                    >{{ selected.assetName }}</a
+                                >
                             </div>
                         </div>
                         <div class="flex justify-between w-full flex-wrap">
@@ -404,8 +390,11 @@ const generatePDF = () => {
 
                         <template #assetName-data="{ row }">
                             <span class="flex items-center justify-start">
-                                <!--TODO: Create Asset Link to marketplace-->
-                                <a href="#" target="_blank" class="text-primary visited:text-primary-800">
+                                <a
+                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${row.assetId}`"
+                                    target="_blank"
+                                    class="text-primary visited:text-primary-800"
+                                >
                                     {{ row.assetName }}
                                 </a>
                             </span>
