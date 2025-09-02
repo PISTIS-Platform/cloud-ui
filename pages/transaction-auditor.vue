@@ -245,7 +245,7 @@ const generatePDF = () => {
                                 <span>
                                     {{
                                         R.isNil(selected.transactionFee)
-                                            ? `${selected.amount}`
+                                            ? `${selected.amount.toFixed(2)}`
                                             : `${(selected.amount - selected.transactionFee).toFixed(2)}`
                                     }}
                                     EUR / {{ selected.transactionFee ? selected.transactionFee.toFixed(2) : 0 }} EUR
