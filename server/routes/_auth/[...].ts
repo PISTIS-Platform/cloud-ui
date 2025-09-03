@@ -35,6 +35,13 @@ const getUserSub = (profile: any) => {
     return profile.sub || '';
 };
 
+const getUserPrefix = (profile: any) => {
+    if (profile.pistis.user.role?.includes('PISTIS_ADMIN')) {
+        return '';
+    }
+    return profile.pistis.group.prefix;
+};
+
 export const authOptions = {
     secret: authSecret,
     providers: [
@@ -52,7 +59,9 @@ export const authOptions = {
                 token.roles = getPistisRoles(jwtDecode(account.access_token));
                 token.orgId = getUserOrgId(jwtDecode(account.access_token));
                 token.sub = getUserSub(jwtDecode(account.access_token));
+                token.prefix = getUserPrefix(jwtDecode(account.access_token));
             }
+
             return Promise.resolve(token);
         },
         session: async ({ session, token }: any) => {
@@ -63,6 +72,7 @@ export const authOptions = {
             session.orgId = token.orgId;
             session.user = {
                 sub: token.sub,
+                prefix: token.prefix,
             };
 
             return Promise.resolve(session);
