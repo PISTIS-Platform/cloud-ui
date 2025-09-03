@@ -1,5 +1,4 @@
 import { jwtDecode } from 'jwt-decode';
-import { JWT } from 'next-auth/jwt';
 import KeycloakProvider from 'next-auth/providers/keycloak';
 
 import { NuxtAuthHandler } from '#auth';
@@ -32,44 +31,9 @@ const getUserOrgId = (profile: any) => {
     return profile.pistis?.group?.id || '';
 };
 
-const getUserOrgPrefix = (profile: any) => {
-    return profile.pistis?.group?.prefix || '';
+const getUserSub = (profile: any) => {
+    return profile.sub || '';
 };
-
-async function refreshAccessToken(token: JWT) {
-    try {
-        if (!token.refresh_token) return token;
-
-        const { access_token, expires_in, id_token } = await $fetch<{
-            access_token: string;
-            expires_in: number;
-            id_token: string;
-        }>(`${keycloak.issuer}/protocol/openid-connect/token`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                client_id: keycloak.clientId,
-                client_secret: keycloak.clientSecret,
-                grant_type: 'refresh_token',
-                refresh_token: token.refresh_token,
-            }),
-        });
-
-        return {
-            ...token,
-            access_token,
-            id_token,
-            expires_at: Date.now() + (expires_in - 15) * 1000,
-        };
-    } catch (err) {
-        return {
-            ...token,
-            error: 'RefreshAccessTokenError',
-        };
-    }
-}
 
 export const authOptions = {
     secret: authSecret,
@@ -84,23 +48,11 @@ export const authOptions = {
     callbacks: {
         jwt: async ({ token, account, user }: any) => {
             if (account && user) {
-                token.id_token = account.id_token;
-                token.provider = account.provider;
                 token.access_token = account.access_token;
-                token.refresh_token = account.refresh_token;
                 token.roles = getPistisRoles(jwtDecode(account.access_token));
                 token.orgId = getUserOrgId(jwtDecode(account.access_token));
-                token.prefix = getUserOrgPrefix(jwtDecode(account.access_token));
-                if (account.expires_at) {
-                    token.expires_at = (account.expires_at - 15) * 1000;
-                }
-                return Promise.resolve(token);
+                token.sub = getUserSub(jwtDecode(account.access_token));
             }
-
-            if (token.expires_at && Date.now() > token.expires_at) {
-                return refreshAccessToken(token);
-            }
-
             return Promise.resolve(token);
         },
         session: async ({ session, token }: any) => {
@@ -110,8 +62,7 @@ export const authOptions = {
             session.roles = token.roles;
             session.orgId = token.orgId;
             session.user = {
-                ...session.user,
-                ...token,
+                sub: token.sub,
             };
 
             return Promise.resolve(session);

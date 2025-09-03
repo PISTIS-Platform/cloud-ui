@@ -9,7 +9,7 @@ const route = useRoute();
 
 const { data } = await useFetch(`/api/catalog/${route.params.assetId}`);
 
-const searchString = 'http://pistis-market.eu/offers';
+const searchString = 'http://pistis-market.eu/purchaseOffer';
 //Search in data to find the index of the offer
 const index = data.value.findIndex((item) => item['@id'] && item['@id'].includes(searchString));
 

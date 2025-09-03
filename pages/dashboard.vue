@@ -161,29 +161,49 @@ const weeklyTransactionsData = ref([0, 0, 0, 0, 0, 0, 0]);
 const weeklyMoneyData = ref([0, 0, 0, 0, 0, 0, 0]);
 
 //Weekly transactions bar chart
-const computedWeeklyTransactionsData = computed(() => ({
-    //TODO: Get weekdays automatically from i18n somehow
-    labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [
-        {
-            label: t('dashboard.resources.transactions'),
-            backgroundColor: '#f87979',
-            data: weeklyTransactionsData.value || [],
-        },
-    ],
-}));
+const computedWeeklyTransactionsData = computed(() => {
+    // Array to hold the labels for the last 7 days
+    const labels = [];
+
+    // Loop 7 times to get the last 7 days including today
+    for (let i = 6; i >= 0; i--) {
+        // Use dayjs to get the day 'i' days ago and format it
+        labels.push(dayjs().subtract(i, 'day').format('ddd'));
+    }
+
+    return {
+        labels: labels,
+        datasets: [
+            {
+                label: t('dashboard.resources.transactions'),
+                backgroundColor: '#f87979',
+                data: weeklyTransactionsData.value || [],
+            },
+        ],
+    };
+});
 //Weekly money bar chart
-const computedWeeklyMoneyData = computed(() => ({
-    //TODO: Get weekdays automatically from i18n somehow
-    labels: ['Mon', 'Tue', 'Wen', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [
-        {
-            label: 'EUR',
-            backgroundColor: '#f87979',
-            data: weeklyMoneyData.value || [],
-        },
-    ],
-}));
+const computedWeeklyMoneyData = computed(() => {
+    // Array to hold the labels for the last 7 days
+    const labels = [];
+
+    // Loop 7 times to get the last 7 days including today
+    for (let i = 6; i >= 0; i--) {
+        // Use dayjs to get the day 'i' days ago and format it
+        labels.push(dayjs().subtract(i, 'day').format('ddd'));
+    }
+
+    return {
+        labels: labels,
+        datasets: [
+            {
+                label: t('dashboard.resources.transactions'),
+                backgroundColor: '#f87979',
+                data: weeklyTransactionsData.value || [],
+            },
+        ],
+    };
+});
 
 //Top cards for simple user
 const cardInfoData = computed(() => [
@@ -290,7 +310,7 @@ const submitIP = async () => {
                         </template>
                         <div
                             v-if="componentStatusStatus !== 'pending'"
-                            class="flex w-full flex-col gap-4 overflow-y-scroll"
+                            class="flex w-full flex-col gap-4 overflow-y-auto"
                         >
                             <StatusCard
                                 v-for="item in componentStatusData"
@@ -429,9 +449,45 @@ const submitIP = async () => {
                 />
                 <UCard v-else :ui="{ base: 'w-full text-gray-700' }">
                     <template #header>
-                        <SubHeading :title="`${t('registry.registration.title')}`" />
+                        <div class="flex justify-between items-center">
+                            <SubHeading
+                                :title="
+                                    userFactory?.isAccepted
+                                        ? `${$t('dashboard.factoryDetails')}`
+                                        : `${t('registry.registration.title')}`
+                                "
+                            />
+                            <div v-if="userFactory" class="flex gap-3 text-sm">
+                                <span>{{
+                                    userFactory.isAccepted ? $t('dashboard.authorized') : $t('dashboard.unauthorized')
+                                }}</span>
+                                <div
+                                    v-if="userFactory.isAccepted"
+                                    class="border w-3 h-3 rounded-full bg-green-300 border-green-500 mt-1"
+                                ></div>
+                                <div v-else class="border w-3 h-3 rounded-full bg-red-300 border-red-500 mt-1"></div>
+                            </div>
+                        </div>
                     </template>
-                    <div class="w-full flex flex-col gap-4">
+                    <div v-if="userFactory && userFactory.isAccepted" class="flex w-full flex-col gap-6">
+                        <div class="flex flex-col gap-2">
+                            <span class="font-semibold text-gray-500">{{ $t('dashboard.factoryUrl') }}</span>
+                            <div class="font-mono">
+                                <a
+                                    :href="`https://${userFactory?.factoryPrefix}.pistis-market.eu`"
+                                    target="_blank"
+                                    class="text-primary-500"
+                                >
+                                    {{ `https://${userFactory?.factoryPrefix}.pistis-market.eu` }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <span class="font-semibold text-gray-500">{{ $t('dashboard.organizationName') }}</span>
+                            <span>{{ userFactory.organizationName }}</span>
+                        </div>
+                    </div>
+                    <div v-else class="w-full flex flex-col gap-4">
                         <p class="text-gray-500">{{ t('registry.registration.welcome') }}</p>
                         <div class="flex w-full justify-between items-center flex-wrap xl:flex-nowrap">
                             <span class="flex gap-4 whitespace-nowrap">
@@ -466,8 +522,8 @@ const submitIP = async () => {
                                     size="lg"
                                     :disabled="downloadingConfigurations"
                                     @click="downloadConfigurations"
-                                    >{{ t('download') }}</UButton
-                                >
+                                    >{{ t('download') }}
+                                </UButton>
                             </UTooltip>
                         </div>
 
