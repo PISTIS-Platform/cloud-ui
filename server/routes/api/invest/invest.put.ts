@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const query = await getQuery(event);
 
-    return $fetch(`${factoryRegistryURL}/srv/investment-planner/update/${query.investmentId}`, {
+    return $fetch(`${factoryRegistryURL}/srv/data-investment-planner/update/${query.investmentId}`, {
         method: 'PUT',
         body,
         headers: {
