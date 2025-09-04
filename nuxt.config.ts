@@ -53,7 +53,7 @@ export default defineNuxtConfig({
         prometheusUrl: '',
         identityManagementUrl: '',
         adminWalletAlias: '',
-        investmentPlannerUrl: '',
+        dataInvestmentPlannerUrl: '',
     },
 
     modules: [
