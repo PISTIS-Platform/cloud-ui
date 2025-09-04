@@ -1,16 +1,13 @@
 import { getToken } from '#auth';
 
-const { investmentPlannerUrl } = useRuntimeConfig();
+const { factoryRegistryURL } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const body = await readBody(event);
     const query = await getQuery(event);
 
-    console.log(factoryRegistryURL);
-    //FIXME: Replace with URL for deployed version
-
-    return $fetch(`${investmentPlannerUrl}/update/${query.investmentId}`, {
+    return $fetch(`${factoryRegistryURL}/srv/investment-planner/update/${query.investmentId}`, {
         method: 'PUT',
         body,
         headers: {
