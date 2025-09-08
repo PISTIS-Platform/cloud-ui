@@ -34,7 +34,7 @@ export default {
         title: 'Invest In Asset',
         info: 'Purchase shares in a published asset',
         assetDetails: 'Asset Details',
-        assetTitle: 'Title',
+        assetName: 'Asset Name',
         assetDescription: 'Description',
         investmentDetails: 'Investment Details',
         totalNumberOfShares: 'Total Number of Shares',
