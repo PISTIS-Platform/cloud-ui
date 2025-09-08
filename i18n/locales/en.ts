@@ -48,6 +48,7 @@ export default {
         noTransactionSelected: 'No transaction selected',
         link: 'Asset Link (Marketplace)',
         downloadPDF: 'Download as PDF',
+        inputMessage: 'Search asset title/name...',
     },
     dashboard: {
         dashboard: 'Dashboard',
