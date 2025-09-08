@@ -51,20 +51,26 @@ const columns: TableColumn[] = [
 
 const page = ref(1);
 
+const data = computed(() => transactionsData.value.data);
+
+const { rows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
+    column: 'createdAt',
+    direction: 'desc',
+});
+
+const sortByColumn = computed(() => sortBy.value.column);
+const sortByDirection = computed(() => sortBy.value.direction);
+
 const totalCount = computed(() => transactionsData.value.meta.totalItems);
 
 const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
     method: 'GET',
     query: {
         page,
+        sortByColumn,
+        sortByDirection,
+        searchString,
     },
-});
-
-const data = computed(() => transactionsData.value.data);
-
-const { filteredRows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
-    column: 'createdAt',
-    direction: 'desc',
 });
 
 const truncateId = (item: string, length: number) => {
@@ -341,8 +347,7 @@ const generatePDF = () => {
                         v-model:sort="sortBy"
                         v-model:expand="expand"
                         :columns="columns"
-                        :rows="filteredRows"
-                        sort-mode="manual"
+                        :rows="rows"
                         :empty-state="{
                             icon: 'i-heroicons-circle-stack-20-solid',
                             label: $t('wallet.noTransactions'),
