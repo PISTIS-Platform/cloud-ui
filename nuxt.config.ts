@@ -54,6 +54,7 @@ export default defineNuxtConfig({
         identityManagementUrl: '',
         adminWalletAlias: '',
         transactionAuditorUrl: '',
+        dataInvestmentPlannerUrl: '',
     },
 
     modules: [
