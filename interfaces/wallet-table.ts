@@ -7,7 +7,7 @@ export interface Transaction {
     seller?: string;
     buyer?: string;
     assetId?: string;
-    assetTitle?: string;
+    assetName?: string;
     assetLink?: string;
     terms?: string;
 }

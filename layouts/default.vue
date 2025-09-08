@@ -19,6 +19,7 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
     { name: 'registry.registry', to: '/factory-registry', roles: ['PISTIS_ADMIN'] },
     { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['PISTIS_ADMIN'] },
     { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
+    { name: 'auditor.title', to: '/transaction-auditor', roles: ['PISTIS_ADMIN'] },
 ];
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [

@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import { z } from 'zod';
 
 const route = useRoute();
 const { showSuccessMessage, showErrorMessage } = useAlertMessage();
 const { t } = useI18n();
 const router = useRouter();
-import { z } from 'zod';
 
 type InvestmentPlan = {
     title: string;
@@ -96,7 +96,7 @@ const numberOfSharesError = computed(() => {
                             <div class="flex flex-col gap-4 w-full">
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
-                                        $t('invest.assetTitle')
+                                        $t('invest.assetName')
                                     }}</span>
                                     <!-- //TODO: Link to marketplace -->
                                     <a href="#" class="text-primary-500">{{ investmentPlan.title }}</a>

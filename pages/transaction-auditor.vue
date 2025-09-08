@@ -1,22 +1,24 @@
 <script setup lang="ts">
 const { t } = useI18n();
 import { useClipboard } from '@vueuse/core';
-import { v4 as uuid } from 'uuid';
+import dayjs from 'dayjs';
+import * as R from 'ramda';
 
 import type TableColumn from '~/interfaces/table-column';
 import type { Transaction } from '~/interfaces/wallet-table';
-import type { TransactionsType, WalletTransaction } from '~/interfaces/wallet-transactions.js';
 
 const { copy: copyAsset, copied: copiedAsset } = useClipboard({});
 const { copy: copyTransaction, copied: copiedTransaction } = useClipboard({});
 const { copy: copyProvider, copied: copiedProvider } = useClipboard({});
 const { copy: copyConsumer, copied: copiedConsumer } = useClipboard({});
+const { copy: copyProviderId, copied: copiedProviderId } = useClipboard({});
+const { copy: copyConsumerId, copied: copiedConsumerId } = useClipboard({});
 
 const { $pdfMake } = useNuxtApp();
 
 const columns: TableColumn[] = [
     {
-        key: 'transactionDate',
+        key: 'createdAt',
         label: t('auditor.date'),
         sortable: true,
         class: 'text-center w-12',
@@ -28,77 +30,58 @@ const columns: TableColumn[] = [
         class: 'text-center w-12 text-nowrap',
     },
     {
-        key: 'assetTitle',
-        label: t('auditor.assetTitle'),
+        key: 'assetName',
+        label: t('auditor.assetName'),
         sortable: false,
         class: 'text-left',
     },
     {
-        key: 'provider',
+        key: 'factorySellerName',
         label: t('auditor.provider'),
         sortable: true,
         class: 'text-left w-12',
     },
     {
-        key: 'consumer',
+        key: 'factoryBuyerName',
         label: t('auditor.consumer'),
         sortable: true,
         class: 'text-left w-12',
     },
 ];
 
-const { data: transactionsData, status: transactionsStatus } = useFetch<TransactionsType>(`/api/wallet/transactions`, {
-    method: 'POST',
-});
+const page = ref(1);
 
-const incomingTransactions = computed(() => {
-    if (!transactionsData.value) return [];
-    return transactionsData.value?.incoming.map((item: WalletTransaction) => ({
-        //Actual data from transaction
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
-        amountToProvider: (item.payload.Basic.amount * 80) / 100,
-        transactionFee: (item.payload.Basic.amount * 20) / 100,
-        provider: item.payload.Basic.recipient_address,
-        consumer: item.payload.Basic.sender_address,
-        //FIXME: Dummy data until available
-        assetId: uuid(),
-        assetTitle: 'Sample Asset Title',
-        assetLink: 'http://google.com',
-        terms: `Enim nisi exercitation nisi ad incididunt. Eiusmod culpa ea minim aute aute aliquip culpa nisi ad ea commodo. Anim labore culpa consequat. Cillum aute culpa ad ex. Elit consectetur et id in velit. Ullamco est in excepteur labore proident adipisicing minim sint id. Ullamco ea reprehenderit irure aliqua deserunt eiusmod tempor labore velit minim excepteur aliquip. Amet aute est in exercitation dolore aliqua nulla eiusmod.
+const data = computed(() => transactionsData.value.data);
 
-Proident dolor sit adipisicing. Ullamco culpa consequat quis. Velit cupidatat anim veniam amet. Commodo consectetur aute elit. Commodo cupidatat id deserunt magna velit est ex aliqua eu ad aute exercitation ea sit.
-
-Esse duis enim cillum ipsum qui magna sit adipisicing occaecat excepteur aliqua officia. Deserunt aliquip nulla irure est occaecat. Ipsum dolor culpa minim nulla in aliqua labore. Excepteur ea in dolor et minim laborum esse tempor dolor amet incididunt ea in minim nulla. Enim esse officia aliquip voluptate magna dolor consectetur. Fugiat incididunt aliquip fugiat velit qui officia excepteur do qui sunt ipsum cupidatat mollit do aliqua. Cillum cillum qui id voluptate sint dolore. Laborum non nostrud eu esse qui nisi aliquip.`,
-    }));
-});
-
-const outgoingTransactions = computed(() => {
-    if (!transactionsData.value) return [];
-    return transactionsData.value?.outgoing.map((item: WalletTransaction) => ({
-        //Actual data from transaction
-        transactionDate: item.included_at,
-        transactionId: item.transaction_id,
-        amount: item.payload.Basic.amount,
-        amountToProvider: (item.payload.Basic.amount * 80) / 100,
-        transactionFee: (item.payload.Basic.amount * 20) / 100,
-        provider: item.payload.Basic.recipient_address,
-        consumer: item.payload.Basic.sender_address,
-        type: 'Outgoing',
-        //FIXME: Dummy data until available
-        assetId: uuid(),
-        assetTitle: 'Sample Asset Title',
-        assetLink: 'http://google.com',
-        terms: 'Ullamco enim Lorem in fugiat labore non fugiat magna nostrud duis aliqua in sit. Aliqua do eiusmod et excepteur laboris magna incididunt. Adipisicing eu nulla aute irure. Nostrud non consequat pariatur aliquip dolor quis eu tempor anim esse aute est elit. Et ut eiusmod exercitation do esse et. Lorem ipsum esse esse est officia nulla sint consectetur. Sunt qui ea commodo esse ipsum laboris et cillum nostrud excepteur tempor elit.',
-    }));
-});
-
-const data = computed(() => [...incomingTransactions.value, ...outgoingTransactions.value]);
-
-const { page, pageCount, filteredRows, paginatedRows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
-    column: 'transactionDate',
+const { rows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
+    column: 'createdAt',
     direction: 'desc',
+});
+
+const rawInput = ref('');
+let timeout = null;
+
+//debounce the search bar
+watch(rawInput, (newVal) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        searchString.value = newVal;
+    }, 500);
+});
+
+const sortByColumn = computed(() => sortBy.value.column);
+const sortByDirection = computed(() => sortBy.value.direction);
+
+const totalCount = computed(() => transactionsData.value.meta.totalItems);
+
+const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
+    method: 'GET',
+    query: {
+        page,
+        sortByColumn,
+        sortByDirection,
+        searchString,
+    },
 });
 
 const truncateId = (item: string, length: number) => {
@@ -126,23 +109,39 @@ const generatePDF = () => {
         content: [
             { text: 'PISTIS - ' + t('auditor.transactionDetails'), style: 'heading' },
             { text: t('auditor.date'), style: 'subheading' },
-            { text: selected.value.transactionDate },
+            { text: dayjs(selected.value.createdAt).format('YYYY-MM-DD HH:mm:ss') },
             { text: t('auditor.transactionId'), style: 'subheading' },
             { text: selected.value.transactionId },
             { text: t('auditor.assetId'), style: 'subheading' },
             { text: selected.value.assetId },
-            { text: t('auditor.assetTitle'), style: 'subheading' },
-            { text: selected.value.assetTitle, link: selected.value.assetLink, style: 'link' },
+            { text: t('auditor.assetName'), style: 'subheading' },
+            {
+                text: selected.value.assetName,
+                link: `https://pistis-market.eu/srv/catalog/datasets/${selected.value.assetId}`,
+                style: 'link',
+            },
             { text: t('auditor.amount'), style: 'subheading' },
-            { text: selected.value.amount + ' EUR' },
+            { text: selected.value.amount.toFixed(2) + ' EUR' },
             { text: t('auditor.amountToProvider'), style: 'subheading' },
-            { text: selected.value.amountToProvider + ' EUR' },
+            {
+                text: R.isNil(selected.value.transactionFee)
+                    ? `${selected.value.amount.toFixed(2)} EUR`
+                    : `${(selected.value.amount - selected.value.transactionFee).toFixed(2)} EUR`,
+            },
             { text: t('auditor.transactionFee'), style: 'subheading' },
-            { text: selected.value.transactionFee + ' EUR' },
+            {
+                text: R.isNil(selected.value.transactionFee)
+                    ? 'None'
+                    : `${selected.value.transactionFee.toFixed(2)} EUR`,
+            },
             { text: t('auditor.provider'), style: 'subheading' },
-            { text: selected.value.provider },
+            { text: selected.value.factorySellerName },
+            { text: t('auditor.provider') + ' ID', style: 'subheading' },
+            { text: selected.value.factorySellerId },
             { text: t('auditor.consumer'), style: 'subheading' },
-            { text: selected.value.consumer },
+            { text: selected.value.factoryBuyerName },
+            { text: t('auditor.consumer') + ' ID', style: 'subheading' },
+            { text: selected.value.factoryBuyerId },
             { text: t('auditor.terms'), style: 'subheading' },
             {
                 text: selected.value.terms,
@@ -206,7 +205,7 @@ const generatePDF = () => {
                         <div class="flex justify-between flex-wrap w-full">
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.date') }}</span>
-                                <span>{{ selected.transactionDate }}</span>
+                                <span>{{ dayjs(selected.createdAt).format('YYYY-MM-DD HH:mm:ss') }}</span>
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.transactionId') }}</span>
@@ -242,10 +241,12 @@ const generatePDF = () => {
                             </div>
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
+
                                 <a
-                                    :href="selected.assetLink"
+                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${selected.assetId}`"
+                                    target="_blank"
                                     class="text-primary visited:text-primary-800 focus:outline-none"
-                                    >{{ selected.assetTitle }}</a
+                                    >{{ selected.assetName }}</a
                                 >
                             </div>
                         </div>
@@ -258,37 +259,71 @@ const generatePDF = () => {
                                 <span class="text-gray-400"
                                     >{{ $t('auditor.amountToProvider') }} / {{ $t('auditor.transactionFee') }}</span
                                 >
-                                <span
-                                    >{{ selected.amountToProvider.toFixed(2) }} EUR /
-                                    {{ selected.transactionFee.toFixed(2) }} EUR</span
-                                >
+                                <span>
+                                    {{
+                                        R.isNil(selected.transactionFee)
+                                            ? `${selected.amount.toFixed(2)}`
+                                            : `${(selected.amount - selected.transactionFee).toFixed(2)}`
+                                    }}
+                                    EUR / {{ selected.transactionFee ? selected.transactionFee.toFixed(2) : 0 }} EUR
+                                </span>
                             </div>
                         </div>
                         <div class="w-full flex justify-between flex-wrap">
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
                                 <span class="text-gray-400">{{ $t('auditor.provider') }}</span>
                                 <span
-                                    >{{ truncateId(selected.provider, 20) }}
+                                    >{{ truncateId(selected.factorySellerName, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
                                         class="w-4 h-4 cursor-pointer"
-                                        @click="copyProvider(selected.provider)" />
+                                        @click="copyProvider(selected.factorySellerName)" />
                                     <UIcon
                                         v-show="copiedProvider"
                                         name="ic:baseline-check"
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
                             </div>
-                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
-                                <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 sm:mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.provider') + ' ID' }}</span>
                                 <span
-                                    >{{ truncateId(selected.consumer, 20) }}
+                                    >{{ truncateId(selected.factorySellerId, 20) }}
                                     <UIcon
                                         name="mingcute:copy-line"
                                         class="w-4 h-4 cursor-pointer"
-                                        @click="copyConsumer(selected.consumer)" />
+                                        @click="copyProviderId(selected.factorySellerId)" />
+                                    <UIcon
+                                        v-show="copiedProviderId"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                            </div>
+                        </div>
+                        <div class="w-full flex justify-between flex-wrap">
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2">
+                                <span class="text-gray-400">{{ $t('auditor.consumer') }}</span>
+                                <span
+                                    >{{ truncateId(selected.factoryBuyerName, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyConsumer(selected.factoryBuyerName)" />
                                     <UIcon
                                         v-show="copiedConsumer"
+                                        name="ic:baseline-check"
+                                        class="w-4 h-4 text-green-500 transition-all duration-100"
+                                /></span>
+                            </div>
+                            <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 sm:mt-4 lg:mt-0">
+                                <span class="text-gray-400">{{ $t('auditor.consumer') + ' ID' }}</span>
+                                <span
+                                    >{{ truncateId(selected.factoryBuyerId, 20) }}
+                                    <UIcon
+                                        name="mingcute:copy-line"
+                                        class="w-4 h-4 cursor-pointer"
+                                        @click="copyConsumerId(selected.factoryBuyerId)" />
+                                    <UIcon
+                                        v-show="copiedConsumerId"
                                         name="ic:baseline-check"
                                         class="w-4 h-4 text-green-500 transition-all duration-100"
                                 /></span>
@@ -308,14 +343,15 @@ const generatePDF = () => {
                     </div>
                 </UModal>
                 <UCard>
-                    <div class="w-ful flex items-center justify-end">
+                    <div class="w-full flex items-center justify-end">
                         <UInput
-                            v-model="searchString"
+                            v-model="rawInput"
                             icon="i-heroicons-magnifying-glass-20-solid"
-                            size="sm"
+                            size="md"
                             color="white"
                             :trailing="false"
-                            placeholder="Search..."
+                            :placeholder="$t('auditor.inputMessage')"
+                            class="w-64"
                         />
                     </div>
 
@@ -323,8 +359,7 @@ const generatePDF = () => {
                         v-model:sort="sortBy"
                         v-model:expand="expand"
                         :columns="columns"
-                        :rows="paginatedRows"
-                        sort-mode="manual"
+                        :rows="rows"
                         :empty-state="{
                             icon: 'i-heroicons-circle-stack-20-solid',
                             label: $t('wallet.noTransactions'),
@@ -335,19 +370,27 @@ const generatePDF = () => {
                     >
                         <template #expand="{ row }">
                             <div class="w-full p-4 flex flex-col text-sm text-gray-500 gap-2 justify-center ml-[200px]">
-                                <span class="flex items-center gap-4">
-                                    <span class="font-bold">{{ row.amountToProvider.toFixed(2) }} EUR</span>
+                                <span class="flex items-center gap-4 justify-between w-64">
+                                    <span class="font-bold">{{
+                                        R.isNil(row.transactionFee)
+                                            ? `${row.amount.toFixed(2)} EUR`
+                                            : `${(row.amount - row.transactionFee).toFixed(2)} EUR`
+                                    }}</span>
                                     <span>{{ $t('auditor.amountToProvider') }}</span>
                                 </span>
-                                <span class="flex items-center gap-4">
-                                    <span class="font-bold">{{ row.transactionFee.toFixed(2) }} EUR</span>
+                                <span class="flex items-center gap-4 justify-between w-64">
+                                    <span class="font-bold">{{
+                                        R.isNil(row.transactionFee)
+                                            ? `${0} EUR`
+                                            : `${row.transactionFee?.toFixed(2)} EUR`
+                                    }}</span>
                                     <span>{{ $t('auditor.transactionFee') }}</span>
                                 </span>
                             </div>
                         </template>
-                        <template #transactionDate-data="{ row }">
-                            <span v-if="row.transactionDate" class="flex items-center justify-center">{{
-                                $d(new Date(row.transactionDate), 'short')
+                        <template #createdAt-data="{ row }">
+                            <span v-if="row.createdAt" class="flex items-center justify-center">{{
+                                $d(new Date(row.createdAt), 'short')
                             }}</span>
                             <span v-else>&mdash;</span>
                         </template>
@@ -358,45 +401,49 @@ const generatePDF = () => {
                             </span>
                         </template>
 
-                        <template #assetTitle-data="{ row }">
+                        <template #assetName-data="{ row }">
                             <span class="flex items-center justify-start">
-                                <a :href="row.assetLink" target="_blank" class="text-primary visited:text-primary-800">
-                                    {{ row.assetTitle }}
+                                <a
+                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${row.assetId}`"
+                                    target="_blank"
+                                    class="text-primary visited:text-primary-800"
+                                >
+                                    {{ row.assetName }}
                                 </a>
                             </span>
                         </template>
 
-                        <template #provider-data="{ row }">
+                        <template #factorySellerName-data="{ row }">
                             <UTooltip
-                                :text="row.provider"
+                                :text="row.factorySellerName"
                                 :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
                                 <span class="flex items-center justify-start">
-                                    {{ truncateId(row.provider, 10) }}
+                                    {{ truncateId(row.factorySellerName, 10) }}
                                 </span>
                             </UTooltip>
                         </template>
 
-                        <template #consumer-data="{ row }">
+                        <template #factoryBuyerName-data="{ row }">
                             <UTooltip
-                                :text="row.consumer"
+                                :text="row.factoryBuyerName"
                                 :ui="{ width: 'max-w-lg' }"
                                 :popper="{ placement: 'top' }"
                                 class="flex items-center justify-center"
                             >
                                 <span class="flex items-center justify-start">
-                                    {{ truncateId(row.consumer, 10) }}
+                                    {{ truncateId(row.factoryBuyerName, 10) }}
                                 </span>
                             </UTooltip>
                         </template>
                     </UTable>
-                    <div v-if="filteredRows.length > pageCount" class="flex justify-end mt-2">
+                    <div class="flex justify-end mt-2">
                         <UPagination
                             v-model="page"
-                            :page-count="pageCount"
-                            :total="filteredRows.length"
+                            :page-count="10"
+                            :total="totalCount"
                             :active-button="{ variant: 'outline' }"
                         />
                     </div>
