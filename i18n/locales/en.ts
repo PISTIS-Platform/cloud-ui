@@ -35,7 +35,7 @@ export default {
         date: 'Date',
         transactionId: 'Transaction ID',
         assetId: 'Asset ID',
-        assetTitle: 'Asset Title',
+        assetName: 'Asset Name',
         amount: 'Full Amount',
         amountToProvider: 'Amount to Data Provider',
         transactionFee: 'Transaction Fee',
@@ -48,7 +48,7 @@ export default {
         noTransactionSelected: 'No transaction selected',
         link: 'Asset Link (Marketplace)',
         downloadPDF: 'Download as PDF',
-        inputMessage: 'Search asset title/name...',
+        inputMessage: 'Search asset name...',
     },
     dashboard: {
         dashboard: 'Dashboard',

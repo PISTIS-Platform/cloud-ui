@@ -31,7 +31,7 @@ const columns: TableColumn[] = [
     },
     {
         key: 'assetName',
-        label: t('auditor.assetTitle'),
+        label: t('auditor.assetName'),
         sortable: false,
         class: 'text-left',
     },
@@ -114,7 +114,7 @@ const generatePDF = () => {
             { text: selected.value.transactionId },
             { text: t('auditor.assetId'), style: 'subheading' },
             { text: selected.value.assetId },
-            { text: t('auditor.assetTitle'), style: 'subheading' },
+            { text: t('auditor.assetName'), style: 'subheading' },
             {
                 text: selected.value.assetName,
                 link: `https://pistis-market.eu/srv/catalog/datasets/${selected.value.assetId}`,
