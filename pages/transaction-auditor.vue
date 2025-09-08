@@ -58,6 +58,17 @@ const { rows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
     direction: 'desc',
 });
 
+const rawInput = ref('');
+let timeout = null;
+
+//debounce the search bar
+watch(rawInput, (newVal) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+        searchString.value = newVal;
+    }, 500);
+});
+
 const sortByColumn = computed(() => sortBy.value.column);
 const sortByDirection = computed(() => sortBy.value.direction);
 
@@ -334,7 +345,7 @@ const generatePDF = () => {
                 <UCard>
                     <div class="w-ful flex items-center justify-end">
                         <UInput
-                            v-model="searchString"
+                            v-model="rawInput"
                             icon="i-heroicons-magnifying-glass-20-solid"
                             size="sm"
                             color="white"
