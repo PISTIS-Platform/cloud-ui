@@ -343,14 +343,15 @@ const generatePDF = () => {
                     </div>
                 </UModal>
                 <UCard>
-                    <div class="w-ful flex items-center justify-end">
+                    <div class="w-full flex items-center justify-end">
                         <UInput
                             v-model="rawInput"
                             icon="i-heroicons-magnifying-glass-20-solid"
-                            size="sm"
+                            size="md"
                             color="white"
                             :trailing="false"
                             :placeholder="$t('auditor.inputMessage')"
+                            class="w-64"
                         />
                     </div>
 
