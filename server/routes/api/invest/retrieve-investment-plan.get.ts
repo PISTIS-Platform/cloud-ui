@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const token = await getToken({ event });
     const query = getQuery(event);
 
-    const response = await $fetch(`${dataInvestmentPlannerUrl}/retrieve/${query.cloudAssetId}`, {
+    const response = await $fetch(`${dataInvestmentPlannerUrl}/investment-planner/retrieve/${query.cloudAssetId}`, {
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },
