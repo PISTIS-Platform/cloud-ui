@@ -350,7 +350,7 @@ const generatePDF = () => {
                             size="sm"
                             color="white"
                             :trailing="false"
-                            placeholder="Search..."
+                            :placeholder="$t('auditor.inputMessage')"
                         />
                     </div>
 
