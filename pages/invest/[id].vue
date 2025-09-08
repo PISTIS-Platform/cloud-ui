@@ -23,7 +23,6 @@ type InvestmentPlan = {
     createdAt: string;
     updatedAt: string;
     terms: string;
-    keywords: string[];
 };
 
 const schema = computed(() =>
@@ -96,27 +95,9 @@ const numberOfSharesError = computed(() => {
                             <div class="flex flex-col gap-4 w-full">
                                 <div class="flex gap-1 flex-col">
                                     <span class="text-sm font-semibold text-gray-400">{{
-                                        $t('invest.assetName')
-                                    }}</span>
-                                    <!-- //TODO: Link to marketplace -->
-                                    <a href="#" class="text-primary-500">{{ investmentPlan.title }}</a>
-                                </div>
-                                <div class="flex gap-1 flex-col">
-                                    <span class="text-sm font-semibold text-gray-400">{{
                                         $t('invest.assetDescription')
                                     }}</span>
                                     <span>{{ investmentPlan.description }}</span>
-                                </div>
-                                <div class="flex gap-1 flex-col">
-                                    <span class="text-sm font-semibold text-gray-400">{{ $t('invest.keywords') }}</span>
-                                    <div class="flex items-center gap-3">
-                                        <span
-                                            v-for="keyword in investmentPlan.keywords"
-                                            :key="keyword"
-                                            class="text-xs bg-gray-200 rounded-lg p-1.5"
-                                            >{{ keyword }}</span
-                                        >
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -207,11 +188,16 @@ const numberOfSharesError = computed(() => {
                     </UCard>
                 </div>
                 <div class="mt-6 mb-2">
-                    <UForm :state="state" :schema="schema" class="flex items-end gap-6 w-full relative">
+                    <UForm
+                        :submit="purchaseShares"
+                        :state="state"
+                        :schema="schema"
+                        class="flex items-end gap-6 relative"
+                    >
                         <UFormGroup
                             :label="$t('invest.numberOfSharesToPurchase')"
                             name="sharesToPurchase"
-                            :ui="{ container: 'w-96', error: 'absolute -bottom-6 w-full' }"
+                            :ui="{ container: 'w-64', error: 'absolute -bottom-6 w-full' }"
                             required
                             eager-validation
                         >
@@ -230,10 +216,11 @@ const numberOfSharesError = computed(() => {
                                 </template>
                             </UInput>
                         </UFormGroup>
+
                         <UButton
-                            class="-ml-36"
-                            type="submit"
+                            class="cursor-pointer"
                             size="xl"
+                            type="submit"
                             :disabled="numberOfSharesError"
                             @click="purchaseShares"
                             >{{ $t('invest.pay') }} ({{ state.sharesToPurchase * investmentPlan.price }} EUR)</UButton
