@@ -83,7 +83,7 @@ export default defineNuxtConfig({
             defaultProvider: 'keycloak',
         },
         session: {
-            enableRefreshPeriodically: true,
+            enableRefreshPeriodically: 60000,
             enableRefreshOnWindowFocus: true,
         },
         globalAppMiddleware: {
