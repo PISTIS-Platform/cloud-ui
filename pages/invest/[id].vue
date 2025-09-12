@@ -75,7 +75,10 @@ const numberOfSharesError = computed(() => {
     <UProgress v-if="retrieveStatus === 'pending'" animation="carousel" color="primary" />
     <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
         <PageContainer>
-            <ErrorCard v-if="retrieveError" :error-msg="$t('invest.retrieveError')"></ErrorCard>
+            <ErrorCard
+                v-if="retrieveError"
+                :error-msg="retrieveError.data?.data?.message ?? $t('invest.retrieveError')"
+            />
             <UCard v-else-if="investmentPlan" class="w-full">
                 <template #header>
                     <div class="flex items-center gap-4">
@@ -228,7 +231,6 @@ const numberOfSharesError = computed(() => {
                     </UForm>
                 </div>
             </UCard>
-            <ErrorCard v-else :error-msg="$t('invest.retrieveError')"></ErrorCard>
         </PageContainer>
     </div>
 </template>
