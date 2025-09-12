@@ -1,7 +1,7 @@
 import { getToken } from '#auth';
 
 const {
-    public: { marketplaceUrl },
+    public: { cloudUrl },
 } = useRuntimeConfig();
 
 export default defineEventHandler(async (event) => {
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const query = await getQuery(event);
 
     //FIXME: Replace with actual marketplace link
-    const response = await $fetch(`${marketplaceUrl}/srv/search/datasets/${query.id}`, {
+    const response = await $fetch(`${cloudUrl}/srv/search/datasets/${query.id}`, {
         headers: {
             Authorization: `Bearer ${token?.access_token}`,
         },
