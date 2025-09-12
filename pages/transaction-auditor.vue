@@ -74,7 +74,11 @@ const sortByDirection = computed(() => sortBy.value.direction);
 
 const totalCount = computed(() => transactionsData.value.meta.totalItems);
 
-const { data: transactionsData, status: transactionsStatus } = useFetch<any>(`/api/transaction-auditor/transactions`, {
+const {
+    data: transactionsData,
+    status: transactionsStatus,
+    error,
+} = useFetch<any>(`/api/transaction-auditor/transactions`, {
     method: 'GET',
     query: {
         page,
@@ -178,8 +182,9 @@ const generatePDF = () => {
 </script>
 
 <template>
-    <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full">
-        <PageContainer>
+    <div class="justify-center items-center px-8 max-w-7xl mx-auto w-full pt-6">
+        <ErrorCard v-if="error" :error-msg="error.data?.data?.message" class="mt-6" />
+        <PageContainer v-else>
             <span class="font-bold text-lg">{{ $t('auditor.title') }}</span>
             <div v-if="transactionsStatus === 'pending'" class="flex flex-col w-full text-lg mt-4">
                 <UProgress animation="carousel" color="primary" />
