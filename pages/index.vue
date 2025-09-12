@@ -18,7 +18,7 @@ const navigation: { name: string; to: string; icon?: string; roles: string[] }[]
 ];
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'home', to: 'dashboard', icon: '', roles: [] },
+    { name: 'dashboard.dashboard', to: 'dashboard', icon: '', roles: [] },
 ];
 
 const features = [
