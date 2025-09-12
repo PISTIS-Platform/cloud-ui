@@ -7,8 +7,6 @@ definePageMeta({
 
 const callbackUrl = '/dashboard';
 
-const config = useRuntimeConfig();
-
 const { status, signIn, signOut, data: session } = useAuth();
 
 const navigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
@@ -20,13 +18,6 @@ const navigation: { name: string; to: string; icon?: string; roles: string[] }[]
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
     { name: 'home', to: 'dashboard', icon: '', roles: [] },
-    {
-        name: 'marketplace',
-        to: config.public.marketplaceUrl + '/srv/catalog/datasets?locale=en&catalog=pistis&page=1',
-        icon: 'heroicons:arrow-top-right-on-square-16-solid',
-        roles: [],
-    },
-    { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
 ];
 
 const features = [

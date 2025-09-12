@@ -6,8 +6,6 @@ useHead({
     bodyAttrs: { class: 'h-full' },
 });
 
-const config = useRuntimeConfig();
-
 import { useMessagesStore } from '~/store/messages';
 
 const messagesStore = useMessagesStore();
@@ -24,13 +22,6 @@ const navigation: { name: string; to: string; roles: string[] }[] = [
 
 const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
     { name: 'dashboard.dashboard', to: '/dashboard', icon: '', roles: [] },
-    {
-        name: 'marketplace',
-        to: config.public.marketplaceUrl + '/srv/catalog/datasets?locale=en&catalog=pistis&page=1',
-        icon: 'heroicons:arrow-top-right-on-square-16-solid',
-        roles: [],
-    },
-    { name: 'distributedQuery', to: config.public.marketplaceUrl + '/srv/catalog/distributed-query', roles: [] },
 ];
 
 const dropdownNavigation: { name: string; to: string; icon?: string; roles: string[] }[] =
