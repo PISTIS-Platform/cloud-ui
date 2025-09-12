@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
     const componentStatusPromises = Object.entries(services).map(async ([key, value]: [string, string[]]) => {
         let active = 'false';
-        const url = `${config.public.marketplaceUrl}${value}`;
+        const url = `${config.public.cloudUrl}${value}`;
         if (value.length === 0) {
             return {
                 title: key,
@@ -37,14 +37,14 @@ export default defineEventHandler(async (event) => {
         }
 
         if (key === 'Marketplace') {
-            const repo = await $fetch(`${config.public.marketplaceUrl}/srv/repo/health`, {
+            const repo = await $fetch(`${config.public.cloudUrl}/srv/repo/health`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token?.access_token}`,
                 },
                 timeout: 5000,
             });
-            const search = await $fetch(`${config.public.marketplaceUrl}/srv/search/health`, {
+            const search = await $fetch(`${config.public.cloudUrl}/srv/search/health`, {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token?.access_token}`,

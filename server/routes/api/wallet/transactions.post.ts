@@ -1,7 +1,7 @@
 import { getServerSession, getToken } from '#auth';
 
 const {
-    public: { marketplaceUrl },
+    public: { cloudUrl },
     adminWalletAlias,
 } = useRuntimeConfig();
 
@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const body = JSON.stringify({ wallet_alias: adminWalletAlias });
     const token = await getToken({ event });
 
-    const transactions = await $fetch<any>(`${marketplaceUrl}/srv/payments/v0/dlt/transactions`, {
+    const transactions = await $fetch<any>(`${cloudUrl}/srv/payments/v0/dlt/transactions`, {
         method: 'POST',
         body,
         headers: {

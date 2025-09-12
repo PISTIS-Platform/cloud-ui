@@ -39,7 +39,7 @@ export default defineNuxtConfig({
 
     runtimeConfig: {
         public: {
-            marketplaceUrl: '',
+            cloudUrl: '',
         },
         authSecret: '',
         keycloak: {
