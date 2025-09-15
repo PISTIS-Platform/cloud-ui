@@ -62,6 +62,10 @@ export const authOptions = {
                 token.prefix = getUserPrefix(jwtDecode(account.access_token));
                 token.id_token = account.id_token;
                 token.provider = account.provider;
+                token.user = {
+                    name: user.name,
+                    email: user.email,
+                };
             }
 
             return Promise.resolve(token);
@@ -75,6 +79,7 @@ export const authOptions = {
             session.user = {
                 sub: token.sub,
                 prefix: token.prefix,
+                ...token.user,
             };
 
             return Promise.resolve(session);
