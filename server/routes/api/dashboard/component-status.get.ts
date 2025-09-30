@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
         'Models Repository': ['/srv/models-repository/api/health'],
         'Smart Contract Execution Engine': ['/srv/smart-contract-execution-engine/ready'],
         'DLT FIAT Wallet': ['/srv/payments/v0/dlt/health_checker'],
-        'Identity Access Management': [],
+        'Identity Access Management': ['/srv/identity-access-management/api/health'],
         'Notifications Engine': ['/srv/notifications/api/health'],
         Marketplace: ['/srv/catalog'],
     };
@@ -71,9 +71,11 @@ export default defineEventHandler(async (event) => {
 
                 if (result === true) {
                     active = 'true';
+                } else if (result?.status === true) {
+                    active = 'true';
                 } else if (result?.success) {
                     active = 'true';
-                } else if (result?.status.toLowerCase() === 'ok' || result?.status.toLowerCase() === 'success') {
+                } else if (result?.status?.toLowerCase() === 'ok' || result?.status?.toLowerCase() === 'success') {
                     active = 'true';
                 }
             } catch (error) {
