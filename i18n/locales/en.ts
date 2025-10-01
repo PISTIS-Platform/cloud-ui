@@ -1,6 +1,12 @@
 import { countriesInEnglish } from '~/constants/countries';
 
 export default {
+    ape: {
+        title: 'Access Policy Editor',
+        page1Name: 'Page 1 Name',
+        page2Name: 'Page 2 Name',
+        page3Name: 'Page 3 Name',
+    },
     balance: 'Balance',
     home: 'Home',
     marketplace: 'Marketplace',
