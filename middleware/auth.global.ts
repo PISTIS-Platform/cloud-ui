@@ -8,6 +8,7 @@ export const routeRoles: Record<string, string[]> = {
     '/models': ['PISTIS_ADMIN'],
     '/usage-analytics': ['PISTIS_ADMIN'],
     '/transaction-auditor': ['PISTIS_ADMIN'],
+    '/ape': ['PISTIS_ADMIN'],
 };
 
 export function getRolesForPath(path: string): string[] | null {
