@@ -7,7 +7,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
     }
 
     if (!allowedRoutes.includes(to.path) && !session.value?.roles?.includes('PISTIS_ADMIN')) {
-        console.log('hello');
         return navigateTo('/dashboard');
     }
 });
