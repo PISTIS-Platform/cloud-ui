@@ -12,29 +12,27 @@ const messagesStore = useMessagesStore();
 
 const { status, signIn, signOut, data: session } = useAuth();
 
-const navigation: { name: string; to: string; roles: string[] }[] = [
-    { name: 'dashboard.dashboard', to: '/dashboard', roles: [] },
-    { name: 'registry.registry', to: '/factory-registry', roles: ['PISTIS_ADMIN'] },
-    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['PISTIS_ADMIN'] },
-    { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
-    { name: 'auditor.title', to: '/transaction-auditor', roles: ['PISTIS_ADMIN'] },
+const navigation: { name: string; to: string }[] = [
+    { name: 'dashboard.dashboard', to: '/dashboard' },
+    { name: 'registry.registry', to: '/factory-registry' },
+    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics' },
+    { name: 'models.models', to: '/models' },
+    { name: 'auditor.title', to: '/transaction-auditor' },
 ];
 
-const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'dashboard.dashboard', to: '/dashboard', icon: '', roles: [] },
+const userNavigation: { name: string; to: string; icon?: string }[] = [
+    { name: 'dashboard.dashboard', to: '/dashboard', icon: '' },
 ];
 
-const dropdownNavigation: { name: string; to: string; icon?: string; roles: string[] }[] =
-    session.value?.roles?.includes('PISTIS_ADMIN')
-        ? [
-              { name: 'wallet.wallet', to: '/wallet', roles: ['PISTIS_ADMIN'] },
-              {
-                  name: 'ape.title',
-                  to: '/ape',
-                  roles: ['PISTIS_ADMIN'],
-              },
-          ]
-        : [];
+const dropdownNavigation: { name: string; to: string; icon?: string }[] = session.value?.roles?.includes('PISTIS_ADMIN')
+    ? [
+          { name: 'wallet.wallet', to: '/wallet' },
+          {
+              name: 'ape.title',
+              to: '/ape',
+          },
+      ]
+    : [{ name: 'wallet.wallet', to: '/wallet' }];
 
 const notificationCount = ref(0);
 
