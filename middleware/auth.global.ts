@@ -5,6 +5,9 @@ export const routeRoles: Record<string, string[]> = {
     '/wallet': [],
     '/factory-creation': [],
     '/factory-registry': ['PISTIS_ADMIN'],
+    '/models': ['PISTIS_ADMIN'],
+    '/usage-analytics': ['PISTIS_ADMIN'],
+    '/transaction-auditor': ['PISTIS_ADMIN'],
 };
 
 export function getRolesForPath(path: string): string[] | null {
