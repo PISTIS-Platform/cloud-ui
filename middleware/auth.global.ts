@@ -18,10 +18,10 @@ export function getRolesForPath(path: string): string[] | null {
     }
 
     // check parent paths (for nested routes that are not explicitly included)
-    //remove empty/falsy strings
+    // remove empty/falsy strings
     const segments = path.split('/').filter(Boolean);
 
-    //check backwards from more specific to more generic parent
+    // check backwards from more specific to more generic parent
     for (let i = segments.length; i > 0; i--) {
         const parentPath = '/' + segments.slice(0, i).join('/');
         if (parentPath in routeRoles) {
