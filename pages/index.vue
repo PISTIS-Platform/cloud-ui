@@ -9,16 +9,16 @@ const callbackUrl = '/dashboard';
 
 const { status, signIn, signOut, data: session } = useAuth();
 
-const navigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'dashboard.dashboard', to: '/dashboard', roles: [] },
-    { name: 'registry.registry', to: '/factory-registry', roles: ['PISTIS_ADMIN'] },
-    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics', roles: ['PISTIS_ADMIN'] },
-    { name: 'models.models', to: '/models', roles: ['PISTIS_ADMIN'] },
-    { name: 'auditor.title', to: '/transaction-auditor', roles: ['PISTIS_ADMIN'] },
+const navigation: { name: string; to: string; icon?: string }[] = [
+    { name: 'dashboard.dashboard', to: '/dashboard' },
+    { name: 'registry.registry', to: '/factory-registry' },
+    { name: 'usage-analytics.usage-analytics', to: '/usage-analytics' },
+    { name: 'models.models', to: '/models' },
+    { name: 'auditor.title', to: '/transaction-auditor' },
 ];
 
-const userNavigation: { name: string; to: string; icon?: string; roles: string[] }[] = [
-    { name: 'dashboard.dashboard', to: 'dashboard', icon: '', roles: [] },
+const userNavigation: { name: string; to: string; icon?: string }[] = [
+    { name: 'dashboard.dashboard', to: 'dashboard', icon: '' },
 ];
 
 const features = [
