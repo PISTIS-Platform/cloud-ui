@@ -3,6 +3,7 @@ export const routeRoles: Record<string, string[]> = {
     '/dashboard': [],
     '/notifications': [],
     '/wallet': [],
+    '/licenses': [],
     '/factory-creation': [],
     '/factory-registry': ['PISTIS_ADMIN'],
     '/models': ['PISTIS_ADMIN'],
