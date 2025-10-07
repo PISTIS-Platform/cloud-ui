@@ -2,6 +2,7 @@
 const { t } = useI18n();
 import { useClipboard } from '@vueuse/core';
 import dayjs from 'dayjs';
+import htmlToPdfmake from 'html-to-pdfmake';
 import * as R from 'ramda';
 
 import type TableColumn from '~/interfaces/table-column';
@@ -108,6 +109,14 @@ const expand = ref({
 
 const decodedTerms = computed(() => decodeURIComponent(atob(selected.value.terms || '')));
 
+const pdfContentArray = computed(() => {
+    const htmlString = decodedTerms.value;
+    if (!htmlString || typeof window === 'undefined') {
+        return [];
+    }
+    return htmlToPdfmake(htmlString);
+});
+
 const generatePDF = () => {
     if (!selected.value) return;
 
@@ -149,10 +158,7 @@ const generatePDF = () => {
             { text: t('auditor.consumer') + ' ID', style: 'subheading' },
             { text: selected.value.factoryBuyerId },
             { text: t('auditor.terms'), style: 'subheading' },
-            {
-                text: selected.value.terms,
-                style: 'body',
-            },
+            ...pdfContentArray.value,
         ],
         styles: {
             heading: {
