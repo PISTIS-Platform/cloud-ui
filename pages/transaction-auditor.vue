@@ -2,6 +2,7 @@
 const { t } = useI18n();
 import { useClipboard } from '@vueuse/core';
 import dayjs from 'dayjs';
+import htmlToPdfmake from 'html-to-pdfmake';
 import * as R from 'ramda';
 
 import type TableColumn from '~/interfaces/table-column';
@@ -106,6 +107,16 @@ const expand = ref({
     row: null,
 });
 
+const decodedTerms = computed(() => decodeURIComponent(atob(selected.value.terms || '')));
+
+const pdfContentArray = computed(() => {
+    const htmlString = decodedTerms.value;
+    if (!htmlString || typeof window === 'undefined') {
+        return [];
+    }
+    return htmlToPdfmake(htmlString);
+});
+
 const generatePDF = () => {
     if (!selected.value) return;
 
@@ -121,8 +132,6 @@ const generatePDF = () => {
             { text: t('auditor.assetName'), style: 'subheading' },
             {
                 text: selected.value.assetName,
-                link: `https://pistis-market.eu/srv/catalog/datasets/${selected.value.assetId}`,
-                style: 'link',
             },
             { text: t('auditor.amount'), style: 'subheading' },
             { text: selected.value.amount.toFixed(2) + ' EUR' },
@@ -147,10 +156,7 @@ const generatePDF = () => {
             { text: t('auditor.consumer') + ' ID', style: 'subheading' },
             { text: selected.value.factoryBuyerId },
             { text: t('auditor.terms'), style: 'subheading' },
-            {
-                text: selected.value.terms,
-                style: 'body',
-            },
+            ...pdfContentArray.value,
         ],
         styles: {
             heading: {
@@ -247,12 +253,7 @@ const generatePDF = () => {
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
 
-                                <a
-                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${selected.assetId}`"
-                                    target="_blank"
-                                    class="text-primary visited:text-primary-800 focus:outline-none"
-                                    >{{ selected.assetName }}</a
-                                >
+                                <span>{{ selected.assetName }}</span>
                             </div>
                         </div>
                         <div class="flex justify-between w-full flex-wrap">
@@ -337,9 +338,10 @@ const generatePDF = () => {
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
                             <div class="max-h-96 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6">
-                                <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
-                                    {{ paragraph }}
-                                </p>
+                                <div
+                                    class="prose lg:prose-sm prose-h2:text-center max-w-full"
+                                    v-html="decodedTerms"
+                                ></div>
                             </div>
                         </div>
                     </div>
@@ -408,13 +410,9 @@ const generatePDF = () => {
 
                         <template #assetName-data="{ row }">
                             <span class="flex items-center justify-start">
-                                <a
-                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${row.assetId}`"
-                                    target="_blank"
-                                    class="text-primary visited:text-primary-800"
-                                >
+                                <span>
                                     {{ row.assetName }}
-                                </a>
+                                </span>
                             </span>
                         </template>
 

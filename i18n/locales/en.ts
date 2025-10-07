@@ -55,6 +55,7 @@ export default {
         pleaseError: 'Please choose between %{min} and %{max} shares to purchase.',
     },
     auditor: {
+        assetTitle: 'Asset Title',
         title: 'Transaction Auditor',
         date: 'Date',
         transactionId: 'Transaction ID',
