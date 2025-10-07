@@ -106,6 +106,8 @@ const expand = ref({
     row: null,
 });
 
+const decodedTerms = computed(() => decodeURIComponent(atob(selected.value.terms || '')));
+
 const generatePDF = () => {
     if (!selected.value) return;
 
@@ -337,9 +339,10 @@ const generatePDF = () => {
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
                             <div class="max-h-96 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6">
-                                <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
-                                    {{ paragraph }}
-                                </p>
+                                <div
+                                    class="prose lg:prose-sm prose-h2:text-center max-w-full"
+                                    v-html="decodedTerms"
+                                ></div>
                             </div>
                         </div>
                     </div>
