@@ -132,8 +132,6 @@ const generatePDF = () => {
             { text: t('auditor.assetName'), style: 'subheading' },
             {
                 text: selected.value.assetName,
-                link: `https://pistis-market.eu/srv/catalog/datasets/${selected.value.assetId}`,
-                style: 'link',
             },
             { text: t('auditor.amount'), style: 'subheading' },
             { text: selected.value.amount.toFixed(2) + ' EUR' },
@@ -255,12 +253,7 @@ const generatePDF = () => {
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
 
-                                <a
-                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${selected.assetId}`"
-                                    target="_blank"
-                                    class="text-primary visited:text-primary-800 focus:outline-none"
-                                    >{{ selected.assetName }}</a
-                                >
+                                <span>{{ selected.assetName }}</span>
                             </div>
                         </div>
                         <div class="flex justify-between w-full flex-wrap">
@@ -417,13 +410,9 @@ const generatePDF = () => {
 
                         <template #assetName-data="{ row }">
                             <span class="flex items-center justify-start">
-                                <a
-                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${row.assetId}`"
-                                    target="_blank"
-                                    class="text-primary visited:text-primary-800"
-                                >
+                                <span>
                                     {{ row.assetName }}
-                                </a>
+                                </span>
                             </span>
                         </template>
 
