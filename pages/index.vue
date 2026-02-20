@@ -21,6 +21,15 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [
     { name: 'dashboard.dashboard', to: 'dashboard', icon: '' },
 ];
 
+const openRegisterForm = () => {
+    navigateTo('https://docs.google.com/forms/d/e/1FAIpQLSd_Dkt9zV1fGz9EWemxIGTKkkkqV4ykUt_KJNEMiiCQCboRbQ/viewform', {
+        external: true,
+        open: {
+            target: '_blank',
+        },
+    });
+};
+
 const features = [
     {
         title: 'Feature 1',
@@ -87,7 +96,8 @@ const isModalOpen = ref(false);
                             :key="page.to"
                             :to="page.to"
                             class="flex-shrink-0 rounded-md text-white text-lg hover:bg-primary-600 py-2 px-4 transition-all"
-                            >{{ $t(page.name) }}
+                        >
+                            {{ $t(page.name) }}
                             <UIcon v-if="page.icon" :name="page.icon" class="w-4 h-4 text-white-500" />
                         </NuxtLink>
                     </div>
@@ -96,7 +106,7 @@ const isModalOpen = ref(false);
                 <div v-if="status !== 'authenticated'" class="flex gap-4">
                     <button
                         class="items-center px-6 py-2 text-white hover:bg-gray-100 border border-neutral-200 hover:text-primary-900 rounded-md cursor-pointer transition-all"
-                        @click="isModalOpen = !isModalOpen"
+                        @click="openRegisterForm()"
                     >
                         Register
                     </button>
@@ -139,8 +149,8 @@ const isModalOpen = ref(false);
                                 class="inline-flex items-center px-4 py-2 text-base font-medium text-primary-950 bg-primary-600 text-white border border-transparent rounded-md hover:text-primary-900 hover:bg-gray-100 cursor-pointer transition-all"
                             >
                                 Find out more
-                            </button></NuxtLink
-                        >
+                            </button>
+                        </NuxtLink>
                     </div>
                 </div>
             </div>
