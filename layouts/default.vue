@@ -25,7 +25,13 @@ const userNavigation: { name: string; to: string; icon?: string }[] = [
 ];
 
 const dropdownNavigation: { name: string; to: string; icon?: string }[] = session.value?.roles?.includes('PISTIS_ADMIN')
-    ? [{ name: 'wallet.wallet', to: '/wallet' }]
+    ? [
+          { name: 'wallet.wallet', to: '/wallet' },
+          {
+              name: 'ape.title',
+              to: '/ape',
+          },
+      ]
     : [{ name: 'wallet.wallet', to: '/wallet' }];
 
 const notificationCount = ref(0);
