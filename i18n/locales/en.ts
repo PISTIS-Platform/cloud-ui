@@ -207,6 +207,7 @@ export default {
         pleaseError: 'Please choose between %{min} and %{max} shares to purchase.',
     },
     auditor: {
+        assetTitle: 'Asset Title',
         title: 'Transaction Auditor',
         date: 'Date',
         transactionId: 'Transaction ID',
@@ -575,6 +576,7 @@ export default {
         notifications: 'Notifications',
         title: 'Notifications',
         markRead: 'Mark as read',
+        markAllRead: 'Mark all as read',
         hide: 'Hide',
         noNotifications: 'No notifications available.',
         refund: 'Refund',

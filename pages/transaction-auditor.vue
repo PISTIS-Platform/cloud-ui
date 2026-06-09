@@ -2,6 +2,7 @@
 const { t } = useI18n();
 import { useClipboard } from '@vueuse/core';
 import dayjs from 'dayjs';
+import htmlToPdfmake from 'html-to-pdfmake';
 import * as R from 'ramda';
 
 import type TableColumn from '~/interfaces/table-column';
@@ -13,8 +14,6 @@ const { copy: copyProvider, copied: copiedProvider } = useClipboard({});
 const { copy: copyConsumer, copied: copiedConsumer } = useClipboard({});
 const { copy: copyProviderId, copied: copiedProviderId } = useClipboard({});
 const { copy: copyConsumerId, copied: copiedConsumerId } = useClipboard({});
-
-const { $pdfMake } = useNuxtApp();
 
 const columns: TableColumn[] = [
     {
@@ -59,7 +58,7 @@ const { rows, sortBy, searchString } = useTable<Transaction[]>(data, 15, {
 });
 
 const rawInput = ref('');
-let timeout = null;
+let timeout: any = null;
 
 //debounce the search bar
 watch(rawInput, (newVal) => {
@@ -106,8 +105,40 @@ const expand = ref({
     row: null,
 });
 
+const decodedTerms = computed(() => {
+    const termString = selected.value.terms || '';
+    try {
+        // attempt to decode assuming it is Base64
+        return decodeURIComponent(atob(termString));
+    } catch (e) {
+        // if decoding fails (invalid Base64), return the string as-is
+        return termString;
+    }
+});
+
 const generatePDF = () => {
     if (!selected.value) return;
+
+    const { $pdfMake } = useNuxtApp();
+
+    let termsContent: any[] = [];
+
+    if (decodedTerms.value) {
+        // Handle plain text newlines or wrapped HTML
+        const safeHtml = decodedTerms.value.includes('<')
+            ? decodedTerms.value
+            : `<div>${decodedTerms.value.replace(/\n/g, '<br>')}</div>`;
+
+        // Safe import check for Vite/Nuxt
+        const convert = (htmlToPdfmake as any).default || htmlToPdfmake;
+
+        try {
+            termsContent = convert(safeHtml);
+        } catch (e) {
+            console.error('PDF HTML conversion failed, falling back to text', e);
+            termsContent = [{ text: decodedTerms.value }];
+        }
+    }
 
     const docDefinition = {
         content: [
@@ -121,8 +152,6 @@ const generatePDF = () => {
             { text: t('auditor.assetName'), style: 'subheading' },
             {
                 text: selected.value.assetName,
-                link: `https://pistis-market.eu/srv/catalog/datasets/${selected.value.assetId}`,
-                style: 'link',
             },
             { text: t('auditor.amount'), style: 'subheading' },
             { text: selected.value.amount.toFixed(2) + ' EUR' },
@@ -147,10 +176,7 @@ const generatePDF = () => {
             { text: t('auditor.consumer') + ' ID', style: 'subheading' },
             { text: selected.value.factoryBuyerId },
             { text: t('auditor.terms'), style: 'subheading' },
-            {
-                text: selected.value.terms,
-                style: 'body',
-            },
+            ...termsContent,
         ],
         styles: {
             heading: {
@@ -247,12 +273,7 @@ const generatePDF = () => {
                             <div class="flex flex-col items-start gap-1 w-full lg:w-1/2 mt-4 lg:mt-0">
                                 <span class="text-gray-400">{{ $t('auditor.assetTitle') }}</span>
 
-                                <a
-                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${selected.assetId}`"
-                                    target="_blank"
-                                    class="text-primary visited:text-primary-800 focus:outline-none"
-                                    >{{ selected.assetName }}</a
-                                >
+                                <span>{{ selected.assetName }}</span>
                             </div>
                         </div>
                         <div class="flex justify-between w-full flex-wrap">
@@ -337,9 +358,7 @@ const generatePDF = () => {
                         <div class="flex flex-col items-start gap-1">
                             <span class="text-gray-400">{{ $t('auditor.terms') }}</span>
                             <div class="max-h-96 flex flex-col gap-2 overflow-y-scroll scrollbar pr-6">
-                                <p v-for="paragraph in selected.terms.split('\n')" :key="paragraph">
-                                    {{ paragraph }}
-                                </p>
+                                <div class="prose text-sm prose-h2:text-center max-w-full" v-html="decodedTerms"></div>
                             </div>
                         </div>
                     </div>
@@ -408,13 +427,9 @@ const generatePDF = () => {
 
                         <template #assetName-data="{ row }">
                             <span class="flex items-center justify-start">
-                                <a
-                                    :href="`https://pistis-market.eu/srv/catalog/datasets/${row.assetId}`"
-                                    target="_blank"
-                                    class="text-primary visited:text-primary-800"
-                                >
+                                <span>
                                     {{ row.assetName }}
-                                </a>
+                                </span>
                             </span>
                         </template>
 
