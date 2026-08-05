@@ -581,4 +581,10 @@ export default {
         noNotifications: 'No notifications available.',
         refund: 'Refund',
     },
+    maintenance: {
+        title: 'PISTIS Demo Infrastructure Transition',
+        description:
+            'Following the official completion of the PISTIS project, the online demo is undergoing a planned migration to a new infrastructure to ensure long-term availability.',
+        availability: 'The demo platform will be restored and accessible again in early September.',
+    },
 };

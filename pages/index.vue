@@ -9,6 +9,9 @@ const callbackUrl = '/dashboard';
 
 const { status, signIn, signOut, data: session } = useAuth();
 
+// PISTIS demo infrastructure transition — remove when NUXT_PUBLIC_MAINTENANCE_MODE is retired
+const maintenance = useMaintenanceMode();
+
 const navigation: { name: string; to: string; icon?: string }[] = [
     { name: 'dashboard.dashboard', to: '/dashboard' },
     { name: 'registry.registry', to: '/factory-registry' },
@@ -103,7 +106,7 @@ const isModalOpen = ref(false);
                     </div>
                 </div>
                 <!-- Sign In button -->
-                <div v-if="status !== 'authenticated'" class="flex gap-4">
+                <div v-if="status !== 'authenticated' && !maintenance" class="flex gap-4">
                     <button
                         class="items-center px-6 py-2 text-white hover:bg-gray-100 border border-neutral-200 hover:text-primary-900 rounded-md cursor-pointer transition-all"
                         @click="openRegisterForm()"
@@ -127,6 +130,24 @@ const isModalOpen = ref(false);
                     </button>
                 </div>
             </nav>
+            <!-- PISTIS demo infrastructure transition notice -->
+            <div v-if="maintenance" class="mt-6 px-8 sm:px-16 2xl:px-48">
+                <UAlert
+                    icon="i-heroicons-exclamation-triangle"
+                    color="red"
+                    variant="solid"
+                    :title="$t('maintenance.title')"
+                    :ui="{
+                        variant: { solid: 'bg-red-500/60 text-white' },
+                        title: 'font-semibold',
+                        description: 'mt-1 leading-relaxed',
+                    }"
+                >
+                    <template #description>
+                        {{ $t('maintenance.description') }} {{ $t('maintenance.availability') }}
+                    </template>
+                </UAlert>
+            </div>
             <div
                 class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full mt-20 gap-12 sm:gap-12 2xl:gap-0 px-8 sm:px-16 2xl:px-48"
             >

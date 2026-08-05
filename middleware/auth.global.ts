@@ -35,6 +35,19 @@ export function getRolesForPath(path: string): string[] | null {
 
 export default defineNuxtRouteMiddleware(async (to) => {
     const { data: session, signOut, status } = useAuth();
+
+    // PISTIS demo infrastructure transition — remove when NUXT_PUBLIC_MAINTENANCE_MODE is retired.
+    // Runs before the sidebase auth middleware (registered from a plugin), so returning here stops
+    // it from redirecting unauthenticated visitors to Keycloak.
+    if (useMaintenanceMode()) {
+        if (status.value === 'authenticated') {
+            await signOut({ callbackUrl: '/' });
+            return;
+        }
+
+        return to.path === '/' ? undefined : navigateTo('/');
+    }
+
     const requiredRoles = getRolesForPath(to.path);
 
     if (to.path !== '/' && (!session.value || status.value !== 'authenticated')) {
