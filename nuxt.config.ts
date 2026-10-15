@@ -40,7 +40,7 @@ export default defineNuxtConfig({
     runtimeConfig: {
         public: {
             cloudUrl: '',
-            // NUXT_PUBLIC_MAINTENANCE_MODE — blocks all sign-in and shows the transition notice on /
+            // NUXT_PUBLIC_MAINTENANCE_MODE — blocks all sign-in and hides Register/Sign In on /
             maintenanceMode: false,
         },
         authSecret: '',

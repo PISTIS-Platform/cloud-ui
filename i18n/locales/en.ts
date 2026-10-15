@@ -581,10 +581,9 @@ export default {
         noNotifications: 'No notifications available.',
         refund: 'Refund',
     },
-    maintenance: {
-        title: 'PISTIS Demo Infrastructure Transition',
+    walkthrough: {
+        title: 'Watch the PISTIS Platform Walkthrough: End-to-End Data Monetization & Exchange',
         description:
-            'Following the official completion of the PISTIS project, the online demo is undergoing a planned migration to a new infrastructure to ensure long-term availability.',
-        availability: 'The demo platform will be restored and accessible again in early September.',
+            'Discover how the PISTIS platform empowers data owners and data seekers to seamlessly manage, transform, and trade data in a secure, federated environment.',
     },
 };

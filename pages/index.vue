@@ -12,6 +12,8 @@ const { status, signIn, signOut, data: session } = useAuth();
 // PISTIS demo infrastructure transition — remove when NUXT_PUBLIC_MAINTENANCE_MODE is retired
 const maintenance = useMaintenanceMode();
 
+const walkthroughUrl = 'https://www.youtube.com/watch?v=iV1JHAT9KgQ';
+
 const navigation: { name: string; to: string; icon?: string }[] = [
     { name: 'dashboard.dashboard', to: '/dashboard' },
     { name: 'registry.registry', to: '/factory-registry' },
@@ -130,23 +132,29 @@ const isModalOpen = ref(false);
                     </button>
                 </div>
             </nav>
-            <!-- PISTIS demo infrastructure transition notice -->
-            <div v-if="maintenance" class="mt-6 px-8 sm:px-16 2xl:px-48">
-                <UAlert
-                    icon="i-heroicons-exclamation-triangle"
-                    color="red"
-                    variant="solid"
-                    :title="$t('maintenance.title')"
-                    :ui="{
-                        variant: { solid: 'bg-red-500/60 text-white' },
-                        title: 'font-semibold',
-                        description: 'mt-1 leading-relaxed',
-                    }"
+            <!-- Platform walkthrough video -->
+            <div class="mt-6 px-8 sm:px-16 2xl:px-48">
+                <NuxtLink
+                    :to="walkthroughUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="group flex items-center gap-4 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-4 text-white transition-all"
                 >
-                    <template #description>
-                        {{ $t('maintenance.description') }} {{ $t('maintenance.availability') }}
-                    </template>
-                </UAlert>
+                    <UIcon
+                        name="i-heroicons-play-circle"
+                        class="w-10 h-10 shrink-0 text-white group-hover:scale-110 transition-transform"
+                        aria-hidden="true"
+                    />
+                    <div class="flex flex-col gap-1">
+                        <span class="font-semibold">{{ $t('walkthrough.title') }}</span>
+                        <span class="leading-relaxed text-white/90">{{ $t('walkthrough.description') }}</span>
+                    </div>
+                    <UIcon
+                        name="i-heroicons-arrow-top-right-on-square"
+                        class="w-5 h-5 shrink-0 ml-auto text-white/80"
+                        aria-hidden="true"
+                    />
+                </NuxtLink>
             </div>
             <div
                 class="flex flex-col sm:flex-row items-center justify-center sm:justify-between w-full mt-20 gap-12 sm:gap-12 2xl:gap-0 px-8 sm:px-16 2xl:px-48"
